@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="brain1">#B34C66</color>
+    <color name="brain2">#D9A5B2</color>
+    <color name="brain3">#EDC2D8</color>
+    <color name="gold">#FF9800</color>
+    <color name="stats">#009900</color>
+    <color name="light">#FF5722</color>
+    <color name="purple">#684d77</color>
+    <color name="light_gray">#DAD8D8</color>
+</resources>

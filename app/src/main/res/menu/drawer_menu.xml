@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_opening"
+            android:icon="@drawable/brain"
+            android:title="@string/main_screen_nav_text"/>
+
+        <item
+            android:id="@+id/nav_active_goals"
+            android:icon="@drawable/active_thinking"
+            android:title="@string/active_goals_nav_text"/>
+
+        <item
+            android:id="@+id/nav_achieved_goals"
+            android:icon="@drawable/trophy"
+            android:title="@string/achieved_goals_nav_text"/>
+
+        <item
+            android:id="@+id/nav_stats"
+            android:icon="@drawable/statistics"
+            android:title="@string/stats_nav_text"/>
+
+        <item
+            android:id="@+id/nav_tips_and_tricks"
+            android:icon="@drawable/tips"
+            android:title="@string/tips_and_tricks_nav_text"/>
+
+        <item
+            android:id="@+id/nav_about_us"
+            android:icon="@drawable/about"
+            android:title="@string/about_us_nav_text"/>
+
+    </group>
+
+</menu>

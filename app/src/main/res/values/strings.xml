@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">PerformanceMeasurement</string>
+    <string name="main_screen_nav_text">Main Screen</string>
+    <string name="active_goals_nav_text">Active Goals</string>
+    <string name="achieved_goals_nav_text">Achieved Goals</string>
+    <string name="stats_nav_text">Stats</string>
+    <string name="tips_and_tricks_nav_text"><![CDATA[Tips & Tricks]]></string>
+    <string name="about_us_nav_text">About Us</string>
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="name_of_new_goal_label_dialog">New Goal\'s Name: </string>
+    <string name="name_of_new_goal_hint_dialog">Name Of New Goal</string>
+    <string name="description_of_new_goal_label_dialog">New Goal\'s Description:</string>
+    <string name="description_of_new_goal_hint_dialog">Description Of The New Goal</string>
+    <string name="cancel_adding_new_goal_dialog_button_text">Cancel</string>
+    <string name="add_new_goal_dialog_button_text">Add New Goal</string>
+</resources>
