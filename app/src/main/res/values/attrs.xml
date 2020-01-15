@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomProgressBar">
+        <attr name="progress_percentage" format="float"/>
+        <attr name="radius" format="float"/>
+        <attr name="textSize" format="float"/>
+        <attr name="base_color" format="integer"/>
+        <attr name="progress_color" format="integer"/>
+        <attr name="text" format="string"/>
+        <attr name="rippleEnabled" format="boolean" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="background_second_color" format="color"/>
+        <attr name="enable_press" format="boolean"/>
+        <attr name="enable_gradient" format="boolean"/>
+    </declare-styleable>
+
+</resources>

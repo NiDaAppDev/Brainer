@@ -18,4 +18,7 @@
     <string name="description_of_new_goal_hint_dialog">Description Of The New Goal</string>
     <string name="cancel_adding_new_goal_dialog_button_text">Cancel</string>
     <string name="add_new_goal_dialog_button_text">Add New Goal</string>
+    <string name="goals_preferences_SharedPreferences_name">goalsPreferences</string>
+    <string name="brain_preferences_SharedPreferences_name">brainPreferences</string>
+    <string name="lightning_view_sizes_SharedPreferences_value_name">lightningViewSizes</string>
 </resources>

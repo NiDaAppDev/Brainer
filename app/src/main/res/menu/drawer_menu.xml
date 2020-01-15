@@ -8,7 +8,7 @@
 
         <item
             android:id="@+id/nav_opening"
-            android:icon="@drawable/brain"
+            android:icon="@drawable/brain_image"
             android:title="@string/main_screen_nav_text"/>
 
         <item

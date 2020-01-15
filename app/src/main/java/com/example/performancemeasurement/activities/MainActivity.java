@@ -21,6 +21,7 @@ import com.example.performancemeasurement.fragments.OpeningFragment;
 import com.example.performancemeasurement.fragments.StatsFragment;
 import com.example.performancemeasurement.fragments.TipsAndTricksFragment;
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
+import com.example.performancemeasurement.publicClassesAndInterfaces.IOnFocusListenable;
 import com.google.android.material.navigation.NavigationView;
 
 /*
@@ -172,5 +173,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setItemTextColor(navMenuTextList);
         navigationView.setItemIconTintList(navMenuIconList);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if(fragment instanceof IOnFocusListenable) {
+            ((IOnFocusListenable) fragment).onWindowFocusChanged(hasFocus);
+        }
     }
 }
