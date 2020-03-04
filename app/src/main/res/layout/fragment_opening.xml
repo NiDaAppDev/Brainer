@@ -61,6 +61,9 @@
                 android:layout_weight="2"
                 android:src="@drawable/plus"
                 android:layout_margin="10dp"
+                android:backgroundTint="@android:color/white"
+                app:rippleColor="@color/brain2"
+                android:foreground="@drawable/fab_add_new_goal_opening_fragment_border"
                 android:elevation="15dp" />
 
             <com.example.performancemeasurement.customViews.CustomProgressBarButton
@@ -87,6 +90,9 @@
                 android:layout_weight="2"
                 android:src="@drawable/play"
                 android:layout_margin="10dp"
+                android:backgroundTint="@android:color/white"
+                app:rippleColor="@color/stop_red"
+                android:foreground="@drawable/fab_green_play_pause_opening_fragment_border"
                 android:elevation="15dp" />
 
 

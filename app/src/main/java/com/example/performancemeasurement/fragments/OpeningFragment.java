@@ -3,8 +3,10 @@ package com.example.performancemeasurement.fragments;
 
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -104,9 +106,8 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable {
         playPauseBtn = v.findViewById(R.id.play_pause_btn);
         addNewGoalBtn = v.findViewById(R.id.add_new_goal_btn);
         currentGoalProgressBarButton = v.findViewById(R.id.goal_progress_bar);
-
-        playPauseBtn.setBackgroundTintList(getResources().getColorStateList(R.color.start_green));
-        addNewGoalBtn.setBackgroundTintList(getResources().getColorStateList(R.color.brain2));
+        currentGoalProgressBarButton.enableDefaultGradient(true);
+        currentGoalProgressBarButton.enableDefaultPress(true);
     }
 
 
@@ -138,15 +139,16 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable {
         //TODO: Here Play Or Pause Action
     }
 
-
     private void updatePlayPauseIcon() {
         int res;
         if (playing) {
             res = R.drawable.pausetoplay_vector_anim;
-            playPauseBtn.setBackgroundTintList(getResources().getColorStateList(R.color.start_green));
+            playPauseBtn.setForeground(getResources().getDrawable(R.drawable.fab_green_play_pause_opening_fragment_border));
+            playPauseBtn.setRippleColor(getResources().getColorStateList(R.color.stop_red));
         } else {
             res = R.drawable.playtopause_vector_anim;
-            playPauseBtn.setBackgroundTintList(getResources().getColorStateList(R.color.stop_red));
+            playPauseBtn.setForeground(getResources().getDrawable(R.drawable.fab_red_play_pause_opening_fragment_border));
+            playPauseBtn.setRippleColor(getResources().getColorStateList(R.color.start_green));
         }
         playPauseBtn.setImageResource(res);
 

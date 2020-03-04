@@ -62,11 +62,7 @@ public class CustomProgressBarButton extends LinearLayout {
 
 
     private void init(Context context, AttributeSet attributeSet) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            mInterpolator = new PathInterpolator(0.33f, 0f, 0.33f, 1);
-        } else {
-            mInterpolator = new AccelerateDecelerateInterpolator();
-        }
+        mInterpolator = new PathInterpolator(0.33f, 0f, 0.33f, 1);
         mShadowDrawable = getResources().getDrawable(R.drawable.gradient_layout_shadow);
         mDensity = getResources().getDisplayMetrics().density;
     }
@@ -76,7 +72,7 @@ public class CustomProgressBarButton extends LinearLayout {
         canvas.save();
         canvas.scale(mCanvasScale, mCanvasScale, mCenterX, mCenterY);
         Log.w("tan", mCanvasScale + "");
-        drawShadow(canvas);
+        //drawShadow(canvas);
         super.dispatchDraw(canvas);
         canvas.restore();
     }
@@ -215,11 +211,11 @@ public class CustomProgressBarButton extends LinearLayout {
     }
 
 
-    public void enabelDefaultPress(boolean enable) {
+    public void enableDefaultPress(boolean enable) {
         mCustomProgressBar.enableDefaultPress(enable);
     }
 
-    public void enabelDefaultGradient(boolean enable) {
+    public void enableDefaultGradient(boolean enable) {
         mCustomProgressBar.enableDefaultGradient(enable);
     }
 

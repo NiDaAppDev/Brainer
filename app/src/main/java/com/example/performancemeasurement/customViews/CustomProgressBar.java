@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -17,6 +18,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
@@ -57,7 +59,7 @@ public class CustomProgressBar extends View {
     }
 
 
-    private void initAttrs(AttributeSet attrs) {
+    public void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.CustomProgressBar, 0, 0);
         try {
             setBaseColor(typedArray.getColor(R.styleable.CustomProgressBar_base_color, getResources().getColor(R.color.round_corner_progress_bar_background_default)));
@@ -139,6 +141,8 @@ public class CustomProgressBar extends View {
     private void updateProgressBar(Canvas canvas) {
         updateBar(canvas);
         updateText(canvas);
+        setOutlineProvider(new ZoftinoCustomOutlineProvider(180));
+        setClipToOutline(true);
     }
 
     public void updateBar(Canvas canvas) {
@@ -156,7 +160,7 @@ public class CustomProgressBar extends View {
         textPaint.getTextBounds(String.valueOf(progress), 0, String.valueOf(progress).length(), percentageBounds);
         textPaint.getTextBounds(getText(), 0, getText().length(), textBounds);
         setText(TextUtils.ellipsize(text, textPaint, canvas.getWidth() - percentageBounds.width() - 30, TextUtils.TruncateAt.END).toString());
-        textSize = (int) (canvas.getHeight() - 30 * getResources().getDisplayMetrics().scaledDensity);
+        textSize = (int) (canvas.getHeight() * 0.4);
         textPaint.setTextSize(textSize);
 
         final float y = canvas.getHeight() / 2 - (textPaint.descent() / 2 + textPaint.ascent() / 2);
@@ -164,7 +168,7 @@ public class CustomProgressBar extends View {
         if (getText() == null) {
             setText("");
         }
-        final float textWidth = textPaint.measureText(getText().toString());
+        final float textWidth = textPaint.measureText(getFullText());
 
         float textStart = (getMeasuredWidth() - textWidth) / 2;
 
@@ -187,7 +191,7 @@ public class CustomProgressBar extends View {
             textPaint.setColor(Color.WHITE);
         }
 
-        canvas.drawText(getText().toString(), (getMeasuredWidth() - textWidth) / 2, y, textPaint);
+        canvas.drawText(getFullText(), (getMeasuredWidth() - textWidth) / 2, y, textPaint);
     }
 
     public void updateProgressWidth() {
@@ -278,7 +282,7 @@ public class CustomProgressBar extends View {
     protected Parcelable onSaveInstanceState() {
 
         Parcelable superState = super.onSaveInstanceState();
-        return new CustomProgressBar.SavedState(superState, (int) getProgress(), getText());
+        return new CustomProgressBar.SavedState(superState, (int) getProgress(), text);
     }
 
     @Override
@@ -343,6 +347,10 @@ public class CustomProgressBar extends View {
     }
 
     public String getText() {
+        return text;
+    }
+
+    public String getFullText(){
         return text + " " + (int) progress + "%";
     }
 
@@ -455,6 +463,20 @@ public class CustomProgressBar extends View {
             }
         };
 
+    }
+
+    public class ZoftinoCustomOutlineProvider extends ViewOutlineProvider {
+
+        int roundCorner;
+
+        public ZoftinoCustomOutlineProvider(int round) {
+            roundCorner = round;
+        }
+
+        @Override
+        public void getOutline(View view, Outline outline) {
+            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), roundCorner);
+        }
     }
 
 }
