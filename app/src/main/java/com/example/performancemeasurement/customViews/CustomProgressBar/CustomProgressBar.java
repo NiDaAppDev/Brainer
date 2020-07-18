@@ -1,4 +1,4 @@
-package com.example.performancemeasurement.customViews;
+package com.example.performancemeasurement.customViews.CustomProgressBar;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextPaint;
@@ -19,12 +18,12 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.example.performancemeasurement.R;
+import com.example.performancemeasurement.customViews.CustomProgressBarButton.ButtonController;
+import com.example.performancemeasurement.customViews.CustomProgressBarButton.DefaultButtonController;
 
 public class CustomProgressBar extends View {
 
@@ -370,23 +369,38 @@ public class CustomProgressBar extends View {
     public void setProgress(final float progress, boolean animate) {
         if (animate) {
 
-            barAnimator = ValueAnimator.ofFloat(getProgress() / 100, progress / 100);
+//            barAnimator = ValueAnimator.ofFloat(getProgress() / 100, progress / 100);
+//
+//            barAnimator.setDuration(700);
+//
+//            barAnimator.setInterpolator(new DecelerateInterpolator());
+//
+//            barAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                @Override
+//                public void onAnimationUpdate(ValueAnimator animation) {
+//                    float interpolation = (float) animation.getAnimatedValue();
+//                    setProgress(((interpolation * (progress - getProgress()))) + getProgress(), false);
+//                }
+//            });
+//
+//            if (!barAnimator.isStarted()) {
+//                barAnimator.start();
+//            }
 
-            barAnimator.setDuration(700);
+//            Animation animation = new Animation() {
+//                @Override
+//                protected void applyTransformation(float interpolatedTime, Transformation t) {
+//                    super.applyTransformation(interpolatedTime, t);
+//                    float value = getProgress() + (progress - getProgress()) * interpolatedTime;
+//                    setProgress(value, false);
+//                }
+//            };
+//            animation.setDuration(700);
+//            this.startAnimation(animation);
 
-            barAnimator.setInterpolator(new DecelerateInterpolator());
+            this.progress = progress;
+            postInvalidate();
 
-            barAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float interpolation = (float) animation.getAnimatedValue();
-                    setProgress((int) ((interpolation * (progress - getProgress()))) + getProgress(), false);
-                }
-            });
-
-            if (!barAnimator.isStarted()) {
-                barAnimator.start();
-            }
         } else {
             this.progress = progress;
             postInvalidate();

@@ -3,6 +3,8 @@ package com.example.performancemeasurement.publicClassesAndInterfaces;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import com.example.performancemeasurement.GoalAndDatabaseObjects.Goal;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,6 +47,33 @@ public class PublicMethods<T> extends Application {
         }
         return out;
 
+    }
+
+    public static <T> ArrayList<T> arrayListWithout(ArrayList<T> arrayList, ArrayList<T> exceptions){
+        ArrayList<T> output = new ArrayList<>(arrayList);
+
+        for(T exception : exceptions){
+            output.remove(exception);
+        }
+
+        return output;
+    }
+
+    public static <T> T getValueOrDefault(T value, T defaultValue) {
+        if (value == null) {
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    public static int positionOfGoalInGoalsArrayList(String goalName, ArrayList<Goal> goalsArrayList){
+        int output = 0;
+        for(Goal goal1 : goalsArrayList){
+            if(goalName.equals(goal1.getName())){
+                return goalsArrayList.indexOf(goal1);
+            }
+        }
+        return -1;
     }
 
     public static Context getAppContext() {

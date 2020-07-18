@@ -1,4 +1,4 @@
-package com.example.performancemeasurement.customViews;
+package com.example.performancemeasurement.customViews.CustomProgressBarButton;
 
 import android.graphics.Color;
 

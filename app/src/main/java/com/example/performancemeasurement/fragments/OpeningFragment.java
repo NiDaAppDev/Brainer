@@ -3,21 +3,18 @@ package com.example.performancemeasurement.fragments;
 
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.performancemeasurement.R;
 import com.example.performancemeasurement.brainAnimation.lightning.RandomLightning;
-import com.example.performancemeasurement.customViews.CustomProgressBarButton;
+import com.example.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton;
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnFocusListenable;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

@@ -1,4 +1,4 @@
-package com.example.performancemeasurement.customViews;
+package com.example.performancemeasurement.customViews.CustomProgressBarButton;
 
 public interface ButtonController {
     int getPressedColor(int color);

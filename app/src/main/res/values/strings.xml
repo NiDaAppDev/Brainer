@@ -21,4 +21,10 @@
     <string name="goals_preferences_SharedPreferences_name">goalsPreferences</string>
     <string name="brain_preferences_SharedPreferences_name">brainPreferences</string>
     <string name="lightning_view_sizes_SharedPreferences_value_name">lightningViewSizes</string>
+    <string name="edit_goal">Edit Goal</string>
+    <string name="expand_goal">Expand Goal</string>
+    <string name="finish">Finish Goal</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

@@ -1,64 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.ActiveGoalsFragment">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-
-            <androidx.recyclerview.widget.RecyclerView
+            <com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
                 android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:background="@color/light_gray"
-                android:padding="4dp"
+                android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical" />
-
-
         </RelativeLayout>
 
-        <View
-            android:id="@+id/blur_background"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom|center"
+            android:layout_margin="20.0dip"
+            android:src="@drawable/plus"
+            app:fabSize="normal" />
+
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:id="@+id/blur_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/blur_background"
-            android:visibility="gone" />
+            android:elevation="5.0dip"
+            android:visibility="invisible"
+            app:realtimeBlurRadius="20.0dip"
+            app:realtimeOverlayColor="#88000000" />
 
         <com.google.android.material.circularreveal.CircularRevealFrameLayout
-            android:id="@+id/fragment_container"
+            android:id="@+id/add_new_goal_dialog_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:elevation="10dp"
-            android:layout_margin="15dp"
+            android:layout_margin="15.0dip"
+            android:elevation="10.0dip"
             android:visibility="invisible"
             app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/dialog"
+                android:id="@+id/add_new_goal_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:cardCornerRadius="15dp"
+                app:cardCornerRadius="15.0dip"
                 app:cardPreventCornerOverlap="true">
 
                 <RelativeLayout
-                    android:id="@+id/pr"
+                    android:id="@+id/add_new_goal_pr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/add_new_active_activity_dialog_background"
                     android:gravity="center"
-                    android:padding="15dp">
+                    android:padding="15.0dip">
 
                     <TextView
                         android:id="@+id/name_label"
@@ -66,15 +72,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/name_of_new_goal_label_dialog"
-                        android:textSize="20sp" />
+                        android:textSize="20.0sp" />
 
                     <EditText
                         android:id="@+id/name_et"
-                        android:layout_width="match_parent"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_label"
                         android:hint="@string/name_of_new_goal_hint_dialog"
-                        android:textSize="20sp" />
+                        android:textSize="20.0sp" />
 
                     <TextView
                         android:id="@+id/description_label"
@@ -83,28 +89,28 @@
                         android:layout_below="@id/name_et"
                         android:layout_gravity="center"
                         android:text="@string/description_of_new_goal_label_dialog"
-                        android:textSize="20sp" />
+                        android:textSize="20.0sp" />
 
                     <EditText
                         android:id="@+id/description_et"
-                        android:layout_width="match_parent"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/description_label"
                         android:hint="@string/description_of_new_goal_hint_dialog"
-                        android:textSize="20sp" />
+                        android:textSize="20.0sp" />
 
                     <RelativeLayout
                         android:id="@+id/cancel_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/description_et"
+                        android:layout_below="@id/description_et"
                         android:layout_alignStart="@id/name_et"
-                        android:layout_margin="15dp"
+                        android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
-                        android:elevation="8dp"
+                        android:elevation="8.0dip"
                         android:focusable="true"
-                        android:padding="15dp">
+                        android:padding="15.0dip">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -112,21 +118,20 @@
                             android:text="@string/cancel_adding_new_goal_dialog_button_text"
                             android:textAllCaps="false"
                             android:textColor="@color/brain1" />
-
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/add_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/description_et"
+                        android:layout_below="@id/description_et"
                         android:layout_alignEnd="@id/description_et"
-                        android:layout_margin="15dp"
+                        android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
-                        android:elevation="8dp"
+                        android:elevation="8.0dip"
                         android:focusable="true"
-                        android:padding="15dp">
+                        android:padding="15.0dip">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -134,24 +139,87 @@
                             android:text="@string/add_new_goal_dialog_button_text"
                             android:textAllCaps="false"
                             android:textColor="@color/brain1" />
-
                     </RelativeLayout>
-
                 </RelativeLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
         </com.google.android.material.circularreveal.CircularRevealFrameLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+        <!--<com.google.android.material.circularreveal.CircularRevealFrameLayout
+            android:id="@+id/continue_edit_dialog_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="20dp"
-            android:src="@drawable/plus"
-            app:fabSize="normal" />
+            android:layout_gravity="center"
+            android:layout_margin="15.0dip"
+            android:elevation="10.0dip"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardCornerRadius="15.0dip"
+                app:cardPreventCornerOverlap="true">
+
+                <RelativeLayout
+                    android:id="@+id/pr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/add_new_active_activity_dialog_background"
+                    android:gravity="center"
+                    android:padding="15.0dip">
+
+                    <TextView
+                        android:id="@+id/save_edits_dialog_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/save_edits_dialog_text"
+                        android:textSize="25.0sp" />
+
+                    <RelativeLayout
+                        android:id="@+id/continue_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/save_edits_dialog_text_view"
+                        android:layout_alignStart="@id/save_edits_dialog_text_view"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/cancel_edits_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/proceed_without_saving_edits_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/save_edits_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/save_edits_dialog_text_view"
+                        android:layout_alignEnd="@id/save_edits_dialog_text_view"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/save_edits_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/save_edits_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.circularreveal.CircularRevealFrameLayout>-->
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </FrameLayout>

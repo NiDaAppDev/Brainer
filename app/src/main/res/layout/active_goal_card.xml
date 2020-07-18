@@ -1,15 +1,333 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="4dp">
+    <FrameLayout
+        android:id="@+id/cardHolder"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
-    </RelativeLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="15.0dip"
+            app:cardElevation="10.0dip">
 
-</androidx.cardview.widget.CardView>
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <RelativeLayout
+                    android:id="@+id/active_goal_root_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/shrunk_active_goal_container"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4.0dip"
+                        android:orientation="horizontal"
+                        android:padding="10.0dip"
+                        android:weightSum="11.0">
+
+                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                            android:id="@+id/shrunk_active_goal_progress_bar"
+                            android:layout_width="0.0dip"
+                            android:layout_height="50.0dip"
+                            android:layout_weight="9.0"
+                            android:transitionName="progressBar"
+                            android:visibility="visible"
+                            app:enable_gradient="true" />
+
+                        <ImageButton
+                            android:id="@+id/active_goal_edit_btn"
+                            android:layout_width="0.0dip"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.0"
+                            android:background="?selectableItemBackground"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/edit" />
+
+                        <ImageButton
+                            android:id="@+id/active_goal_expand_shrink_btn"
+                            android:layout_width="0.0dip"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.0"
+                            android:background="?selectableItemBackground"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/expand" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/expanded_active_goal_container"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4.0dip"
+                        android:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/active_goal_back_to_parent_btn_container"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/expanded_active_goal_title"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:clickable="false"
+                            android:focusable="false">
+
+                            <ImageButton
+                                android:id="@+id/active_goal_back_to_parent_btn"
+                                android:layout_width="0.0dip"
+                                android:layout_height="fill_parent"
+                                android:background="?selectableItemBackground"
+                                android:src="@drawable/back_to_parent"
+                                app:layout_constraintDimensionRatio="1:1"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/expanded_active_goal_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10.0dip"
+                            android:text="Goal Name"
+                            android:textColor="@android:color/black"
+                            android:textSize="40.0sp"
+                            android:textStyle="bold" />
+
+                        <com.developer.mtextfield.TextFieldBoxes
+                            android:id="@+id/expanded_active_goal_edit_name_field_box"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="invisible"
+                            android:layout_margin="10dp"
+                            app:labelText="Goal Name:">
+
+                            <com.developer.mtextfield.ExtendedEditText
+                                android:id="@+id/expanded_active_goal_edit_name_edit_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </com.developer.mtextfield.TextFieldBoxes>
+
+                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                            android:id="@+id/expanded_active_goal_progress_bar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30.0dip"
+                            android:layout_below="@id/expanded_active_goal_title"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginStart="20.0dip"
+                            android:layout_marginEnd="20.0dip"
+                            android:transitionName="progressBar"
+                            app:enable_gradient="true" />
+
+                        <TextView
+                            android:id="@+id/expanded_active_goal_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/expanded_active_goal_progress_bar"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10.0dip"
+                            android:maxLines="3"
+                            android:text="Goal's Description"
+                            android:textColor="#ff6f6f6f"
+                            android:textSize="20.0sp"
+                            android:textStyle="normal" />
+
+                        <com.developer.mtextfield.TextFieldBoxes
+                            android:id="@+id/expanded_active_goal_edit_description_field_box"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/expanded_active_goal_progress_bar"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="invisible"
+                            android:layout_margin="10dp"
+                            app:labelText="Goal Description:">
+
+                            <com.developer.mtextfield.ExtendedEditText
+                                android:id="@+id/expanded_active_goal_edit_description_edit_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal" />
+                        </com.developer.mtextfield.TextFieldBoxes>
+
+                        <LinearLayout
+                            android:id="@+id/expanded_active_goal_sub_goals_title_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/expanded_active_goal_description"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="5.0dip"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:weightSum="14.0">
+
+                            <View
+                                android:id="@+id/expanded_active_goal_sub_goal_title_left"
+                                android:layout_width="0.0dip"
+                                android:layout_height="3.0dip"
+                                android:layout_weight="4.0"
+                                android:background="@color/light_gray" />
+
+                            <TextView
+                                android:id="@+id/expanded_active_goal_sub_goals_title"
+                                android:layout_width="0.0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5.0dip"
+                                android:layout_weight="6.0"
+                                android:gravity="center"
+                                android:text="SubGoals"
+                                android:textColor="#ff5a5a5a"
+                                android:textSize="25.0sp"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:id="@+id/expanded_active_goal_sub_goal_title_right"
+                                android:layout_width="0.0dip"
+                                android:layout_height="3.0dip"
+                                android:layout_weight="4.0"
+                                android:background="@color/light_gray" />
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/expanded_active_goal_sub_goals_container"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/expanded_active_goal_sub_goals_title_container"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10.0dip"
+                            android:animateLayoutChanges="true"
+                            android:elevation="15.0dip"
+                            android:gravity="center">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/expanded_active_goal_sub_goals_recyclerview"
+                                android:layout_width="fill_parent"
+                                android:layout_height="100.0dip"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/finish_goal_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15.0dip"
+                            android:gravity="center"
+                            android:background="@drawable/finish_btn_background"
+                            android:clickable="true"
+                            android:elevation="8.0dip"
+                            android:focusable="true"
+                            android:padding="15.0dip"
+                            android:layout_below="@id/expanded_active_goal_sub_goals_container">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/finish"
+                                android:textAllCaps="false"
+                                android:textColor="@android:color/white" />
+
+                        </RelativeLayout>
+
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_panel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/active_goal_root_view"
+                    android:layout_margin="4.0dip"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:id="@+id/edit_delete_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/delete_btn_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/delete"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/edit_cancel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/cancel_btn_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/edit_save_button"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cancel"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/edit_save_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/save_btn_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/save"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+    <com.github.mmin18.widget.RealtimeBlurView
+        android:id="@+id/blur"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cardHolder"
+        android:layout_alignBottom="@id/cardHolder"
+        android:visibility="invisible"
+        app:realtimeBlurRadius="20.0dip"
+        app:realtimeOverlayColor="#88000000" />
+</RelativeLayout>

@@ -66,7 +66,7 @@
                 android:foreground="@drawable/fab_add_new_goal_opening_fragment_border"
                 android:elevation="15dp" />
 
-            <com.example.performancemeasurement.customViews.CustomProgressBarButton
+            <com.example.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
                 android:id="@+id/goal_progress_bar"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
