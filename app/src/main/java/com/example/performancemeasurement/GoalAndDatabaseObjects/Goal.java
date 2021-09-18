@@ -15,6 +15,15 @@ public class Goal {
 
     private boolean expanded;
 
+    public Goal(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.parentGoal = "";
+        this.timeCounted = 0;
+        this.timeEstimated = 100;
+        this.achieved = false;
+    }
+
     public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, boolean achieved) {
         this.name = name;
         this.description = description;

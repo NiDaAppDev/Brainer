@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalContract.*;
+import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 
 import java.util.ArrayList;
@@ -53,10 +53,21 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return sQLiteDatabase.rawQuery(queryID, null);
     }
 
-    public boolean doesGoalExist(Goal goal) {
-        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goal.getName() + "'";
+    public boolean doesGoalExist(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'" + " AND " + GoalEntry.COLUMN_GOAL_ACHIEVED + " = 0";
         Cursor cursor = sQLiteDatabase.rawQuery(query, null);
         if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public boolean doesActiveGoalNameAlreadyExist(String name, String editedGoalName) {
+        String Query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = " + name + " AND " + GoalEntry.COLUMN_GOAL_ACHIEVED + " = 0";
+        Cursor cursor = sQLiteDatabase.rawQuery(Query, null);
+        if (cursor.getCount() <= 0 || (cursor.getCount() <= 1 && name.equals(editedGoalName)) ) {
             cursor.close();
             return false;
         }
@@ -96,6 +107,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, achieved);
             goals.add(goal);
         }
+        cursor.close();
         return goals;
     }
 
@@ -128,7 +140,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     }
 
     public void addGoal(Goal goal) {
-        if (!doesGoalExist(goal) && goal.getName().trim().length() != 0 && goal.getTimeEstimated() != 0) {
+        if (!doesGoalExist(goal.getName()) && goal.getName().trim().length() != 0 && goal.getTimeEstimated() != 0) {
             String name = goal.getName();
             String description = PublicMethods.getValueOrDefault(goal.getDescription(), "");
             String parent = PublicMethods.getValueOrDefault(goal.getParentGoal(), "");
@@ -149,27 +161,52 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     }
 
     public void removeGoal(Goal goal) {
-        if (doesGoalExist(goal)) {
+        if (doesGoalExist(goal.getName())) {
             sQLiteDatabase.delete(GoalEntry.TABLE_NAME,
-                    GoalEntry.COLUMN_GOAL_NAME + "=" + goal.getName(),
+                    GoalEntry.COLUMN_GOAL_NAME + "= '" + goal.getName() + "'",
                     null);
         }
     }
 
     public void clearDatabase() {
-        String clearDBQuery = "DELETE FROM "+GoalEntry.TABLE_NAME;
+        String clearDBQuery = "DELETE FROM " + GoalEntry.TABLE_NAME;
         sQLiteDatabase.execSQL(clearDBQuery);
+    }
+
+    public void progressGoal() {
+
     }
 
     public void editGoal(Goal goal, String newName, String newDescription, ArrayList<Goal> removedSubGoals) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GoalEntry.COLUMN_GOAL_NAME, newName.equals(goal.getName()) ? goal.getName() : newName);
-        contentValues.put(GoalEntry.COLUMN_GOAL_DESCRIPTION, newDescription.equals(goal.getDescription()) ? goal.getDescription() : newDescription);
+        contentValues.put(GoalEntry.COLUMN_GOAL_NAME, newName);
+        contentValues.put(GoalEntry.COLUMN_GOAL_DESCRIPTION, newDescription);
 
-        sQLiteDatabase.update(GoalEntry.TABLE_NAME, contentValues, GoalEntry.COLUMN_GOAL_NAME + " = " + goal.getName(), null);
+        //sQLiteDatabase.update(GoalEntry.TABLE_NAME, contentValues, GoalEntry.COLUMN_GOAL_NAME + " = " + goal.getName(), null);
+        boolean wasNameChanged = !goal.getName().equals(newName);
+        if (wasNameChanged) {
 
-        if(!(removedSubGoals.isEmpty())){
-            for(Goal removedSubGoal : removedSubGoals){
+            String updateParentName = "UPDATE " + GoalEntry.TABLE_NAME +
+                    " SET " + GoalEntry.COLUMN_GOAL_PARENT + " = '" + newName +
+                    "' WHERE " + GoalEntry.COLUMN_GOAL_PARENT + " = '" + goal.getName() + "'";
+
+            String updateGoalName = "UPDATE " + GoalEntry.TABLE_NAME +
+                    " SET " + GoalEntry.COLUMN_GOAL_NAME + " = '" + newName +
+                    "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goal.getName() + "'";
+
+
+            sQLiteDatabase.execSQL(updateParentName);
+            sQLiteDatabase.execSQL(updateGoalName);
+        }
+        String updateGoalDescription = "UPDATE " + GoalEntry.TABLE_NAME +
+                " SET " + GoalEntry.COLUMN_GOAL_DESCRIPTION + " = '" + newDescription +
+                "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goal.getName() + "'";
+
+        sQLiteDatabase.execSQL(updateGoalDescription);
+
+
+        if (!(removedSubGoals.isEmpty())) {
+            for (Goal removedSubGoal : removedSubGoals) {
                 String subGoalsQuery = "UPDATE " + GoalEntry.TABLE_NAME +
                         " SET " +
                         GoalEntry.COLUMN_GOAL_PARENT + " = ''" +

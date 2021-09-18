@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center">
 
         <com.example.performancemeasurement.brainAnimation.lightning.RandomLightning
@@ -46,54 +47,79 @@
             app:layout_constraintEnd_toEndOf="@id/parent"
             app:srcCompat="@drawable/brain_image"/>
 
+        <RelativeLayout
+            android:id="@+id/goal_picker_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:elevation="15.0dip"
+            android:gravity="center"
+            android:paddingTop="28dp"
+            android:paddingBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/lightning_canvas_1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/main_goal_wheel_picker_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="9"
-            android:orientation="horizontal"
             android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="9"
             app:layout_constraintTop_toBottomOf="@id/brain_image">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/add_new_goal_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:src="@drawable/plus"
                 android:layout_margin="10dp"
+                android:layout_weight="2"
                 android:backgroundTint="@android:color/white"
-                app:rippleColor="@color/brain2"
+                android:elevation="15dp"
                 android:foreground="@drawable/fab_add_new_goal_opening_fragment_border"
-                android:elevation="15dp" />
+                android:src="@drawable/plus"
+                app:tint="@color/black"
+                app:rippleColor="@color/brain2" />
 
             <com.example.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
                 android:id="@+id/goal_progress_bar"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:elevation="15dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="7dp"
                 android:layout_weight="5"
-                app:progress_percentage="100"
-                app:radius="180"
+                android:clickable="false"
+                android:elevation="15dp"
+                android:focusable="true"
+                android:duplicateParentState="true"
                 app:enable_gradient="true"
                 app:enable_press="true"
-                android:clickable="true"
-                android:focusable="true"
-                app:text="Goal's Name bla bla bla bla"/>
+                app:progress_percentage="100"
+                app:radius="180"
+                app:text="Goal's Name bla bla bla bla" />
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/play_pause_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:src="@drawable/play"
                 android:layout_margin="10dp"
+                android:layout_weight="2"
                 android:backgroundTint="@android:color/white"
-                app:rippleColor="@color/stop_red"
+                android:elevation="15dp"
                 android:foreground="@drawable/fab_green_play_pause_opening_fragment_border"
-                android:elevation="15dp" />
+                android:src="@drawable/play"
+                app:tint="@color/black"
+                app:rippleColor="@color/stop_red" />
 
 
         </LinearLayout>

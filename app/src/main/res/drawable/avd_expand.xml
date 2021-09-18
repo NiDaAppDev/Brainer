@@ -15,7 +15,7 @@
                 <path
                     android:name="path_2"
                     android:pathData="M 7 10 L 12 15 L 12 10 Z"
-                    android:fillColor="#ff6f6f6f"/>
+                    android:fillColor="#FDA018"/>
             </group>
             <group
                 android:name="group_1_1"
@@ -24,7 +24,7 @@
                 <path
                     android:name="path_1_1"
                     android:pathData="M 12 10 L 12 15 L 17 10 Z"
-                    android:fillColor="#ff6f6f6f"/>
+                    android:fillColor="#FDA018"/>
             </group>
         </vector>
     </aapt:attr>

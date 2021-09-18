@@ -4,21 +4,26 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:backgroundTint="@color/transparent">
 
     <FrameLayout
         android:id="@+id/cardHolder"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/transparent">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5.0dip"
+            android:layout_marginTop="5dip"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="15dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="15.0dip"
-            app:cardElevation="10.0dip">
+            app:cardElevation="7.5dip">
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -36,7 +41,8 @@
                         android:layout_margin="4.0dip"
                         android:orientation="horizontal"
                         android:padding="10.0dip"
-                        android:weightSum="11.0">
+                        android:weightSum="11.0"
+                        android:visibility="visible">
 
                         <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
                             android:id="@+id/shrunk_active_goal_progress_bar"
@@ -64,6 +70,44 @@
                             android:background="?selectableItemBackground"
                             android:scaleType="fitCenter"
                             android:src="@drawable/expand" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/selectable_active_goal_container"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4.0dip"
+                        android:orientation="horizontal"
+                        android:weightSum="11.0"
+                        android:visibility="invisible">
+
+                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                            android:id="@+id/selectable_active_goal_progress_bar"
+                            android:layout_width="0.0dip"
+                            android:layout_height="50.0dip"
+                            android:layout_marginLeft="10.0dip"
+                            android:layout_marginTop="10.0dip"
+                            android:layout_marginBottom="10.0dip"
+                            android:layout_weight="9.0"
+                            android:transitionName="progressBar"
+                            android:visibility="visible"
+                            app:enable_gradient="true" />
+
+                        <it.emperor.animatedcheckbox.AnimatedCheckBox
+                            android:id="@+id/active_goal_select_button"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2.0"
+                            app:acb_animation_duration="400"
+                            app:acb_border_checked_color="#7ED321"
+                            app:acb_border_checked_stroke_width="3dp"
+                            app:acb_border_not_checked_color="@color/material_grey_600"
+                            app:acb_circle_color="#7ED321"
+                            app:acb_hook_color="@color/white"
+                            app:acb_hook_stroke_width="3dp"
+                            app:acb_padding="15dp" />
+
+
                     </LinearLayout>
 
                     <RelativeLayout
@@ -141,6 +185,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="10.0dip"
                             android:maxLines="3"
+                            android:scrollbars="vertical"
                             android:text="Goal's Description"
                             android:textColor="#ff6f6f6f"
                             android:textSize="20.0sp"

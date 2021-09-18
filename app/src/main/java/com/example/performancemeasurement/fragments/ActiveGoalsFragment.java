@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,9 +32,13 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     FloatingActionButton fab;
     View blurBackground;
     CircularRevealFrameLayout dialog;
+    RelativeLayout cancel, addNewGoal;
+    EditText newGoalsName, newGoalsDescription;
     NestedRecyclerView activeGoalsList;
     ActiveGoalsAdapter activeGoalsAdapter;
     GoalDBHelper db;
+
+
 
     public ActiveGoalsFragment() {
         // Required empty public constructor
@@ -52,11 +58,15 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         fab = v.findViewById(R.id.fab);
         blurBackground = v.findViewById(R.id.blur_view);
         dialog = v.findViewById(R.id.add_new_goal_dialog_container);
+        cancel = v.findViewById(R.id.cancel_btn);
+        addNewGoal = v.findViewById(R.id.add_btn);
+        newGoalsName = v.findViewById(R.id.name_et);
+        newGoalsDescription = v.findViewById(R.id.description_et);
 
         initGoalsList(v);
 
         //db.clearDatabase();
-        initGoals(50);
+        //initGoals(50);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +84,23 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             }
         });
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeDialog();
+            }
+        });
+
+        addNewGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString());
+                //lottie_dialog_to_check_if_goal_already_exists
+                db.addGoal(newGoal);
+                closeDialog();
+                activeGoalsAdapter.updateAddedActiveGoal();
+            }
+        });
 
         return v;
     }
@@ -97,10 +124,54 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      */
     public void initGoalsList(View v){
         activeGoalsList = v.findViewById(R.id.recycler_view);
-        activeGoalsAdapter = new ActiveGoalsAdapter(getContext(), db.getActiveGoalsArrayList(), db.getActiveGoalsCursor(), activeGoalsList, (MainActivity) getActivity());
+        activeGoalsAdapter = new ActiveGoalsAdapter(getContext(),
+                db.getActiveGoalsArrayList(),
+                db.getActiveGoalsCursor(),
+                activeGoalsList,
+                (MainActivity) getActivity(),
+                fab);
+        activeGoalsList.setHasFixedSize(true);
         activeGoalsList.setLayoutManager(new LinearLayoutManager(getContext()));
         activeGoalsList.setAdapter(activeGoalsAdapter);
         ((SimpleItemAnimator) Objects.requireNonNull(activeGoalsList.getItemAnimator())).setSupportsChangeAnimations(false);
+
+        /**
+         Enables one Card hovering another (the hovered one getting expanded and when it ends being
+          hovered it collapses
+         */
+//        HoverItemDecoration itemDecoration = new HoverItemDecoration(
+//                new HoveringCallback() {
+//                    @Override
+//                    public void attachToRecyclerView(@Nullable RecyclerView recyclerView) {
+//                        super.attachToRecyclerView(recyclerView);
+//                        addOnDropListener(new HoveringCallback.OnDroppedListener() {
+//                            @Override
+//                            public void onDroppedOn(ActiveGoalsAdapter.ActiveGoalsViewHolder viewHolder, ActiveGoalsAdapter.ActiveGoalsViewHolder target) {
+//
+//                            }
+//                        });
+//                    }
+//                },
+//                new ItemBackgroundCallback() {
+//                    private int hoverColor = Color.parseColor("#e9effb");
+//
+//                    @Override
+//                    public int getDefaultBackgroundColor(@NonNull RecyclerView.ViewHolder viewHolder) {
+//                        return Color.WHITE;
+//                    }
+//
+//                    @Override
+//                    public int getDraggingBackgroundColor(@NonNull RecyclerView.ViewHolder viewHolder) {
+//                        return Color.WHITE;
+//                    }
+//
+//                    @Override
+//                    public int getHoverBackgroundColor(@NonNull RecyclerView.ViewHolder viewHolder) {
+//                        return hoverColor;
+//                    }
+//                });
+//
+//        itemDecoration.attachToRecyclerView(activeGoalsList);
     }
 
     /**
@@ -122,6 +193,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         fab.setExpanded(false);
         fadeBlurOut();
 
+        newGoalsName.setText("");
+        newGoalsDescription.setText("");
+
     }
 
     /**
@@ -134,6 +208,8 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         alphaAnimation.setFillAfter(true);
         blurBackground.startAnimation(alphaAnimation);
         blurBackground.setVisibility(View.VISIBLE);
+        blurBackground.setClickable(true);
+        dialog.setClickable(true);
     }
 
 
@@ -146,6 +222,8 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         alphaAnimation.setFillAfter(true);
         blurBackground.startAnimation(alphaAnimation);
         blurBackground.setVisibility(View.GONE);
+        blurBackground.setClickable(false);
+        dialog.setClickable(false);
     }
 
     /**
@@ -155,6 +233,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     public boolean onBackPressed() {
         if (dialog.getVisibility() == View.VISIBLE) {
             closeDialog();
+            return true;
+        } else if (activeGoalsAdapter.getSelectable()) {
+            activeGoalsAdapter.setSelectable(false);
             return true;
         } else {
             return false;

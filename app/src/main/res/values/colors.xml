@@ -28,8 +28,11 @@
     <color name="cardview_shadow_end_color">#03000000</color>
     <color name="cardview_shadow_start_color">#37000000</color>
     <color name="colorAccent">#ffd81b60</color>
-    <color name="colorPrimary">#ff008577</color>
-    <color name="colorPrimaryDark">#ff00574b</color>
+    <color name="colorPrimary">@color/brain1</color>
+    <color name="colorPrimaryDark">#853B4E</color>
+<!--    <color name="colorAccent">#ffd81b60</color>-->
+<!--    <color name="colorPrimary">#ff008577</color>-->
+<!--    <color name="colorPrimaryDark">#ff00574b</color>-->
     <color name="design_bottom_navigation_shadow_color">#14000000</color>
     <color name="design_default_color_primary">#ff3f51b5</color>
     <color name="design_default_color_primary_dark">#ff303f9f</color>
@@ -98,7 +101,8 @@
     <color name="ripple_material_light">#1f000000</color>
     <color name="round_corner_progress_bar_background_default">#ffa3a3a3</color>
     <color name="round_corner_progress_bar_border_default">#ffc7c7c7</color>
-    <color name="round_corner_progress_bar_progress_default">#ff5abb32</color>
+<!--    <color name="round_corner_progress_bar_progress_default">#ff5abb32</color>-->
+    <color name="round_corner_progress_bar_progress_default">@color/colorPrimary</color>
     <color name="save_edits">#ff0270c0</color>
     <color name="back_to_edited_goal">#02528E</color>
     <color name="secondary_text_default_material_dark">#b3ffffff</color>

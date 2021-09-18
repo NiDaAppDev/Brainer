@@ -17,19 +17,50 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@color/light_gray"
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical" />
         </RelativeLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom|center"
-            android:layout_margin="20.0dip"
-            android:src="@drawable/plus"
-            app:fabSize="normal" />
+            android:layout_margin="20.0dip">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plus"
+                app:fabSize="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="add new goal / select an action"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_selected_goals_as_sub_goal_of"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plus"
+                app:fabSize="normal"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toTopOf="@id/fab"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="set selected goals as subgoals of"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_delete_selected_goals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plus"
+                app:fabSize="normal"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="delete selected goals"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <com.github.mmin18.widget.RealtimeBlurView
             android:id="@+id/blur_view"

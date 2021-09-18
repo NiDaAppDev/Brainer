@@ -3,9 +3,47 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/brain2</item>
+        <item name="colorPrimaryDark">@color/brain1</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--this attribute is to change the theme of the normal FAB-->
+        <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton</item>
+    </style>
+
+    <style name="Widget.App.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+
+        <!--the following attribute will changes in the appearance of
+            the normal FAB in terms of colors-->
+        <item name="materialThemeOverlay">@style/myCustomThemeForNormalFab</item>
+
+        <!--the following attribute will change in the shape appearance of the normal FAB-->
+<!--        <item name="shapeAppearanceOverlay">@style/customNormalFAB</item>-->
+
+        <!--to make the code look cleaner and readable, the above
+            two children are implemented separately-->
+    </style>
+
+    <style name="customNormalFAB">
+
+        <!--for the normal FAB the cornerFamily is given the value as the rounded-->
+        <!--in this case it has been done to differentiate the
+            themes of the normal FAB and extended FAB-->
+        <item name="cornerFamily">rounded</item>
+
+        <!--and the cornerSize makes rounded corner for all
+            4 corners of the FAB as 20dp radius-->
+        <item name="cornerSize">20dp</item>
+
+    </style>
+
+    <style name="myCustomThemeForNormalFab" parent="">
+
+        <!--for the extended FAB the cornerFamily is given the value as the cut-->
+        <item name="colorSecondary">@color/colorPrimary</item>
+
+        <!--this attribute gives makes the change in the text and icon color of the FAB-->
+        <item name="colorOnSecondary">@color/white</item>
 
     </style>
 </resources>
