@@ -38,6 +38,6 @@ public class DialogHandler {
         stopEditDialog.show();
         return shouldContinue[0];
     }
-
+//context.getResources().getColor(R.color.save_edits)
 
 }

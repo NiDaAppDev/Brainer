@@ -27,4 +27,8 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="confirm_setting_as_subgoals_of_parent_goal_dialog_button_text">Confirm</string>
+    <string name="finish_goal_dialog_finish_button_text">Finish</string>
+    <string name="active_goals_fragment_menu_sort_item_label">Sort</string>
+    <string name="sort_goals_dialog_button_text">Sort</string>
 </resources>

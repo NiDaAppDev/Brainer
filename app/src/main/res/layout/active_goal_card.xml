@@ -8,13 +8,13 @@
     android:backgroundTint="@color/transparent">
 
     <FrameLayout
-        android:id="@+id/cardHolder"
+        android:id="@+id/activeCardHolder"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/transparent">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
+            android:id="@+id/activeCardView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dip"
@@ -94,7 +94,7 @@
                             app:enable_gradient="true" />
 
                         <it.emperor.animatedcheckbox.AnimatedCheckBox
-                            android:id="@+id/active_goal_select_button"
+                            android:id="@+id/active_goal_multi_select_button"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="2.0"
@@ -370,8 +370,8 @@
         android:id="@+id/blur"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/cardHolder"
-        android:layout_alignBottom="@id/cardHolder"
+        android:layout_alignTop="@id/activeCardHolder"
+        android:layout_alignBottom="@id/activeCardHolder"
         android:visibility="invisible"
         app:realtimeBlurRadius="20.0dip"
         app:realtimeOverlayColor="#88000000" />

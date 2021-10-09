@@ -7,13 +7,19 @@ public class GoalContract {
     public static final class GoalEntry implements BaseColumns {
         public static final String COLUMN_GOAL_ACHIEVED = "achieved";
 
-//        public static final String COLUMN_GOAL_START_DATE = "startDate";
+        public static final String COLUMN_GOAL_FINISH_DATE = "finishDate";
 
         public static final String COLUMN_GOAL_COUNTED_TIME = "countedTime";
 
         public static final String COLUMN_GOAL_DESCRIPTION = "description";
 
         public static final String COLUMN_GOAL_ESTIMATED_TIME = "estimatedTime";
+
+        public static final String COLUMN_GOAL_DIFFICULTY = "difficulty";
+
+        public static final String COLUMN_GOAL_EVOLVING = "evolving";
+
+        public static final String COLUMN_GOAL_SATISFACTION = "satisfaction";
 
         public static final String COLUMN_GOAL_NAME = "name";
 

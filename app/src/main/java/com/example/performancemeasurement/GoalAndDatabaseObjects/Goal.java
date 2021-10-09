@@ -9,9 +9,17 @@ public class Goal {
 
     private String parentGoal;
 
+    private String finishDate;
+
     private int timeCounted;
 
     private int timeEstimated;
+
+    private int difficulty;
+
+    private int evolving;
+
+    private int satisfaction;
 
     private boolean expanded;
 
@@ -22,15 +30,20 @@ public class Goal {
         this.timeCounted = 0;
         this.timeEstimated = 100;
         this.achieved = false;
+        this.finishDate = "";
     }
 
-    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, boolean achieved) {
+    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, String finishDate) {
         this.name = name;
         this.description = description;
         this.parentGoal = parentGoal;
         this.timeCounted = timeCounted;
         this.timeEstimated = timeEstimated;
+        this.difficulty = difficulty;
+        this.evolving = evolving;
+        this.satisfaction = satisfaction;
         this.achieved = achieved;
+        this.finishDate = finishDate;
     }
 
     public String getDescription() {
@@ -51,6 +64,18 @@ public class Goal {
 
     public int getTimeEstimated() {
         return this.timeEstimated;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public int getEvolving() {
+        return evolving;
+    }
+
+    public int getSatisfaction() {
+        return satisfaction;
     }
 
     public boolean isAchieved() {
@@ -79,6 +104,30 @@ public class Goal {
 
     public void setTimeEstimated(int timeEstimated) {
         this.timeEstimated = timeEstimated;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setEvolving(int evolving) {
+        this.evolving = evolving;
+    }
+
+    public void setSatisfaction(int satisfaction) {
+        this.satisfaction = satisfaction;
+    }
+
+    public String getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(String finishDate) {
+        this.finishDate = finishDate;
+    }
+
+    public int getProgress(){
+        return timeCounted * 100 / timeEstimated;
     }
 
     public String toString() {

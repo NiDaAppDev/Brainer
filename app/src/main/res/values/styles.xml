@@ -9,7 +9,12 @@
 
         <!--this attribute is to change the theme of the normal FAB-->
         <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton</item>
+
+        <!--this attribute is to change the theme of the extended FAB-->
+        <item name="extendedFloatingActionButtonStyle">
+            @style/Widget.App.ExtendedFloatingActionButton</item>
     </style>
+
 
     <style name="Widget.App.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
 
@@ -44,6 +49,40 @@
 
         <!--this attribute gives makes the change in the text and icon color of the FAB-->
         <item name="colorOnSecondary">@color/white</item>
+
+    </style>
+
+    <style name="Widget.App.ExtendedFloatingActionButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+
+        <!--the following attribute will changes in the appearance
+            of the extended FAB in terms of colors-->
+        <item name="materialThemeOverlay">@style/myCustomThemeForExtendedFab</item>
+
+        <!--the following attribute will change in the
+            shape appearance of the extended FAB-->
+<!--        <item name="shapeAppearanceOverlay">@style/customExtendedFAB</item>-->
+
+        <!--to make the code look cleaner and readable, the above
+            two children are implemented separately-->
+    </style>
+
+    <style name="customExtendedFAB">
+
+        <!--for the extended FAB the cornerFamily is given the value as the cut-->
+        <item name="cornerFamily">cut</item>
+
+        <!--and the cornerSize makes the cut for all 4 corners of the FAB as 10dp-->
+        <item name="cornerSize">10dp</item>
+
+    </style>
+
+    <style name="myCustomThemeForExtendedFab" parent="">
+
+        <!--this attribute gives makes the change in the background of the FAB-->
+        <item name="colorSecondary">@color/colorPrimary</item>
+
+        <!--this attribute gives makes the change in the text and icon color of the FAB-->
+        <item name="colorOnSecondary">@android:color/white</item>
 
     </style>
 </resources>

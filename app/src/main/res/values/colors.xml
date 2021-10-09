@@ -101,8 +101,8 @@
     <color name="ripple_material_light">#1f000000</color>
     <color name="round_corner_progress_bar_background_default">#ffa3a3a3</color>
     <color name="round_corner_progress_bar_border_default">#ffc7c7c7</color>
-<!--    <color name="round_corner_progress_bar_progress_default">#ff5abb32</color>-->
-    <color name="round_corner_progress_bar_progress_default">@color/colorPrimary</color>
+    <color name="round_corner_progress_bar_progress_default">#ff5abb32</color>
+<!--    <color name="round_corner_progress_bar_progress_default">@color/colorPrimary</color>-->
     <color name="save_edits">#ff0270c0</color>
     <color name="back_to_edited_goal">#02528E</color>
     <color name="secondary_text_default_material_dark">#b3ffffff</color>
@@ -118,4 +118,9 @@
     <color name="switch_thumb_normal_material_light">#fff1f1f1</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6ffffff</color>
+    <color name="difficulty_bronze">#a77044</color>
+    <color name="difficulty_silver">#a7a7ad</color>
+    <color name="difficulty_gold">#d6af36</color>
+    <color name="difficulty_purple">#711c58</color>
+    <color name="difficulty_black">#1C1919</color>
 </resources>

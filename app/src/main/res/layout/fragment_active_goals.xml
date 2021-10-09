@@ -14,7 +14,7 @@
             android:layout_height="fill_parent">
 
             <com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
-                android:id="@+id/recycler_view"
+                android:id="@+id/active_goals_recycler_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:nestedScrollingEnabled="true"
@@ -27,40 +27,65 @@
             android:layout_gravity="end|bottom|center"
             android:layout_margin="20.0dip">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/plus"
+                app:srcCompat="@drawable/plus"
                 app:fabSize="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Actions"
+                app:icon="@drawable/plus"
                 android:contentDescription="add new goal / select an action"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_selected_goals_as_sub_goal_of"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/plus"
+                app:srcCompat="@drawable/plus"
                 app:fabSize="normal"
                 android:layout_marginBottom="3dp"
                 app:layout_constraintBottom_toTopOf="@id/fab"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 android:contentDescription="set selected goals as subgoals of"/>
+            
+            <TextView
+                android:id="@+id/add_as_subgoals_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Add selected as subgoal/s"
+                app:layout_constraintBottom_toBottomOf="@id/fab_add_selected_goals_as_sub_goal_of"
+                app:layout_constraintTop_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of"
+                app:layout_constraintEnd_toStartOf="@id/fab_add_selected_goals_as_sub_goal_of"
+                android:visibility="gone" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_delete_selected_goals"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/plus"
+                app:srcCompat="@drawable/delete"
                 app:fabSize="normal"
                 android:layout_marginBottom="3dp"
                 app:layout_constraintBottom_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 android:contentDescription="delete selected goals"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/delete_selected_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Delete selected goal/s"
+                app:layout_constraintBottom_toBottomOf="@id/fab_delete_selected_goals"
+                app:layout_constraintTop_toTopOf="@id/fab_delete_selected_goals"
+                app:layout_constraintEnd_toStartOf="@id/fab_delete_selected_goals"
+                android:visibility="gone" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.github.mmin18.widget.RealtimeBlurView
             android:id="@+id/blur_view"
@@ -70,6 +95,129 @@
             android:visibility="invisible"
             app:realtimeBlurRadius="20.0dip"
             app:realtimeOverlayColor="#88000000" />
+
+        <com.google.android.material.circularreveal.CircularRevealFrameLayout
+            android:id="@+id/active_goals_fragment_sort_goals_dialog_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="15.0dip"
+            android:elevation="10.0dip"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/active_goals_fragment_sort_goals_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardCornerRadius="15.0dip"
+                app:cardPreventCornerOverlap="true">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/add_new_active_activity_dialog_background"
+                    android:gravity="center"
+                    android:padding="15.0dip">
+
+                    <TextView
+                        android:id="@+id/active_goals_fragment_sort_dialog_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sort Goals"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="15dp"
+                        android:textSize="30sp"/>
+
+                    <TextView
+                        android:id="@+id/active_goals_fragment_sort_dialog_sort_by_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:layout_below="@id/active_goals_fragment_sort_dialog_label"
+                        android:text="Sort By:"/>
+
+                    <RadioGroup
+                        android:id="@+id/active_goals_fragment_sort_by_radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/active_goals_fragment_sort_dialog_sort_by_label">
+
+                        <RadioButton
+                            android:id="@+id/active_goals_fragment_name_radio_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="Name"/>
+
+                        <RadioButton
+                            android:id="@+id/active_goals_fragment_progress_radio_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="Progress"/>
+
+                    </RadioGroup>
+
+                    <TextView
+                        android:id="@+id/active_goals_fragment_sort_dialog_asc_desc_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:layout_below="@id/active_goals_fragment_sort_by_radio_group"
+                        android:text="Ascending / Descending:"/>
+
+                    <RadioGroup
+                        android:id="@+id/active_goals_fragment_asc_desc_radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/active_goals_fragment_sort_dialog_asc_desc_label">
+
+                        <RadioButton
+                            android:id="@+id/active_goals_fragment_asc_radio_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="Ascending"/>
+
+                        <RadioButton
+                            android:id="@+id/active_goals_fragment_desc_radio_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="Descending"/>
+
+                    </RadioGroup>
+
+                    <RelativeLayout
+                        android:id="@+id/active_goals_fragment_sort_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/active_goals_fragment_asc_desc_radio_group"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/ripple_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sort_goals_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/brain1" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.circularreveal.CircularRevealFrameLayout>
 
         <com.google.android.material.circularreveal.CircularRevealFrameLayout
             android:id="@+id/add_new_goal_dialog_container"
@@ -98,9 +246,19 @@
                     android:padding="15.0dip">
 
                     <TextView
+                        android:id="@+id/add_new_goal_dialog_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add new goal:"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="15dp"
+                        android:textSize="30sp"/>
+
+                    <TextView
                         android:id="@+id/name_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/add_new_goal_dialog_label"
                         android:layout_gravity="center"
                         android:text="@string/name_of_new_goal_label_dialog"
                         android:textSize="20.0sp" />
@@ -174,6 +332,263 @@
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
         </com.google.android.material.circularreveal.CircularRevealFrameLayout>
+
+        <com.google.android.material.circularreveal.CircularRevealFrameLayout
+            android:id="@+id/set_as_subgoal_of_dialog_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="30.0dip"
+            android:elevation="10.0dip"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/set_as_subgoal_of_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="450dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="15.0dip"
+                app:cardPreventCornerOverlap="true">
+
+                <RelativeLayout
+                    android:id="@+id/set_as_subgoal_of_pr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/add_new_active_activity_dialog_background"
+                    android:gravity="center"
+                    android:padding="15.0dip">
+
+                    <TextView
+                        android:id="@+id/select_parent_subgoal_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dip"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="30sp"
+                        android:text="Select parent goal:"/>
+
+                    <com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
+                        android:id="@+id/set_as_subgoal_dialog_recycler_view"
+                        android:layout_below="@id/select_parent_subgoal_label"
+                        android:layout_above="@id/subgoal_dialog_cancel_button"
+                        android:layout_width="fill_parent"
+                        android:layout_height="100dp"
+                        android:nestedScrollingEnabled="true"
+                        android:scrollbars="vertical" />
+
+                    <RelativeLayout
+                        android:id="@+id/subgoal_dialog_cancel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@id/set_as_subgoal_dialog_recycler_view"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/ripple_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cancel_adding_new_goal_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/brain1" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/subgoal_dialog_confirm_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@id/set_as_subgoal_dialog_recycler_view"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="15.0dip"
+                        android:background="@drawable/ripple_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/confirm_setting_as_subgoals_of_parent_goal_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/brain1" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.circularreveal.CircularRevealFrameLayout>
+
+        <com.google.android.material.circularreveal.CircularRevealFrameLayout
+            android:id="@+id/finish_goal_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="30.0dip"
+            android:elevation="10.0dip"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardCornerRadius="15.0dip"
+                app:cardPreventCornerOverlap="true">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/add_new_active_activity_dialog_background"
+                    android:gravity="center"
+                    android:padding="15.0dip">
+
+                    <TextView
+                        android:id="@+id/finish_goal_dialog_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="30sp"
+                        android:layout_margin="15dip"
+                        android:layout_centerHorizontal="true"
+                        android:text="Finish Goal"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/difficulty_picker_label"
+                        android:layout_width="wrap_content"
+                        android:layout_below="@id/finish_goal_dialog_label"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="how hard was it to complete the goal?"/>
+
+                    <com.warkiz.tickseekbar.TickSeekBar
+                        android:id="@+id/difficulty_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/difficulty_picker_label"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="25dip"
+                        app:tsb_ticks_count="5"
+                        app:tsb_thumb_color="@color/colorPrimary"
+                        app:tsb_thumb_size="15dp"
+                        app:tsb_show_tick_marks_type="oval"
+                        app:tsb_show_tick_texts="below"
+                        app:tsb_tick_texts_color="@color/colorPrimary"
+                        app:tsb_min="1"
+                        app:tsb_max="5"
+                        app:tsb_progress="3"
+                        app:tsb_tick_marks_color="@color/colorPrimary"/>
+
+                    <TextView
+                        android:id="@+id/evolving_picker_label"
+                        android:layout_width="wrap_content"
+                        android:layout_below="@id/difficulty_picker"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="how much has the goal evolved you?"/>
+
+                    <com.warkiz.tickseekbar.TickSeekBar
+                        android:id="@+id/evolving_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evolving_picker_label"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="25dip"
+                        app:tsb_ticks_count="5"
+                        app:tsb_thumb_color="@color/colorPrimary"
+                        app:tsb_thumb_size="30dp"
+                        app:tsb_show_tick_marks_type="oval"
+                        app:tsb_show_tick_texts="below"
+                        app:tsb_tick_texts_color="@color/colorPrimary"
+                        app:tsb_min="1"
+                        app:tsb_max="5"
+                        app:tsb_progress="3"
+                        app:tsb_tick_marks_color="@color/colorPrimary"
+                        app:tsb_thumb_drawable="@drawable/medal"/>
+
+                    <TextView
+                        android:id="@+id/satisfaction_picker_label"
+                        android:layout_width="wrap_content"
+                        android:layout_below="@id/evolving_picker"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="how much satisfaction did you get from the goal?"/>
+
+                    <com.warkiz.tickseekbar.TickSeekBar
+                        android:id="@+id/satisfaction_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/satisfaction_picker_label"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="15dip"
+                        app:tsb_ticks_count="5"
+                        app:tsb_thumb_color="@color/colorPrimary"
+                        app:tsb_thumb_size="30dp"
+                        app:tsb_show_tick_marks_type="oval"
+                        app:tsb_show_tick_texts="below"
+                        app:tsb_tick_texts_color="@color/colorPrimary"
+                        app:tsb_min="1"
+                        app:tsb_max="5"
+                        app:tsb_progress="3"
+                        app:tsb_tick_marks_color="@color/colorPrimary"
+                        app:tsb_thumb_drawable="@drawable/smiley_3"/>
+
+                    <RelativeLayout
+                        android:id="@+id/finish_goal_dialog_cancel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@id/satisfaction_picker"
+                        android:layout_below="@id/satisfaction_picker"
+                        android:layout_marginStart="15.0dip"
+                        android:layout_marginBottom="15.0dip"
+                        android:background="@drawable/ripple_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cancel_adding_new_goal_dialog_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/brain1" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/finish_goal_dialog_finish_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@id/satisfaction_picker"
+                        android:layout_below="@id/satisfaction_picker"
+                        android:layout_marginEnd="15.0dip"
+                        android:layout_marginBottom="15.0dip"
+                        android:background="@drawable/ripple_button_background"
+                        android:clickable="true"
+                        android:elevation="8.0dip"
+                        android:focusable="true"
+                        android:padding="15.0dip">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/finish_goal_dialog_finish_button_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/brain1" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.circularreveal.CircularRevealFrameLayout>
+
 
         <!--<com.google.android.material.circularreveal.CircularRevealFrameLayout
             android:id="@+id/continue_edit_dialog_container"

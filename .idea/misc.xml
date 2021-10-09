@@ -4,11 +4,23 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_sort.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable-v24/trophy.xml" value="0.2421875" />
         <entry key="app/src/main/res/drawable/active_thinking.xml" value="0.371875" />
         <entry key="app/src/main/res/drawable/cancel.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/custom_rating_bar.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/play.xml" value="0.2421875" />
         <entry key="app/src/main/res/drawable/plus.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/smiley_rating_bar_full_empty.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/smiley_rating_bar_full_filled.xml" value="0.371875" />
+        <entry key="app/src/main/res/layout-v28/achieved_goal_card.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/achieved_goal_card.xml" value="0.302536231884058" />
+        <entry key="app/src/main/res/layout/active_goal_card.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_achieved_goals.xml" value="0.302536231884058" />
         <entry key="app/src/main/res/layout/fragment_active_goals.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_opening.xml" value="0.24547101449275363" />
+        <entry key="app/src/main/res/menu/active_goals_fragment_menu.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.35572916666666665" />
       </map>
     </option>
   </component>

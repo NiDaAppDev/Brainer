@@ -2,6 +2,8 @@
   <dictionary name="nitzan">
     <words>
       <w>checkmark</w>
+      <w>subgoal</w>
+      <w>subgoals</w>
     </words>
   </dictionary>
 </component>

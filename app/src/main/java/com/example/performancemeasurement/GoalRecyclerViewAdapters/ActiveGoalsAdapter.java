@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,7 +41,8 @@ import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.circularreveal.CircularRevealFrameLayout;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -59,19 +61,24 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     private NestedRecyclerView recyclerView;
     private GoalDBHelper db;
     private int expandedItem = -1, editedItem = -1;
-    private final static boolean[] openedFromParent = new boolean[]{false, true}, continueExpanding = new boolean[]{true}, selectable = new boolean[]{false};
-    private ArrayList<Goal> removedSubGoals = new ArrayList<>(), selectedGoals = new ArrayList<>();
+    private final boolean[] openedFromParent = new boolean[]{false, true}, continueExpanding = new boolean[]{true}, multiSelectable = new boolean[]{false}, singleSelectable = new boolean[]{false};
+    private ArrayList<Goal> removedSubGoals = new ArrayList<>(), multiSelectedGoals = new ArrayList<>();
+    private Goal singleSelectedGoal;
     private String newName, newDescription;
+    private View blur;
+    private CircularRevealFrameLayout finishGoalDialog;
     private DialogHandler stopEditDialogHandler;
-    private FloatingActionButton fab;
+    private ExtendedFloatingActionButton fab;
 
-    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, FloatingActionButton fab) {
+    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog) {
         this.context = context;
         this.activeGoals = activeGoals;
         this.cursor = cursor;
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.fab = fab;
+        this.blur = blur;
+        this.finishGoalDialog = finishGoalDialog;
 
         db = new GoalDBHelper(context);
     }
@@ -83,19 +90,73 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     }
 
     /**
-     * get from outside the adapter class whether the items are in selectable mode or not.
+     * get from outside the adapter class whether the items are in multiSelectable mode or not.
      */
-    public boolean getSelectable(){
-        return selectable[0];
+    public boolean getMultiSelectable() {
+        return multiSelectable[0];
     }
 
     /**
-     * set from outside the adapter class whether the items are in selectable mode or not.
+     * set from outside the adapter class whether the items are in multiSelectable mode or not.
      */
-    public void setSelectable(boolean new_selectable){
-        selectable[0] = new_selectable;
-        selectedGoals.clear();
+    public void setMultiSelectable(boolean new_multi_selectable) {
+        if (!new_multi_selectable && fab.isExtended()) {
+            fab.callOnClick();
+        }
+        multiSelectable[0] = new_multi_selectable;
+        emptyMultiSelected();
         notifyDataSetChanged();
+    }
+
+    /**
+     * get from outside the adapter class the list of multiSelected goals in the adapter.
+     */
+    public ArrayList<Goal> getMultiSelected() {
+        return multiSelectedGoals;
+    }
+
+    /**
+     * empty list of multiSelected goals from outside the adapter class.
+     */
+    public void emptyMultiSelected() {
+        multiSelectedGoals.clear();
+    }
+
+    /**
+     * get from outside the adapter class whether the items are in singleSelectable mode or not.
+     */
+    public boolean getSingleSelectable() {
+        return singleSelectable[0];
+    }
+
+    /**
+     * set from outside the adapter class whether the items are in singleSelectable mode or not.
+     */
+    public void setSingleSelectable(boolean new_single_selectable) {
+        if (new_single_selectable && fab.isExtended()) {
+            fab.callOnClick();
+        }
+        singleSelectable[0] = new_single_selectable;
+        emptySingleSelected();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * get from outside the adapter class the list of singleSelected goals in the adapter.
+     */
+    public Goal getSingleSelected() {
+        return singleSelectedGoal;
+    }
+
+    /**
+     * empty list of singleSelected goals from outside the adapter class.
+     */
+    public void emptySingleSelected() {
+        singleSelectedGoal = null;
+    }
+
+    public void updateGoalsList() {
+        activeGoals = db.getActiveGoalsArrayList();
     }
 
     public void updateAddedActiveGoal() {
@@ -138,7 +199,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             description = itemView.findViewById(R.id.expanded_active_goal_description);
             selectableProgressBar = itemView.findViewById(R.id.selectable_active_goal_progress_bar);
             selectableProgressBar.enableDefaultGradient(true);
-            selectButton = itemView.findViewById(R.id.active_goal_select_button);
+            selectButton = itemView.findViewById(R.id.active_goal_multi_select_button);
             subGoalsTitleContainer = itemView.findViewById(R.id.expanded_active_goal_sub_goals_title_container);
             subGoalsRecyclerViewContainer = itemView.findViewById(R.id.expanded_active_goal_sub_goals_container);
             subGoalsRecyclerView = itemView.findViewById(R.id.expanded_active_goal_sub_goals_recyclerview);
@@ -159,7 +220,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selectable[0]) {
+                    if (multiSelectable[0] || singleSelectable[0]) {
                         selectButton.callOnClick();
                     } else {
                         toggleExpand();
@@ -173,8 +234,8 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (!selectable[0]) {
-                        selectable[0] = true;
+                    if (!multiSelectable[0]) {
+                        multiSelectable[0] = true;
                         expandedItem = -1;
                         selectButton.callOnClick();
                         notifyDataSetChanged();
@@ -203,10 +264,25 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 }
             });
 
+            /**
+             * controls what happens when an active-goal items finish button is clicked.
+             */
             btnFinish.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finishGoal(activeGoals.get(getAdapterPosition()));
+                    ArrayList<Goal> subgoals = db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition()));
+                    boolean activeSubgoalUnderGoal = false;
+                    for (Goal subgoal : subgoals) {
+                        if (!subgoal.isAchieved()) {
+                            activeSubgoalUnderGoal = true;
+                            break;
+                        }
+                    }
+                    if (activeSubgoalUnderGoal) {
+                        openCantFinishGoalWarningDialog(activeGoals.get(getAdapterPosition()));
+                    } else {
+                        finishGoal(activeGoals.get(getAdapterPosition()));
+                    }
                 }
             });
 
@@ -254,15 +330,24 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             });
 
             /**
-             * controls what happens when a goal is selected / unselected.
+             * controls what happens when a goal is multiSelected / unMultiSelected.
              */
             selectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selectedGoals.contains(activeGoals.get(getAdapterPosition()))) {
-                        select(false);
-                    } else {
-                        select(true);
+                    if (multiSelectable[0]) {
+                        if (multiSelectedGoals.contains(activeGoals.get(getAdapterPosition()))) {
+                            multiSelect(false);
+                        } else {
+                            multiSelect(true);
+                        }
+                    } else if (singleSelectable[0]) {
+                        if (singleSelectedGoal == null) {
+                            singleSelect(true);
+                        } else {
+                            ((ActiveGoalsViewHolder) Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeGoals.indexOf(singleSelectedGoal)))).singleSelect(false);
+                            singleSelect(true);
+                        }
                     }
                 }
             });
@@ -356,7 +441,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         }
 
         /**
-         * switches the cards to selectable mode
+         * switches the cards to multiSelectable mode
          */
         public void setToSelectable() {
             expandedContainer.setVisibility(View.GONE);
@@ -369,9 +454,9 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         }
 
         /**
-         * switches the cards to not-selectable mode
+         * switches the cards to not-multiSelectable mode
          */
-        public void setToNotSelectable() {
+        public void setToNotMultiSelectable() {
             expandedContainer.setVisibility(View.GONE);
             shrunkContainer.setVisibility(View.VISIBLE);
             shrunkProgressBar.setVisibility(View.VISIBLE);
@@ -382,16 +467,39 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         }
 
         /**
-         * switches the card to selected / unselected
+         * switches the card to multiSelected / unMultiSelected
          */
-        public void select(boolean select) {
-            if (select) {
-                selectedGoals.add(activeGoals.get(getAdapterPosition()));
+        public void multiSelect(boolean multiSelect) {
+            if (multiSelect) {
+                multiSelectedGoals.add(activeGoals.get(getAdapterPosition()));
                 selectButton.setChecked(true, true);
             } else {
-                selectedGoals.remove(activeGoals.get(getAdapterPosition()));
+                multiSelectedGoals.remove(activeGoals.get(getAdapterPosition()));
                 selectButton.setChecked(false, true);
             }
+        }
+
+        /**
+         * switches the card to multiSelected / unMultiSelected
+         */
+        public void singleSelect(boolean singleSelect) {
+            try {
+                if (singleSelect) {
+                    singleSelectedGoal = activeGoals.get(getAdapterPosition());
+                    selectButton.setChecked(true, true);
+                } else {
+                    selectButton.setChecked(false, true);
+                }
+            } catch (Exception e) {
+                if (singleSelect) {
+                    singleSelectedGoal = activeGoals.get(getAdapterPosition());
+                    selectButton.setChecked(true, false);
+                } else {
+                    selectButton.setChecked(false, false);
+                }
+            }
+
+
         }
 
         /**
@@ -445,8 +553,14 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             }
         }
 
+        /**
+         * finishes the selected goal (starts the process of making it achieved).
+         *
+         * @param goal is the goal starting the achieving-process.
+         */
         public void finishGoal(Goal goal) {
-            //TODO: here add goal-finishing functionality
+            openFinishGoalDialog();
+            PublicMethods.setFinishingGoal(goal);
         }
 
         /**
@@ -640,15 +754,22 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             if (holder.expandedContainer.getVisibility() == View.VISIBLE) {
                 holder.shrink();
             }
-            if (selectable[0]) {
+            if (multiSelectable[0]) {
                 holder.setToSelectable();
-                if (selectedGoals.contains(activeGoals.get(holder.getAdapterPosition()))) {
+                if (multiSelectedGoals.contains(activeGoals.get(holder.getAdapterPosition()))) {
+                    holder.selectButton.setChecked(true);
+                } else {
+                    holder.selectButton.setChecked(false);
+                }
+            } else if (singleSelectable[0]) {
+                holder.setToSelectable();
+                if (singleSelectedGoal != null && singleSelectedGoal.equals(activeGoals.get(holder.getAdapterPosition()))) {
                     holder.selectButton.setChecked(true);
                 } else {
                     holder.selectButton.setChecked(false);
                 }
             } else {
-                holder.setToNotSelectable();
+                holder.setToNotMultiSelectable();
             }
             resource = R.drawable.expand;
         } else {
@@ -738,7 +859,47 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 /* Here handle whatever happens when user clicks the 'OK' button.*/
             }
         };
-        return stopEditDialogHandler.continueExpanding(activity, context, "Goals Name Already Exist", "The name " + name + " is already used on another goal. Please think of another name for your goal.", "OK", okProcedure);
+        return stopEditDialogHandler.continueExpanding(activity, context, "Goals Name Already Exist", "The name \"" + name + "\" is already used on another goal. Please think of another name for your goal.", "OK", okProcedure);
+    }
+
+    /**
+     * handles what happens when trying to finish a goal that has one/more unfinished subgoals.
+     *
+     * @param goal is the goal the user tries to finish.
+     * @return the dialog explaining why the user can't finish the goal (due to its unfinished goals).
+     */
+    public boolean openCantFinishGoalWarningDialog(Goal goal) {
+        stopEditDialogHandler = new DialogHandler();
+        Runnable okProcedure;
+        okProcedure = new Runnable() {
+            @Override
+            public void run() {
+                /* Here handle whatever happens when user clicks the 'OK' button.*/
+            }
+        };
+        return stopEditDialogHandler.continueExpanding(activity, context, "Goal Has Active Subgoals", "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal).toString(), "OK", okProcedure);
+    }
+
+    /**
+     * Opens the finish-goal dialog.
+     */
+    public void openFinishGoalDialog() {
+        finishGoalDialog.setVisibility(View.VISIBLE);
+        fadeBlurIn();
+        finishGoalDialog.setClickable(true);
+    }
+
+    /**
+     * Shows the shadow appears when dialog is opened.
+     */
+    public void fadeBlurIn() {
+        blur.setVisibility(View.INVISIBLE);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        blur.startAnimation(alphaAnimation);
+        blur.setVisibility(View.VISIBLE);
+        blur.setClickable(true);
     }
 
     /**
