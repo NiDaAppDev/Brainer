@@ -9,6 +9,8 @@ public class Goal {
 
     private String parentGoal;
 
+    private String tag;
+
     private String finishDate;
 
     private int timeCounted;
@@ -30,10 +32,11 @@ public class Goal {
         this.timeCounted = 0;
         this.timeEstimated = 100;
         this.achieved = false;
+        this.tag = "";
         this.finishDate = "";
     }
 
-    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, String finishDate) {
+    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, String tag, String finishDate) {
         this.name = name;
         this.description = description;
         this.parentGoal = parentGoal;
@@ -43,6 +46,7 @@ public class Goal {
         this.evolving = evolving;
         this.satisfaction = satisfaction;
         this.achieved = achieved;
+        this.tag = tag;
         this.finishDate = finishDate;
     }
 
@@ -116,6 +120,14 @@ public class Goal {
 
     public void setSatisfaction(int satisfaction) {
         this.satisfaction = satisfaction;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getFinishDate() {

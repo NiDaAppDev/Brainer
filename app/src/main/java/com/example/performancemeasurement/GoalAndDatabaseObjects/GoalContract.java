@@ -21,6 +21,8 @@ public class GoalContract {
 
         public static final String COLUMN_GOAL_SATISFACTION = "satisfaction";
 
+        public static final String COLUMN_GOAL_TAG = "tag";
+
         public static final String COLUMN_GOAL_NAME = "name";
 
         public static final String COLUMN_GOAL_PARENT = "parent";
@@ -28,6 +30,9 @@ public class GoalContract {
         public static final String COLUMN_GOAL_TIMESTAMP = "timeStamp";
 
         public static final String TABLE_NAME = "goalsList";
+
+        //TODO to edit db columns edit here
+
     }
 }
 

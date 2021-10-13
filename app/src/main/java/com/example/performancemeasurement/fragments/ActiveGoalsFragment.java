@@ -30,6 +30,8 @@ import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,8 +56,10 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     RadioGroup sortByGroup, ascDescGroup;
     RadioButton byNameRadio, byProgressRadio, ascRadio, descRadio;
     RelativeLayout cancelAddingNewGoal, addNewGoal, cancelSetAsSubgoalOf, setAsSubgoalOf, cancelFinishGoal, finishGoalButton, sortGoalsButton;
-    EditText newGoalsName, newGoalsDescription;
+    EditText newGoalsName, newGoalsDescription, tagCreator;
     TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
+    ChipGroup tagPicker;
+    Chip defaultTag;
     NestedRecyclerView activeGoalsList, setAsSubgoalOfGoalsList;
     ActiveGoalsAdapter mainActiveGoalsAdapter, setAsSubgoalOfGoalsAdapter;
     GoalDBHelper db;
@@ -106,6 +110,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         difficultySeekBar = v.findViewById(R.id.difficulty_picker);
         evolvingSeekBar = v.findViewById(R.id.evolving_picker);
         satisfactionSeekBar = v.findViewById(R.id.satisfaction_picker);
+        tagPicker = v.findViewById(R.id.tag_picker);
+        defaultTag = v.findViewById(R.id.default_tag);
+        tagCreator = v.findViewById(R.id.tag_creator);
         finishGoalButton = v.findViewById(R.id.finish_goal_dialog_finish_button);
         newGoalsName = v.findViewById(R.id.name_et);
         newGoalsDescription = v.findViewById(R.id.description_et);
@@ -245,9 +252,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 if ((int) finishGoalDialog.getTag() != newVis) {
                     finishGoalDialog.setTag(finishGoalDialog.getVisibility());
                     if (finishGoalDialog.getVisibility() == View.VISIBLE) {
-                        difficultySeekBar.setProgress(3);
-                        evolvingSeekBar.setProgress(3);
-                        satisfactionSeekBar.setProgress(3);
+
                     }
                 }
             }
@@ -333,7 +338,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         for (int i = 1; i <= numOfGoals; i++) {
             parent = new Random().nextBoolean() ? "1" : "";
             progress = new Random().nextInt(100) + 1;
-            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, false, "");
+            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, false, "", "");
             db.addGoal(goal);
         }
         mainActiveGoalsAdapter.swapCursor(db.getActiveGoalsCursor());
@@ -353,7 +358,12 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 (MainActivity) getActivity(),
                 fab,
                 blurBackground,
-                finishGoalDialog);
+                finishGoalDialog,
+                difficultySeekBar,
+                evolvingSeekBar,
+                satisfactionSeekBar,
+                tagPicker,
+                tagCreator);
         activeGoalsList.setHasFixedSize(true);
         activeGoalsList.setLayoutManager(new LinearLayoutManager(getContext()));
         activeGoalsList.setAdapter(mainActiveGoalsAdapter);
@@ -402,7 +412,14 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      * Finishes The selected Goal (makes it achieved).
      */
     public void finishGoal() {
-        db.finishGoal(PublicMethods.getFinishingGoal(), difficultySeekBar.getProgress(), evolvingSeekBar.getProgress(), satisfactionSeekBar.getProgress());
+        String tag = "Other";
+        if (tagCreator.getText().toString().matches("")) {
+            Chip selected = v.findViewById(tagPicker.getCheckedChipId());
+            tag = selected.getText().toString();
+        } else {
+            tag = tagCreator.getText().toString();
+        }
+        db.finishGoal(PublicMethods.getFinishingGoal(), difficultySeekBar.getProgress(), evolvingSeekBar.getProgress(), satisfactionSeekBar.getProgress(), tag);
         mainActiveGoalsAdapter.notifyItemRemoved(activeGoalsArrayList.indexOf(PublicMethods.getFinishingGoal()));
         mainActiveGoalsAdapter.updateGoalsList();
     }
@@ -530,7 +547,12 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 (MainActivity) getActivity(),
                 fab,
                 blurBackground,
-                finishGoalDialog);
+                finishGoalDialog,
+                difficultySeekBar,
+                evolvingSeekBar,
+                satisfactionSeekBar,
+                tagPicker,
+                tagCreator);
         setAsSubgoalOfGoalsAdapter.setMultiSelectable(false);
         setAsSubgoalOfGoalsAdapter.setSingleSelectable(true);
         setAsSubgoalOfGoalsList.setHasFixedSize(true);

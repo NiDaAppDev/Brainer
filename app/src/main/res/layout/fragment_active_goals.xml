@@ -31,48 +31,48 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/plus"
-                app:fabSize="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="add new goal / select an action"
                 android:text="Actions"
+                app:fabSize="normal"
                 app:icon="@drawable/plus"
-                android:contentDescription="add new goal / select an action"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/plus" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_selected_goals_as_sub_goal_of"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/plus"
-                app:fabSize="normal"
                 android:layout_marginBottom="3dp"
+                android:contentDescription="set selected goals as subgoals of"
+                android:visibility="gone"
+                app:fabSize="normal"
                 app:layout_constraintBottom_toTopOf="@id/fab"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:visibility="gone"
-                android:contentDescription="set selected goals as subgoals of"/>
-            
+                app:srcCompat="@drawable/plus" />
+
             <TextView
                 android:id="@+id/add_as_subgoals_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="Add selected as subgoal/s"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/fab_add_selected_goals_as_sub_goal_of"
-                app:layout_constraintTop_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of"
                 app:layout_constraintEnd_toStartOf="@id/fab_add_selected_goals_as_sub_goal_of"
-                android:visibility="gone" />
+                app:layout_constraintTop_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_delete_selected_goals"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/delete"
-                app:fabSize="normal"
                 android:layout_marginBottom="3dp"
+                android:contentDescription="delete selected goals"
+                android:visibility="gone"
+                app:fabSize="normal"
                 app:layout_constraintBottom_toTopOf="@id/fab_add_selected_goals_as_sub_goal_of"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:visibility="gone"
-                android:contentDescription="delete selected goals"/>
+                app:srcCompat="@drawable/delete" />
 
             <TextView
                 android:id="@+id/delete_selected_label"
@@ -80,10 +80,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="Delete selected goal/s"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/fab_delete_selected_goals"
-                app:layout_constraintTop_toTopOf="@id/fab_delete_selected_goals"
                 app:layout_constraintEnd_toStartOf="@id/fab_delete_selected_goals"
-                android:visibility="gone" />
+                app:layout_constraintTop_toTopOf="@id/fab_delete_selected_goals" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -125,18 +125,18 @@
                         android:id="@+id/active_goals_fragment_sort_dialog_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sort Goals"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="15dp"
-                        android:textSize="30sp"/>
+                        android:text="Sort Goals"
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/active_goals_fragment_sort_dialog_sort_by_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:layout_below="@id/active_goals_fragment_sort_dialog_label"
-                        android:text="Sort By:"/>
+                        android:text="Sort By:"
+                        android:textSize="20sp" />
 
                     <RadioGroup
                         android:id="@+id/active_goals_fragment_sort_by_radio_group"
@@ -148,16 +148,16 @@
                             android:id="@+id/active_goals_fragment_name_radio_btn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:checked="true"
                             android:buttonTint="@color/colorPrimary"
-                            android:text="Name"/>
+                            android:checked="true"
+                            android:text="Name" />
 
                         <RadioButton
                             android:id="@+id/active_goals_fragment_progress_radio_btn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/colorPrimary"
-                            android:text="Progress"/>
+                            android:text="Progress" />
 
                     </RadioGroup>
 
@@ -165,9 +165,9 @@
                         android:id="@+id/active_goals_fragment_sort_dialog_asc_desc_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:layout_below="@id/active_goals_fragment_sort_by_radio_group"
-                        android:text="Ascending / Descending:"/>
+                        android:text="Ascending / Descending:"
+                        android:textSize="20sp" />
 
                     <RadioGroup
                         android:id="@+id/active_goals_fragment_asc_desc_radio_group"
@@ -179,16 +179,16 @@
                             android:id="@+id/active_goals_fragment_asc_radio_btn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:checked="true"
                             android:buttonTint="@color/colorPrimary"
-                            android:text="Ascending"/>
+                            android:checked="true"
+                            android:text="Ascending" />
 
                         <RadioButton
                             android:id="@+id/active_goals_fragment_desc_radio_btn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/colorPrimary"
-                            android:text="Descending"/>
+                            android:text="Descending" />
 
                     </RadioGroup>
 
@@ -249,10 +249,10 @@
                         android:id="@+id/add_new_goal_dialog_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add new goal:"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="15dp"
-                        android:textSize="30sp"/>
+                        android:text="Add new goal:"
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/name_label"
@@ -363,17 +363,17 @@
                         android:id="@+id/select_parent_subgoal_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="15dip"
                         android:layout_centerHorizontal="true"
-                        android:textSize="30sp"
-                        android:text="Select parent goal:"/>
+                        android:layout_margin="15dip"
+                        android:text="Select parent goal:"
+                        android:textSize="30sp" />
 
                     <com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
                         android:id="@+id/set_as_subgoal_dialog_recycler_view"
-                        android:layout_below="@id/select_parent_subgoal_label"
-                        android:layout_above="@id/subgoal_dialog_cancel_button"
                         android:layout_width="fill_parent"
                         android:layout_height="100dp"
+                        android:layout_above="@id/subgoal_dialog_cancel_button"
+                        android:layout_below="@id/select_parent_subgoal_label"
                         android:nestedScrollingEnabled="true"
                         android:scrollbars="vertical" />
 
@@ -449,102 +449,163 @@
                     android:gravity="center"
                     android:padding="15.0dip">
 
-                    <TextView
-                        android:id="@+id/finish_goal_dialog_label"
+                    <ScrollView
+                        android:id="@+id/finish_goal_dialog_scroll_container"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="30sp"
-                        android:layout_margin="15dip"
-                        android:layout_centerHorizontal="true"
-                        android:text="Finish Goal"
-                        android:textStyle="bold"/>
+                        android:layout_height="500dp">
 
-                    <TextView
-                        android:id="@+id/difficulty_picker_label"
-                        android:layout_width="wrap_content"
-                        android:layout_below="@id/finish_goal_dialog_label"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="how hard was it to complete the goal?"/>
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/add_new_active_activity_dialog_background"
+                            android:gravity="center">
 
-                    <com.warkiz.tickseekbar.TickSeekBar
-                        android:id="@+id/difficulty_picker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/difficulty_picker_label"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginBottom="25dip"
-                        app:tsb_ticks_count="5"
-                        app:tsb_thumb_color="@color/colorPrimary"
-                        app:tsb_thumb_size="15dp"
-                        app:tsb_show_tick_marks_type="oval"
-                        app:tsb_show_tick_texts="below"
-                        app:tsb_tick_texts_color="@color/colorPrimary"
-                        app:tsb_min="1"
-                        app:tsb_max="5"
-                        app:tsb_progress="3"
-                        app:tsb_tick_marks_color="@color/colorPrimary"/>
 
-                    <TextView
-                        android:id="@+id/evolving_picker_label"
-                        android:layout_width="wrap_content"
-                        android:layout_below="@id/difficulty_picker"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="how much has the goal evolved you?"/>
+                            <TextView
+                                android:id="@+id/finish_goal_dialog_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_margin="15dip"
+                                android:text="Finish Goal"
+                                android:textSize="30sp"
+                                android:textStyle="bold" />
 
-                    <com.warkiz.tickseekbar.TickSeekBar
-                        android:id="@+id/evolving_picker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/evolving_picker_label"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginBottom="25dip"
-                        app:tsb_ticks_count="5"
-                        app:tsb_thumb_color="@color/colorPrimary"
-                        app:tsb_thumb_size="30dp"
-                        app:tsb_show_tick_marks_type="oval"
-                        app:tsb_show_tick_texts="below"
-                        app:tsb_tick_texts_color="@color/colorPrimary"
-                        app:tsb_min="1"
-                        app:tsb_max="5"
-                        app:tsb_progress="3"
-                        app:tsb_tick_marks_color="@color/colorPrimary"
-                        app:tsb_thumb_drawable="@drawable/medal"/>
+                            <TextView
+                                android:id="@+id/difficulty_picker_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/finish_goal_dialog_label"
+                                android:text="how hard was it to complete the goal?"
+                                android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/satisfaction_picker_label"
-                        android:layout_width="wrap_content"
-                        android:layout_below="@id/evolving_picker"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="how much satisfaction did you get from the goal?"/>
+                            <com.warkiz.tickseekbar.TickSeekBar
+                                android:id="@+id/difficulty_picker"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/difficulty_picker_label"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="25dip"
+                                app:tsb_max="5"
+                                app:tsb_min="1"
+                                app:tsb_progress="3"
+                                app:tsb_show_tick_marks_type="oval"
+                                app:tsb_show_tick_texts="below"
+                                app:tsb_thumb_color="@color/colorPrimary"
+                                app:tsb_thumb_size="15dp"
+                                app:tsb_tick_marks_color="@color/colorPrimary"
+                                app:tsb_tick_texts_color="@color/colorPrimary"
+                                app:tsb_ticks_count="5" />
 
-                    <com.warkiz.tickseekbar.TickSeekBar
-                        android:id="@+id/satisfaction_picker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/satisfaction_picker_label"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginBottom="15dip"
-                        app:tsb_ticks_count="5"
-                        app:tsb_thumb_color="@color/colorPrimary"
-                        app:tsb_thumb_size="30dp"
-                        app:tsb_show_tick_marks_type="oval"
-                        app:tsb_show_tick_texts="below"
-                        app:tsb_tick_texts_color="@color/colorPrimary"
-                        app:tsb_min="1"
-                        app:tsb_max="5"
-                        app:tsb_progress="3"
-                        app:tsb_tick_marks_color="@color/colorPrimary"
-                        app:tsb_thumb_drawable="@drawable/smiley_3"/>
+                            <TextView
+                                android:id="@+id/evolving_picker_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/difficulty_picker"
+                                android:text="how much has the goal evolved you?"
+                                android:textSize="20sp" />
+
+                            <com.warkiz.tickseekbar.TickSeekBar
+                                android:id="@+id/evolving_picker"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/evolving_picker_label"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="25dip"
+                                app:tsb_max="5"
+                                app:tsb_min="1"
+                                app:tsb_progress="3"
+                                app:tsb_show_tick_marks_type="oval"
+                                app:tsb_show_tick_texts="below"
+                                app:tsb_thumb_color="@color/colorPrimary"
+                                app:tsb_thumb_drawable="@drawable/medal"
+                                app:tsb_thumb_size="30dp"
+                                app:tsb_tick_marks_color="@color/colorPrimary"
+                                app:tsb_tick_texts_color="@color/colorPrimary"
+                                app:tsb_ticks_count="5" />
+
+                            <TextView
+                                android:id="@+id/satisfaction_picker_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/evolving_picker"
+                                android:text="how much satisfaction did you get from the goal?"
+                                android:textSize="20sp" />
+
+                            <com.warkiz.tickseekbar.TickSeekBar
+                                android:id="@+id/satisfaction_picker"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/satisfaction_picker_label"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="15dip"
+                                app:tsb_max="5"
+                                app:tsb_min="1"
+                                app:tsb_progress="3"
+                                app:tsb_show_tick_marks_type="oval"
+                                app:tsb_show_tick_texts="below"
+                                app:tsb_thumb_color="@color/colorPrimary"
+                                app:tsb_thumb_drawable="@drawable/smiley_3"
+                                app:tsb_thumb_size="30dp"
+                                app:tsb_tick_marks_color="@color/colorPrimary"
+                                app:tsb_tick_texts_color="@color/colorPrimary"
+                                app:tsb_ticks_count="5" />
+
+                            <TextView
+                                android:id="@+id/tag_picker_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/satisfaction_picker"
+                                android:text="which tag would you categorize it under?"
+                                android:textSize="20sp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/tag_picker"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tag_picker_label"
+                                app:singleSelection="true"
+                                app:selectionRequired="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/default_tag"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Other"
+                                    android:checkable="true"
+                                    android:checked="true"/>
+
+                            </com.google.android.material.chip.ChipGroup>
+
+                            <TextView
+                                android:id="@+id/tag_creator_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tag_picker"
+                                android:layout_centerHorizontal="true"
+                                android:text="or:"
+                                android:textSize="20sp" />
+
+                            <EditText
+                                android:id="@+id/tag_creator"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tag_creator_label"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="15dip"
+                                android:hint="write new tag's name"/>
+
+                        </RelativeLayout>
+
+                    </ScrollView>
+
 
                     <RelativeLayout
                         android:id="@+id/finish_goal_dialog_cancel_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@id/satisfaction_picker"
-                        android:layout_below="@id/satisfaction_picker"
+                        android:layout_below="@id/finish_goal_dialog_scroll_container"
+                        android:layout_alignStart="@id/finish_goal_dialog_scroll_container"
                         android:layout_marginStart="15.0dip"
                         android:layout_marginBottom="15.0dip"
                         android:background="@drawable/ripple_button_background"
@@ -565,8 +626,8 @@
                         android:id="@+id/finish_goal_dialog_finish_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@id/satisfaction_picker"
-                        android:layout_below="@id/satisfaction_picker"
+                        android:layout_below="@id/finish_goal_dialog_scroll_container"
+                        android:layout_alignEnd="@id/finish_goal_dialog_scroll_container"
                         android:layout_marginEnd="15.0dip"
                         android:layout_marginBottom="15.0dip"
                         android:background="@drawable/ripple_button_background"

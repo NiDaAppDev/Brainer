@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -41,8 +42,11 @@ import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.warkiz.tickseekbar.TickSeekBar;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -54,23 +58,26 @@ import it.emperor.animatedcheckbox.AnimatedCheckBox;
 
 public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.ActiveGoalsViewHolder> implements View.OnTouchListener {
 
-    private Context context;
+    private final Context context;
     private Cursor cursor;
     private ArrayList<Goal> activeGoals;
-    private MainActivity activity;
-    private NestedRecyclerView recyclerView;
-    private GoalDBHelper db;
+    private final MainActivity activity;
+    private final NestedRecyclerView recyclerView;
+    private final GoalDBHelper db;
     private int expandedItem = -1, editedItem = -1;
     private final boolean[] openedFromParent = new boolean[]{false, true}, continueExpanding = new boolean[]{true}, multiSelectable = new boolean[]{false}, singleSelectable = new boolean[]{false};
-    private ArrayList<Goal> removedSubGoals = new ArrayList<>(), multiSelectedGoals = new ArrayList<>();
+    private final ArrayList<Goal> removedSubGoals = new ArrayList<>(), multiSelectedGoals = new ArrayList<>();
     private Goal singleSelectedGoal;
     private String newName, newDescription;
-    private View blur;
-    private CircularRevealFrameLayout finishGoalDialog;
+    private final View blur;
+    private final CircularRevealFrameLayout finishGoalDialog;
+    private final TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
+    private final ChipGroup tagPicker;
+    private final EditText tagCreator;
     private DialogHandler stopEditDialogHandler;
-    private ExtendedFloatingActionButton fab;
+    private final ExtendedFloatingActionButton fab;
 
-    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog) {
+    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, ChipGroup tagPicker, EditText tagCreator) {
         this.context = context;
         this.activeGoals = activeGoals;
         this.cursor = cursor;
@@ -79,6 +86,11 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         this.fab = fab;
         this.blur = blur;
         this.finishGoalDialog = finishGoalDialog;
+        this.difficultySeekBar = difficultySeekBar;
+        this.evolvingSeekBar = evolvingSeekBar;
+        this.satisfactionSeekBar = satisfactionSeekBar;
+        this.tagPicker = tagPicker;
+        this.tagCreator = tagCreator;
 
         db = new GoalDBHelper(context);
     }
@@ -887,6 +899,23 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         finishGoalDialog.setVisibility(View.VISIBLE);
         fadeBlurIn();
         finishGoalDialog.setClickable(true);
+        difficultySeekBar.setProgress(3);
+        evolvingSeekBar.setProgress(3);
+        satisfactionSeekBar.setProgress(3);
+        tagPicker.removeAllViews();
+        Chip defaultChip = new Chip(context);
+        defaultChip.setText("Other");
+        defaultChip.setCheckable(true);
+        defaultChip.setChecked(true);
+        tagPicker.addView(defaultChip);
+        ArrayList<String> tags = db.getAllTags();
+        for (String tag : tags) {
+            Chip chip = new Chip(context);
+            chip.setText(tag);
+            chip.setCheckable(true);
+            tagPicker.addView(chip);
+        }
+        tagCreator.setText("");
     }
 
     /**

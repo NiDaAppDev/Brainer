@@ -13,6 +13,8 @@
         <!--this attribute is to change the theme of the extended FAB-->
         <item name="extendedFloatingActionButtonStyle">
             @style/Widget.App.ExtendedFloatingActionButton</item>
+
+        <item name="chipStyle">@style/customChip</item>
     </style>
 
 
@@ -83,6 +85,16 @@
 
         <!--this attribute gives makes the change in the text and icon color of the FAB-->
         <item name="colorOnSecondary">@android:color/white</item>
+
+    </style>
+
+    <style name="customChip" parent="Widget.MaterialComponents.Chip.Filter">
+
+        <item name="chipBackgroundColor">@color/chip_custom_color</item>
+
+        <item name="android:textColor">@color/chip_text_custom_color</item>
+
+        <item name="checkedIconTint">@color/brain3</item>
 
     </style>
 </resources>
