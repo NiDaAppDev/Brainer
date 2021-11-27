@@ -10,7 +10,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class PublicMethods<T> extends Application {
@@ -69,12 +72,34 @@ public class PublicMethods<T> extends Application {
         return value;
     }
 
-    public static int getInverseColor(int color){
+    public static String formatDateTime(String timeToFormat) {
+
+        String finalDateTime = "";
+
+        Date date = null;
+        if (timeToFormat != null) {
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeToFormat);
+            } catch (ParseException e) {
+                date = null;
+            }
+
+            if (date != null) {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                finalDateTime = formatter.format(date);
+            }
+        }
+
+        return finalDateTime;
+
+    }
+
+    public static int getInverseColor(int color) {
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
         int alpha = Color.alpha(color);
-        return Color.argb(alpha, 255-red, 255-green, 255-blue);
+        return Color.argb(alpha, 255 - red, 255 - green, 255 - blue);
     }
 
     public static int positionOfGoalInGoalsArrayList(String goalName, ArrayList<Goal> goalsArrayList) {

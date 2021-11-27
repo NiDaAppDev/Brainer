@@ -1,6 +1,13 @@
 package com.example.performancemeasurement.GoalAndDatabaseObjects;
 
+import android.content.Context;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Goal {
+    private static GoalDBHelper db;
+
     private boolean achieved;
 
     private String description;
@@ -8,6 +15,8 @@ public class Goal {
     private String name;
 
     private String parentGoal;
+
+    private String startDate;
 
     private String tag;
 
@@ -29,6 +38,7 @@ public class Goal {
         this.name = name;
         this.description = description;
         this.parentGoal = "";
+        this.startDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         this.timeCounted = 0;
         this.timeEstimated = 100;
         this.achieved = false;
@@ -62,6 +72,11 @@ public class Goal {
         return this.parentGoal;
     }
 
+    public String getStartDate(Context context) {
+        db = new GoalDBHelper(context);
+        return db.getGoalStartDate(name);
+    }
+
     public int getTimeCounted() {
         return this.timeCounted;
     }
@@ -80,6 +95,14 @@ public class Goal {
 
     public int getSatisfaction() {
         return satisfaction;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getFinishDate() {
+        return finishDate;
     }
 
     public boolean isAchieved() {
@@ -122,16 +145,8 @@ public class Goal {
         this.satisfaction = satisfaction;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public String getFinishDate() {
-        return finishDate;
     }
 
     public void setFinishDate(String finishDate) {

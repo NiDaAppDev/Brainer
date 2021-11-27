@@ -31,17 +31,21 @@ import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedR
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.hootsuite.nachos.NachoTextView;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
 import com.warkiz.tickseekbar.SeekParams;
 import com.warkiz.tickseekbar.TickSeekBar;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -56,9 +60,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     RadioGroup sortByGroup, ascDescGroup;
     RadioButton byNameRadio, byProgressRadio, ascRadio, descRadio;
     RelativeLayout cancelAddingNewGoal, addNewGoal, cancelSetAsSubgoalOf, setAsSubgoalOf, cancelFinishGoal, finishGoalButton, sortGoalsButton;
-    EditText newGoalsName, newGoalsDescription, tagCreator;
+    EditText newGoalsName, newGoalsDescription;
     TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
-    ChipGroup tagPicker;
+    NachoTextView tagPickerEditText;
     Chip defaultTag;
     NestedRecyclerView activeGoalsList, setAsSubgoalOfGoalsList;
     ActiveGoalsAdapter mainActiveGoalsAdapter, setAsSubgoalOfGoalsAdapter;
@@ -85,6 +89,8 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
 
         db = new GoalDBHelper(getContext());
 
+//        db.clearDatabase();
+
         fab = v.findViewById(R.id.fab);
         addAsSubgoalsFab = v.findViewById(R.id.fab_add_selected_goals_as_sub_goal_of);
         deleteFab = v.findViewById(R.id.fab_delete_selected_goals);
@@ -110,9 +116,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         difficultySeekBar = v.findViewById(R.id.difficulty_picker);
         evolvingSeekBar = v.findViewById(R.id.evolving_picker);
         satisfactionSeekBar = v.findViewById(R.id.satisfaction_picker);
-        tagPicker = v.findViewById(R.id.tag_picker);
-        defaultTag = v.findViewById(R.id.default_tag);
-        tagCreator = v.findViewById(R.id.tag_creator);
+        tagPickerEditText = v.findViewById(R.id.tag_picker_edit_text);
         finishGoalButton = v.findViewById(R.id.finish_goal_dialog_finish_button);
         newGoalsName = v.findViewById(R.id.name_et);
         newGoalsDescription = v.findViewById(R.id.description_et);
@@ -122,10 +126,8 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         activeGoalsArrayList = db.getActiveGoalsArrayList();
 
         initGoalsList(v);
-
-//        db.clearDatabase();
-//        initGoals(50);
-
+        initGoals(50);
+//
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,7 +175,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 } else if (finishGoalDialog.getVisibility() == View.VISIBLE) {
                     closeFinishGoalDialog();
                 } else if (sortGoalsDialog.getVisibility() == View.VISIBLE) {
-                    closeSortGoalsDialog();
+                    closeSortGoalsDialog(false);
                 }
             }
         });
@@ -181,20 +183,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         sortGoalsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sortByGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_name_radio_btn) {
-                    sortMode = 1;
-                } else if (sortByGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_progress_radio_btn) {
-                    sortMode = 2;
-                }
-
-                if (ascDescGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_asc_radio_btn) {
-                    ascending = true;
-                } else if (ascDescGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_desc_radio_btn) {
-                    ascending = false;
-                }
-
-                sort(sortMode, ascending, activeGoalsArrayList);
-                closeSortGoalsDialog();
+                closeSortGoalsDialog(true);
                 mainActiveGoalsAdapter.notifyDataSetChanged();
             }
         });
@@ -334,10 +323,11 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     private void initGoals(int numOfGoals) {
         Goal goal;
         int progress;
-        String parent;
+        String parent, startDate;
         for (int i = 1; i <= numOfGoals; i++) {
             parent = new Random().nextBoolean() ? "1" : "";
             progress = new Random().nextInt(100) + 1;
+
             goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, false, "", "");
             db.addGoal(goal);
         }
@@ -362,8 +352,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 difficultySeekBar,
                 evolvingSeekBar,
                 satisfactionSeekBar,
-                tagPicker,
-                tagCreator);
+                tagPickerEditText);
         activeGoalsList.setHasFixedSize(true);
         activeGoalsList.setLayoutManager(new LinearLayoutManager(getContext()));
         activeGoalsList.setAdapter(mainActiveGoalsAdapter);
@@ -412,14 +401,25 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      * Finishes The selected Goal (makes it achieved).
      */
     public void finishGoal() {
-        String tag = "Other";
-        if (tagCreator.getText().toString().matches("")) {
-            Chip selected = v.findViewById(tagPicker.getCheckedChipId());
-            tag = selected.getText().toString();
+        ArrayList<String> tagsArray = new ArrayList<>();
+        if (tagPickerEditText.getText().toString().equals("")) {
+            List<com.hootsuite.nachos.chip.Chip> allTagsSelected = tagPickerEditText.getAllChips();
+            for (com.hootsuite.nachos.chip.Chip chip : allTagsSelected) {
+                tagsArray.add(chip.getText().toString());
+            }
         } else {
-            tag = tagCreator.getText().toString();
+            tagsArray.add("Other");
         }
-        db.finishGoal(PublicMethods.getFinishingGoal(), difficultySeekBar.getProgress(), evolvingSeekBar.getProgress(), satisfactionSeekBar.getProgress(), tag);
+
+        StringBuilder tags = new StringBuilder();
+        for (int i = 0; i < tagsArray.size(); i++) {
+            if (i > 0){
+                tags.append(",");
+            }
+            tags.append(tagsArray.get(i));
+        }
+
+        db.finishGoal(PublicMethods.getFinishingGoal(), difficultySeekBar.getProgress(), evolvingSeekBar.getProgress(), satisfactionSeekBar.getProgress(), tags.toString());
         mainActiveGoalsAdapter.notifyItemRemoved(activeGoalsArrayList.indexOf(PublicMethods.getFinishingGoal()));
         mainActiveGoalsAdapter.updateGoalsList();
     }
@@ -456,10 +456,19 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         sortGoalsDialog.setVisibility(View.VISIBLE);
         fadeBlurIn();
         sortGoalsDialog.setClickable(true);
-        if (sortMode == 2) {
-            sortByGroup.check(R.id.active_goals_fragment_progress_radio_btn);
-        } else {
-            sortByGroup.check(R.id.active_goals_fragment_name_radio_btn);
+        switch (sortMode) {
+            case 1:
+                sortByGroup.check(R.id.active_goals_fragment_start_date_radio_btn);
+                break;
+            case 2:
+                sortByGroup.check(R.id.active_goals_fragment_name_radio_btn);
+                break;
+            case 3:
+                sortByGroup.check(R.id.active_goals_fragment_progress_radio_btn);
+                break;
+            default:
+                sortByGroup.check(R.id.active_goals_fragment_start_date_radio_btn);
+                break;
         }
 
         if (!ascending) {
@@ -473,7 +482,26 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     /**
      * Closes the sort-goals dialog.
      */
-    public void closeSortGoalsDialog() {
+    public void closeSortGoalsDialog(boolean sort) {
+
+        if (sort) {
+            if (sortByGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_start_date_radio_btn) {
+                sortMode = 1;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_name_radio_btn) {
+                sortMode = 2;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_progress_radio_btn) {
+                sortMode = 3;
+            }
+
+            if (ascDescGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_asc_radio_btn) {
+                ascending = true;
+            } else if (ascDescGroup.getCheckedRadioButtonId() == R.id.active_goals_fragment_desc_radio_btn) {
+                ascending = false;
+            }
+
+            sort(sortMode, ascending, activeGoalsArrayList);
+        }
+
         sortGoalsDialog.setVisibility(View.INVISIBLE);
         fadeBlurOut();
         sortGoalsDialog.setClickable(false);
@@ -551,8 +579,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 difficultySeekBar,
                 evolvingSeekBar,
                 satisfactionSeekBar,
-                tagPicker,
-                tagCreator);
+                tagPickerEditText);
         setAsSubgoalOfGoalsAdapter.setMultiSelectable(false);
         setAsSubgoalOfGoalsAdapter.setSingleSelectable(true);
         setAsSubgoalOfGoalsList.setHasFixedSize(true);
@@ -600,6 +627,21 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 Collections.sort(arrayListToSort, new Comparator<Goal>() {
                     @Override
                     public int compare(Goal o1, Goal o2) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            Date d1 = sdf.parse(o1.getStartDate(getContext())),
+                                    d2 = sdf.parse(o2.getStartDate(getContext()));
+                            return d1.compareTo(d2);
+                        } catch (ParseException e) {
+                            return 0;
+                        }
+                    }
+                });
+                break;
+            case 2:
+                Collections.sort(arrayListToSort, new Comparator<Goal>() {
+                    @Override
+                    public int compare(Goal o1, Goal o2) {
                         try {
                             int numericO1 = Integer.parseInt(o1.getName()),
                                     numericO2 = Integer.parseInt(o2.getName());
@@ -610,7 +652,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                     }
                 });
                 break;
-            case 2:
+            case 3:
                 Collections.sort(arrayListToSort, new Comparator<Goal>() {
                     @Override
                     public int compare(Goal o1, Goal o2) {
@@ -640,6 +682,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             return true;
         } else if (finishGoalDialog.getVisibility() == View.VISIBLE) {
             closeFinishGoalDialog();
+            return true;
+        } else if (sortGoalsDialog.getVisibility() == View.VISIBLE) {
+            closeSortGoalsDialog(false);
             return true;
         } else if (mainActiveGoalsAdapter.getMultiSelectable()) {
             mainActiveGoalsAdapter.setMultiSelectable(false);

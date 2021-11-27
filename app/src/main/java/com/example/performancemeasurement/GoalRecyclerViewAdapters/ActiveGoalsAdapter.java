@@ -8,6 +8,8 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -17,7 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,10 +44,11 @@ import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.terminator.ChipTerminatorHandler;
+import com.hootsuite.nachos.validator.ChipifyingNachoValidator;
 import com.warkiz.tickseekbar.TickSeekBar;
 
 import java.util.ArrayList;
@@ -72,12 +75,11 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     private final View blur;
     private final CircularRevealFrameLayout finishGoalDialog;
     private final TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
-    private final ChipGroup tagPicker;
-    private final EditText tagCreator;
+    private final NachoTextView tagPickerEditText;
     private DialogHandler stopEditDialogHandler;
     private final ExtendedFloatingActionButton fab;
 
-    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, ChipGroup tagPicker, EditText tagCreator) {
+    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, NachoTextView tagPickerEditText) {
         this.context = context;
         this.activeGoals = activeGoals;
         this.cursor = cursor;
@@ -89,8 +91,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         this.difficultySeekBar = difficultySeekBar;
         this.evolvingSeekBar = evolvingSeekBar;
         this.satisfactionSeekBar = satisfactionSeekBar;
-        this.tagPicker = tagPicker;
-        this.tagCreator = tagCreator;
+        this.tagPickerEditText = tagPickerEditText;
 
         db = new GoalDBHelper(context);
     }
@@ -185,7 +186,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         CustomProgressBar shrunkProgressBar, expandedProgressBar, selectableProgressBar;
         ImageButton btnExpandShrink, btnEdit, btnBackToParent;
         AnimatedCheckBox selectButton;
-        TextView title, description;
+        TextView title, startDate, description;
         RecyclerView subGoalsRecyclerView;
         ExtendedEditText nameET, descriptionET;
         TextFieldBoxes nameETContainer, descriptionETContainer;
@@ -208,6 +209,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             title = itemView.findViewById(R.id.expanded_active_goal_title);
             expandedProgressBar = itemView.findViewById(R.id.expanded_active_goal_progress_bar);
             expandedProgressBar.enableDefaultGradient(true);
+            startDate = itemView.findViewById(R.id.expanded_active_goal_start_date);
             description = itemView.findViewById(R.id.expanded_active_goal_description);
             selectableProgressBar = itemView.findViewById(R.id.selectable_active_goal_progress_bar);
             selectableProgressBar.enableDefaultGradient(true);
@@ -801,10 +803,13 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
 
 
         String name = currentGoal.getName(),
+                startDateText = currentGoal.getStartDate(context),
                 description = currentGoal.getDescription(),
                 parent = currentGoal.getParentGoal();
         int timeCounted = currentGoal.getTimeCounted(),
                 timeEstimated = currentGoal.getTimeEstimated();
+
+        Log.d(TAG, "onBindViewHolder: " + name + ": " + startDateText);
 
         holder.shrunkProgressBar.setText(name);
         holder.shrunkProgressBar.setProgress((timeCounted * 100 / timeEstimated));
@@ -816,6 +821,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         holder.selectableProgressBar.setProgress((timeCounted * 100 / timeEstimated));
         holder.selectableProgressBar.setRadius(300.0f);
         holder.title.setText(name);
+        holder.startDate.setText(startDateText);
         holder.description.setText(description);
         holder.description.setOnTouchListener(this);
         holder.description.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -902,20 +908,45 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         difficultySeekBar.setProgress(3);
         evolvingSeekBar.setProgress(3);
         satisfactionSeekBar.setProgress(3);
-        tagPicker.removeAllViews();
-        Chip defaultChip = new Chip(context);
-        defaultChip.setText("Other");
-        defaultChip.setCheckable(true);
-        defaultChip.setChecked(true);
-        tagPicker.addView(defaultChip);
-        ArrayList<String> tags = db.getAllTags();
-        for (String tag : tags) {
-            Chip chip = new Chip(context);
-            chip.setText(tag);
-            chip.setCheckable(true);
-            tagPicker.addView(chip);
-        }
-        tagCreator.setText("");
+        tagPickerEditText.setText("");
+        String[] tags = db.getAllTags().toArray(new String[0]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, tags);
+        tagPickerEditText.setAdapter(adapter);
+        tagPickerEditText.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_CURRENT_TOKEN);
+        tagPickerEditText.enableEditChipOnTouch(false, false);
+        tagPickerEditText.setNachoValidator(new ChipifyingNachoValidator());
+        tagPickerEditText.setThreshold(1);
+        tagPickerEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tagPickerEditText.showDropDown();
+            }
+        });
+
+        ArrayList<String> allTagsArrayList = db.getAllTags();
+        tagPickerEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ArrayList<String> tagsArrayList = new ArrayList<>(allTagsArrayList);
+                for (com.hootsuite.nachos.chip.Chip chip : tagPickerEditText.getAllChips())
+                    if (tagsArrayList.contains(chip.getText())) {
+                        tagsArrayList.remove(chip.getText());
+                    }
+                String[] tags = tagsArrayList.toArray(new String[0]);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, tags);
+                tagPickerEditText.setAdapter(adapter);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     /**

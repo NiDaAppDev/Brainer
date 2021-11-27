@@ -25,6 +25,7 @@ import com.example.performancemeasurement.GoalRecyclerViewAdapters.AchievedGoals
 import com.example.performancemeasurement.R;
 import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
+import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 
 import java.text.ParseException;
@@ -35,7 +36,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
-public class AchievedGoalsFragment extends Fragment {
+public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
 
     View v;
     NestedRecyclerView achievedGoalsList;
@@ -87,7 +88,7 @@ public class AchievedGoalsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (sortGoalsDialog.getVisibility() == View.VISIBLE) {
-                    closeSortGoalsDialog();
+                    closeSortGoalsDialog(false);
                 }
             }
         });
@@ -96,26 +97,7 @@ public class AchievedGoalsFragment extends Fragment {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
-                if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_name_radio_btn) {
-                    sortMode = 1;
-                } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_finish_date_radio_btn) {
-                    sortMode = 2;
-                } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_difficulty_radio_btn) {
-                    sortMode = 3;
-                } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_evolving_radio_btn) {
-                    sortMode = 4;
-                } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_satisfaction_radio_btn) {
-                    sortMode = 5;
-                }
-
-                if (ascDescGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_asc_radio_btn) {
-                    ascending = true;
-                } else if (ascDescGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_desc_radio_btn) {
-                    ascending = false;
-                }
-
-                sort(sortMode, ascending, achievedGoalsArrayList);
-                closeSortGoalsDialog();
+                closeSortGoalsDialog(true);
                 mainAchievedGoalsAdapter.setExpandedItem(-1);
                 mainAchievedGoalsAdapter.notifyDataSetChanged();
             }
@@ -195,7 +177,7 @@ public class AchievedGoalsFragment extends Fragment {
         sortGoalsDialog.setVisibility(View.VISIBLE);
         fadeBlurIn();
         sortGoalsDialog.setClickable(true);
-        switch (sortMode){
+        switch (sortMode) {
             case 1:
                 sortByGroup.check(R.id.achieved_goals_fragment_name_radio_btn);
                 break;
@@ -211,6 +193,9 @@ public class AchievedGoalsFragment extends Fragment {
             case 5:
                 sortByGroup.check(R.id.achieved_goals_fragment_satisfaction_radio_btn);
                 break;
+            default:
+                sortByGroup.check(R.id.achieved_goals_fragment_name_radio_btn);
+                break;
         }
 
         if (!ascending) {
@@ -224,7 +209,30 @@ public class AchievedGoalsFragment extends Fragment {
     /**
      * Closes the sort-goals dialog.
      */
-    public void closeSortGoalsDialog() {
+    public void closeSortGoalsDialog(boolean sort) {
+
+        if (sort) {
+            if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_name_radio_btn) {
+                sortMode = 1;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_finish_date_radio_btn) {
+                sortMode = 2;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_difficulty_radio_btn) {
+                sortMode = 3;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_evolving_radio_btn) {
+                sortMode = 4;
+            } else if (sortByGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_satisfaction_radio_btn) {
+                sortMode = 5;
+            }
+
+            if (ascDescGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_asc_radio_btn) {
+                ascending = true;
+            } else if (ascDescGroup.getCheckedRadioButtonId() == R.id.achieved_goals_fragment_desc_radio_btn) {
+                ascending = false;
+            }
+
+            sort(sortMode, ascending, achievedGoalsArrayList);
+        }
+
         sortGoalsDialog.setVisibility(View.INVISIBLE);
         fadeBlurOut();
         sortGoalsDialog.setClickable(false);
@@ -244,10 +252,10 @@ public class AchievedGoalsFragment extends Fragment {
                     @Override
                     public int compare(Goal o1, Goal o2) {
                         try {
-                            int numericO1 =Integer.parseInt(o1.getName()),
+                            int numericO1 = Integer.parseInt(o1.getName()),
                                     numericO2 = Integer.parseInt(o2.getName());
                             return numericO1 - numericO2;
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             return o1.getName().compareToIgnoreCase(o2.getName());
                         }
                     }
@@ -260,7 +268,7 @@ public class AchievedGoalsFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         try {
                             Date d1 = sdf.parse(o1.getFinishDate()),
-                            d2 = sdf.parse(o2.getFinishDate());
+                                    d2 = sdf.parse(o2.getFinishDate());
                             return d1.compareTo(d2);
                         } catch (ParseException e) {
                             return 0;
@@ -302,4 +310,14 @@ public class AchievedGoalsFragment extends Fragment {
 
     }
 
+
+    @Override
+    public boolean onBackPressed() {
+        if (sortGoalsDialog.getVisibility() == View.VISIBLE) {
+            closeSortGoalsDialog(false);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

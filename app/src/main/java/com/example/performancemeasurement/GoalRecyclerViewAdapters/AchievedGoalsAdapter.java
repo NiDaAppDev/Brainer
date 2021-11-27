@@ -333,6 +333,12 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         holder.description.setTextColor(PublicMethods.getInverseColor(color));
         holder.finishDate.setTextColor(PublicMethods.getInverseColor(color));
 
+        holder.medal_1.setVisibility(View.VISIBLE);
+        holder.medal_2.setVisibility(View.VISIBLE);
+        holder.medal_3.setVisibility(View.VISIBLE);
+        holder.medal_4.setVisibility(View.VISIBLE);
+        holder.medal_5.setVisibility(View.VISIBLE);
+
         switch (currentGoal.getEvolving()) {
             case 1:
                 holder.medal_1.setVisibility(View.GONE);

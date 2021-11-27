@@ -145,11 +145,18 @@
                         android:layout_below="@id/active_goals_fragment_sort_dialog_sort_by_label">
 
                         <RadioButton
-                            android:id="@+id/active_goals_fragment_name_radio_btn"
+                            android:id="@+id/active_goals_fragment_start_date_radio_btn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/colorPrimary"
                             android:checked="true"
+                            android:text="Start Date" />
+
+                        <RadioButton
+                            android:id="@+id/active_goals_fragment_name_radio_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/colorPrimary"
                             android:text="Name" />
 
                         <RadioButton
@@ -559,41 +566,14 @@
                                 android:text="which tag would you categorize it under?"
                                 android:textSize="20sp" />
 
-                            <com.google.android.material.chip.ChipGroup
-                                android:id="@+id/tag_picker"
+                            <com.hootsuite.nachos.NachoTextView
+                                android:id="@+id/tag_picker_edit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tag_picker_label"
-                                app:singleSelection="true"
-                                app:selectionRequired="true">
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/default_tag"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Other"
-                                    android:checkable="true"
-                                    android:checked="true"/>
-
-                            </com.google.android.material.chip.ChipGroup>
-
-                            <TextView
-                                android:id="@+id/tag_creator_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tag_picker"
-                                android:layout_centerHorizontal="true"
-                                android:text="or:"
-                                android:textSize="20sp" />
-
-                            <EditText
-                                android:id="@+id/tag_creator"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tag_creator_label"
-                                android:layout_marginTop="5dip"
-                                android:layout_marginBottom="15dip"
-                                android:hint="write new tag's name"/>
+                                app:chipBackground="@color/chip_custom_color"
+                                app:chipTextColor="@color/chip_text_custom_color"
+                                android:hint="'Other' by default, create or choose other tags"/>
 
                         </RelativeLayout>
 

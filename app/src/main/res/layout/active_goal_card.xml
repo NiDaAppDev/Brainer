@@ -178,10 +178,22 @@
                             app:enable_gradient="true" />
 
                         <TextView
-                            android:id="@+id/expanded_active_goal_description"
+                            android:id="@+id/expanded_active_goal_start_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/expanded_active_goal_progress_bar"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10.0dip"
+                            android:text="Start Date"
+                            android:textColor="#ff6f6f6f"
+                            android:textSize="20.0sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/expanded_active_goal_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/expanded_active_goal_start_date"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="10.0dip"
                             android:maxLines="3"

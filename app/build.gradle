@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
     implementation 'it.emperor.animatedcheckbox:animatedcheckbox:1.0.3'
     implementation 'com.github.warkiz.tickseekbar:tickseekbar:0.1.4'
+    implementation "com.hootsuite.android:nachos:1.1.1"
     implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
     implementation 'com.github.TutorialsAndroid:MTextField:v4.0.19'
     implementation 'com.airbnb.android:lottie:3.3.0'

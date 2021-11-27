@@ -21,7 +21,7 @@ public class GoalContract {
 
         public static final String COLUMN_GOAL_SATISFACTION = "satisfaction";
 
-        public static final String COLUMN_GOAL_TAG = "tag";
+        public static final String COLUMN_GOAL_TAGS = "tag";
 
         public static final String COLUMN_GOAL_NAME = "name";
 

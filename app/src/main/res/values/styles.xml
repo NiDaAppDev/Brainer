@@ -15,6 +15,7 @@
             @style/Widget.App.ExtendedFloatingActionButton</item>
 
         <item name="chipStyle">@style/customChip</item>
+
     </style>
 
 
