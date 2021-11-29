@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.AchievedGoalsFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -57,105 +57,148 @@
                     android:gravity="center"
                     android:padding="15.0dip">
 
-                    <TextView
-                        android:id="@+id/achieved_goals_fragment_sort_dialog_label"
+
+                    <ScrollView
+                        android:id="@+id/achieved_goals_sort_dialog_scroll_container"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sort Goals"
-                        android:layout_centerHorizontal="true"
-                        android:layout_margin="15dp"
-                        android:textSize="30sp"/>
+                        android:layout_height="500dp">
 
-                    <TextView
-                        android:id="@+id/achieved_goals_fragment_sort_dialog_sort_by_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:layout_below="@id/achieved_goals_fragment_sort_dialog_label"
-                        android:text="Sort By:"/>
-
-                    <RadioGroup
-                        android:id="@+id/achieved_goals_fragment_sort_by_radio_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/achieved_goals_fragment_sort_dialog_sort_by_label">
-
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_name_radio_btn"
-                            android:layout_width="match_parent"
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Name"/>
+                            android:background="@drawable/add_new_active_activity_dialog_background"
+                            android:gravity="center">
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_finish_date_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Finish Date"/>
+                            <TextView
+                                android:id="@+id/achieved_goals_fragment_sort_dialog_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_margin="15dp"
+                                android:text="Sort Goals"
+                                android:textSize="30sp" />
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_difficulty_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Difficulty Level"/>
+                            <TextView
+                                android:id="@+id/achieved_goals_fragment_sort_dialog_sort_by_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_sort_dialog_label"
+                                android:text="Sort By:"
+                                android:textSize="20sp" />
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_evolving_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Evolving Level"/>
+                            <RadioGroup
+                                android:id="@+id/achieved_goals_fragment_sort_by_radio_group"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_sort_dialog_sort_by_label">
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_satisfaction_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Satisfaction Level"/>
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_name_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:checked="true"
+                                    android:text="Name" />
 
-                    </RadioGroup>
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_finish_date_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:text="Finish Date" />
 
-                    <TextView
-                        android:id="@+id/achieved_goals_fragment_sort_dialog_asc_desc_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:layout_below="@id/achieved_goals_fragment_sort_by_radio_group"
-                        android:text="Ascending / Descending:"/>
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_difficulty_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:text="Difficulty Level" />
 
-                    <RadioGroup
-                        android:id="@+id/achieved_goals_fragment_asc_desc_radio_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/achieved_goals_fragment_sort_dialog_asc_desc_label">
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_evolving_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:text="Evolving Level" />
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_asc_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Ascending"/>
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_satisfaction_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:text="Satisfaction Level" />
 
-                        <RadioButton
-                            android:id="@+id/achieved_goals_fragment_desc_radio_btn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPrimary"
-                            android:text="Descending"/>
+                            </RadioGroup>
 
-                    </RadioGroup>
+                            <TextView
+                                android:id="@+id/achieved_goals_fragment_sort_dialog_asc_desc_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_sort_by_radio_group"
+                                android:text="Ascending / Descending:"
+                                android:textSize="20sp" />
+
+                            <RadioGroup
+                                android:id="@+id/achieved_goals_fragment_asc_desc_radio_group"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_sort_dialog_asc_desc_label">
+
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_asc_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:checked="true"
+                                    android:text="Ascending" />
+
+                                <RadioButton
+                                    android:id="@+id/achieved_goals_fragment_desc_radio_btn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="@color/colorPrimary"
+                                    android:text="Descending" />
+
+                            </RadioGroup>
+
+                            <TextView
+                                android:id="@+id/achieved_goals_fragment_sort_dialog_tag_filter_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_asc_desc_radio_group"
+                                android:text="Filter Tags:"
+                                android:textSize="20sp" />
+
+                            <com.adroitandroid.chipcloud.ChipCloud
+                                android:id="@+id/achieved_goals_fragment_tag_filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/achieved_goals_fragment_sort_dialog_tag_filter_label"
+                                app:gravity="staggered"
+                                app:selectMode="multi"
+                                app:deselectedColor="@color/brain2"
+                                app:deselectedFontColor="@color/brain1"
+                                app:selectedColor="@color/brain1"
+                                app:selectedFontColor="@color/white"
+                                app:selectTransitionMS="150"
+                                app:deselectTransitionMS="150">
+
+                            </com.adroitandroid.chipcloud.ChipCloud>
+
+                        </RelativeLayout>
+
+                    </ScrollView>
+
+
 
                     <RelativeLayout
                         android:id="@+id/achieved_goals_fragment_sort_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/achieved_goals_fragment_asc_desc_radio_group"
+                        android:layout_below="@id/achieved_goals_sort_dialog_scroll_container"
                         android:layout_centerHorizontal="true"
-                        android:layout_margin="15.0dip"
+                        android:layout_marginStart="15.0dip"
+                        android:layout_marginBottom="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
                         android:elevation="8.0dip"

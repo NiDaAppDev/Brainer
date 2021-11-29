@@ -137,9 +137,9 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             int evolving = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_EVOLVING));
             int satisfaction = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_SATISFACTION));
             boolean achieved = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_ACHIEVED)) > 0;
-            String tag = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_TAGS));
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
             String finishDate = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_FINISH_DATE));
-            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, difficulty, evolving, satisfaction, achieved, tag, finishDate);
+            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, difficulty, evolving, satisfaction, achieved, tags, finishDate);
             goals.add(goal);
         }
         cursor.close();
@@ -220,9 +220,16 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             int evolving = PublicMethods.getValueOrDefault(goal.getEvolving(), 0);
             int satisfaction = goal.getSatisfaction();
             boolean achieved = PublicMethods.getValueOrDefault(goal.isAchieved(), false);
-            String tag = PublicMethods.getValueOrDefault(goal.getTag(), "");
+            ArrayList<String> tagsArray = PublicMethods.getValueOrDefault(goal.getTagsAsArrayList(), new ArrayList<>());
             String finishDate = PublicMethods.getValueOrDefault(goal.getFinishDate(), "");
 
+            StringBuilder tags = new StringBuilder();
+            for (int i = 0; i < tagsArray.size(); i++) {
+                if (i > 0){
+                    tags.append(",");
+                }
+                tags.append(tagsArray.get(i));
+            }
 
             //TODO to edit db columns edit here
 
@@ -237,7 +244,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             contentValues.put(GoalEntry.COLUMN_GOAL_EVOLVING, evolving);
             contentValues.put(GoalEntry.COLUMN_GOAL_SATISFACTION, satisfaction);
             contentValues.put(GoalEntry.COLUMN_GOAL_ACHIEVED, achieved);
-            contentValues.put(GoalEntry.COLUMN_GOAL_TAGS, tag);
+            contentValues.put(GoalEntry.COLUMN_GOAL_TAGS, tags.toString());
             contentValues.put(GoalEntry.COLUMN_GOAL_FINISH_DATE, finishDate);
 
             sQLiteDatabase.insert(GoalEntry.TABLE_NAME, null, contentValues);
@@ -336,8 +343,8 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllTags() {
         ArrayList<String> tagsList = new ArrayList<>();
 
-        String query = "SELECT " + GoalEntry.COLUMN_GOAL_TAGS + " FROM " + GoalEntry.TABLE_NAME +
-                " WHERE " + GoalEntry.COLUMN_GOAL_TAGS + " NOT IN ('', 'Other')";
+        String query = "SELECT DISTINCT " + GoalEntry.COLUMN_GOAL_TAGS + " FROM " + GoalEntry.TABLE_NAME +
+                " WHERE " + GoalEntry.COLUMN_GOAL_TAGS + " NOT IN ('')";
 
         Cursor allTagsCursor = sQLiteDatabase.rawQuery(query, null);
 

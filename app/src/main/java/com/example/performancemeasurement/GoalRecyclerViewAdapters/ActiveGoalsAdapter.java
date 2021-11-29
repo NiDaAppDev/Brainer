@@ -178,6 +178,13 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         scrollToPositionInRecyclerView(0, Objects.requireNonNull(recyclerView.getLayoutManager()));
     }
 
+    /**
+     * Set the expanded item from outside the adapter.
+     */
+    public void setExpandedItem(int expandedItem){
+        this.expandedItem = expandedItem;
+    }
+
     public class ActiveGoalsViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout shrunkContainer, subGoalsTitleContainer, selectableContainer;

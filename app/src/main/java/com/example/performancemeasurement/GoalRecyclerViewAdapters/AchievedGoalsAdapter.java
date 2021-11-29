@@ -1,5 +1,7 @@
 package com.example.performancemeasurement.GoalRecyclerViewAdapters;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -9,6 +11,7 @@ import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.adroitandroid.chipcloud.ChipCloud;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
@@ -74,7 +78,8 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         LinearLayout shrunkContainer, subGoalsTitleContainer;
         RelativeLayout expandedContainer, subGoalsRecyclerViewContainer;
         ImageButton btnExpandShrink, btnBackToParent;
-        TextView shrunkTitle, expandedTitle, description, finishDate;
+        TextView shrunkTitle, expandedTitle, description, finishDate, goalsTagsLabel;
+        ChipCloud goalsTagsGroup;
         ImageView medal_1, medal_2, medal_3, medal_4, medal_5, satisfactionEmoji;
         RecyclerView subGoalsRecyclerView;
         boolean shrunk = true;
@@ -91,6 +96,8 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
             expandedTitle = itemView.findViewById(R.id.expanded_achieved_goal_title);
             description = itemView.findViewById(R.id.expanded_achieved_goal_description);
             finishDate = itemView.findViewById(R.id.expanded_achieved_goal_finish_date);
+            goalsTagsLabel = itemView.findViewById(R.id.expanded_achieved_goal_tags_label);
+            goalsTagsGroup = itemView.findViewById(R.id.expanded_achieved_goal_tags_parent);
             medal_1 = itemView.findViewById(R.id.medal_1);
             medal_2 = itemView.findViewById(R.id.medal_2);
             medal_3 = itemView.findViewById(R.id.medal_3);
@@ -280,6 +287,7 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         if (achievedGoals.get(position) == null) {
             return;
         }
+        Log.d(TAG, "onBindViewHolder: " + achievedGoals);
 
         int resource;
         if (expandedItem != position) {
@@ -299,6 +307,8 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
 
         String name = currentGoal.getName(),
                 description = currentGoal.getDescription();
+
+        String[] tags = currentGoal.getTagsAsArray();
 
         holder.shrunkTitle.setText(name);
         holder.expandedTitle.setText(name);
@@ -332,6 +342,10 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         holder.expandedTitle.setTextColor(PublicMethods.getInverseColor(color));
         holder.description.setTextColor(PublicMethods.getInverseColor(color));
         holder.finishDate.setTextColor(PublicMethods.getInverseColor(color));
+        holder.goalsTagsLabel.setTextColor(PublicMethods.getInverseColor(color));
+        holder.goalsTagsGroup.setGravity(ChipCloud.Gravity.CENTER);
+        holder.goalsTagsGroup.removeAllViews();
+        holder.goalsTagsGroup.addChips(tags);
 
         holder.medal_1.setVisibility(View.VISIBLE);
         holder.medal_2.setVisibility(View.VISIBLE);

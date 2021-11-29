@@ -3,6 +3,7 @@ package com.example.performancemeasurement.GoalAndDatabaseObjects;
 import android.content.Context;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Goal {
@@ -18,7 +19,7 @@ public class Goal {
 
     private String startDate;
 
-    private String tag;
+    private ArrayList<String> tags;
 
     private String finishDate;
 
@@ -42,11 +43,11 @@ public class Goal {
         this.timeCounted = 0;
         this.timeEstimated = 100;
         this.achieved = false;
-        this.tag = "";
+        this.tags = new ArrayList<>();
         this.finishDate = "";
     }
 
-    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, String tag, String finishDate) {
+    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
         this.name = name;
         this.description = description;
         this.parentGoal = parentGoal;
@@ -56,7 +57,7 @@ public class Goal {
         this.evolving = evolving;
         this.satisfaction = satisfaction;
         this.achieved = achieved;
-        this.tag = tag;
+        this.tags = tags;
         this.finishDate = finishDate;
     }
 
@@ -97,8 +98,12 @@ public class Goal {
         return satisfaction;
     }
 
-    public String getTag() {
-        return tag;
+    public ArrayList<String> getTagsAsArrayList() {
+        return tags;
+    }
+
+    public String[] getTagsAsArray() {
+        return tags.toArray(new String[0]);
     }
 
     public String getFinishDate() {
@@ -145,8 +150,8 @@ public class Goal {
         this.satisfaction = satisfaction;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
     }
 
     public void setFinishDate(String finishDate) {

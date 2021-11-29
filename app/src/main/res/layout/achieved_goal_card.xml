@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:backgroundTint="@color/transparent"
     android:clickable="true"
-    android:focusable="true"
-    android:backgroundTint="@color/transparent">
+    android:focusable="true">
 
     <FrameLayout
         android:id="@+id/achievedCardHolder"
@@ -17,8 +17,8 @@
             android:id="@+id/achievedCardView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
             android:layout_marginStart="5dp"
+            android:layout_marginTop="5dip"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -29,18 +29,18 @@
                 android:id="@+id/shrunk_achieved_goal_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="11"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="11">
 
                 <TextView
                     android:id="@+id/shrunk_achieved_goal_title"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
-                    android:textSize="40sp"
-                    android:textColor="#ff5a5a5a"
-                    android:text="Goal Name"
                     android:layout_weight="10"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:text="Goal Name"
+                    android:textColor="#ff5a5a5a"
+                    android:textSize="40sp" />
 
                 <ImageButton
                     android:id="@+id/achieved_goal_expand_shrink_btn"
@@ -106,64 +106,95 @@
                     android:id="@+id/expanded_achieved_goal_finish_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="#ff5a5a5a"
-                    android:layout_centerHorizontal="true"
                     android:layout_below="@id/expanded_achieved_goal_description"
-                    android:text="Finished On"/>
+                    android:layout_centerHorizontal="true"
+                    android:text="Finished On"
+                    android:textColor="#ff5a5a5a"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/expanded_achieved_goal_tags_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/expanded_achieved_goal_finish_date"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20.0dip"
+                    android:text="Goal's Tags"
+                    android:textColor="#ff6f6f6f"
+                    android:textSize="20.0sp"
+                    android:textStyle="normal" />
+
+                <com.adroitandroid.chipcloud.ChipCloud
+                    android:id="@+id/expanded_achieved_goal_tags_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/expanded_achieved_goal_tags_label"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginBottom="10dp"
+                    app:selectMode="none"
+                    app:deselectedColor="@color/brain2"
+                    app:deselectedFontColor="@color/brain1"
+                    app:selectedColor="@color/brain1"
+                    app:selectedFontColor="@color/white"
+                    app:chipSpacing="5dp"
+                    app:gravity="center"
+                    app:singleLine="false">
+
+                </com.adroitandroid.chipcloud.ChipCloud>
 
                 <LinearLayout
                     android:id="@+id/achieved_goal_medal_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/expanded_achieved_goal_finish_date"
-                    android:weightSum="5"
-                    android:gravity="center">
+                    android:layout_below="@id/expanded_achieved_goal_tags_parent"
+                    android:gravity="center"
+                    android:weightSum="5">
 
                     <ImageView
                         android:id="@+id/medal_1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/medal"
-                        android:layout_weight="1"/>
+                        android:src="@drawable/medal" />
 
                     <ImageView
                         android:id="@+id/medal_2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/medal"
-                        android:layout_weight="1"/>
+                        android:src="@drawable/medal" />
 
                     <ImageView
                         android:id="@+id/medal_3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/medal"
-                        android:layout_weight="1"/>
+                        android:src="@drawable/medal" />
 
                     <ImageView
                         android:id="@+id/medal_4"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/medal"
-                        android:layout_weight="1"/>
+                        android:src="@drawable/medal" />
 
                     <ImageView
                         android:id="@+id/medal_5"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/medal"
-                        android:layout_weight="1"/>
+                        android:src="@drawable/medal" />
 
                 </LinearLayout>
 
@@ -171,11 +202,11 @@
                     android:id="@+id/achieved_goal_satisfaction_smiley"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
                     android:layout_below="@id/achieved_goal_medal_holder"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="15dp"
-                    android:src="@drawable/smiley_5"/>
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/smiley_5" />
 
                 <LinearLayout
                     android:id="@+id/expanded_achieved_goal_sub_goals_title_container"
@@ -229,7 +260,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/expanded_achieved_goal_sub_goals_recyclerview"
                         android:layout_width="fill_parent"
-                        android:layout_height="100.0dip"/>
+                        android:layout_height="100.0dip" />
                 </RelativeLayout>
 
             </RelativeLayout>

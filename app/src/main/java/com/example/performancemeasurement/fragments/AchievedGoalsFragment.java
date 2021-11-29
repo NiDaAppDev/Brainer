@@ -1,8 +1,10 @@
 package com.example.performancemeasurement.fragments;
 
 
-import android.annotation.SuppressLint;
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.adroitandroid.chipcloud.Chip;
+import com.adroitandroid.chipcloud.ChipCloud;
+import com.adroitandroid.chipcloud.ChipListener;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.Goal;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
 import com.example.performancemeasurement.GoalRecyclerViewAdapters.AchievedGoalsAdapter;
@@ -45,10 +50,12 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
     CircularRevealFrameLayout sortGoalsDialog;
     RadioGroup sortByGroup, ascDescGroup;
     RadioButton byNameRadio, byFinishDateRadio, byDifficultyRadio, byEvolvingRadio, bySatisfactionRadio, ascRadio, descRadio;
+    ChipCloud tagFilter;
     RelativeLayout sortGoalsButton;
     ArrayList<Goal> achievedGoalsArrayList;
     int sortMode;
     boolean ascending = true;
+    ArrayList<Integer> filters = new ArrayList<>(), tempFilters = new ArrayList<>();
     GoalDBHelper db;
 
     public AchievedGoalsFragment() {
@@ -80,9 +87,29 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
         bySatisfactionRadio = v.findViewById(R.id.achieved_goals_fragment_satisfaction_radio_btn);
         ascRadio = v.findViewById(R.id.achieved_goals_fragment_asc_radio_btn);
         descRadio = v.findViewById(R.id.achieved_goals_fragment_desc_radio_btn);
+        tagFilter = v.findViewById(R.id.achieved_goals_fragment_tag_filter);
         sortGoalsButton = v.findViewById(R.id.achieved_goals_fragment_sort_btn);
 
         initGoalsList(v);
+
+        ArrayList<String> allTags = db.getAllTags();
+        Log.d(TAG, "onCreateView: " + allTags);
+        for (int i = 0; i < allTags.size(); i++) {
+            filters.add(i);
+        }
+
+
+        tagFilter.setChipListener(new ChipListener() {
+            @Override
+            public void chipSelected(int index) {
+                tempFilters.add(index);
+            }
+
+            @Override
+            public void chipDeselected(int index) {
+                tempFilters.remove((Object)index);
+            }
+        });
 
         blurBackground.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +121,6 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
         });
 
         sortGoalsButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
                 closeSortGoalsDialog(true);
@@ -204,6 +230,14 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
             ascDescGroup.check(R.id.achieved_goals_fragment_asc_radio_btn);
         }
 
+        tagFilter.removeAllViews();
+        ArrayList<String> allTags = db.getAllTags();
+        tagFilter.addChips(allTags.toArray(new String[0]));
+        for (int filter : filters) {
+            tagFilter.setSelectedChip(filter);
+        }
+
+        tempFilters = new ArrayList<>(filters);
     }
 
     /**
@@ -230,6 +264,8 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
                 ascending = false;
             }
 
+            filters = new ArrayList<>(tempFilters);
+
             sort(sortMode, ascending, achievedGoalsArrayList);
         }
 
@@ -245,6 +281,26 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
 
         this.sortMode = sortMode;
         this.ascending = ascending;
+
+        ArrayList<Goal> filteredArrayListToRemoveFromOriginal = new ArrayList<>();
+
+        arrayListToSort.clear();
+        arrayListToSort.addAll(db.getAchievedGoalsArrayList());
+
+        for (Goal goal : arrayListToSort) {
+            boolean goalHasOneOfTheTags = false;
+            for (int filterTag : filters) {
+                if (goal.getTagsAsArrayList().contains(((Chip) tagFilter.getChildAt(filterTag)).getText().toString())) {
+                    goalHasOneOfTheTags = true;
+                }
+            }
+            if (!goalHasOneOfTheTags) {
+                filteredArrayListToRemoveFromOriginal.add(goal);
+            }
+        }
+
+        arrayListToSort.removeAll(filteredArrayListToRemoveFromOriginal);
+
 
         switch (sortMode) {
             case 1:

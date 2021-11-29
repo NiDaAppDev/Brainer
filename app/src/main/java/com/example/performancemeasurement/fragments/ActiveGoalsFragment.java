@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -184,6 +185,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             @Override
             public void onClick(View v) {
                 closeSortGoalsDialog(true);
+                mainActiveGoalsAdapter.setExpandedItem(-1);
                 mainActiveGoalsAdapter.notifyDataSetChanged();
             }
         });
@@ -328,7 +330,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             parent = new Random().nextBoolean() ? "1" : "";
             progress = new Random().nextInt(100) + 1;
 
-            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, false, "", "");
+            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, false, new ArrayList<String>(), "");
             db.addGoal(goal);
         }
         mainActiveGoalsAdapter.swapCursor(db.getActiveGoalsCursor());
@@ -525,6 +527,9 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      */
     public void closeAddNewGoalDialog() {
 
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getContext().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
         //fab.setExpanded(false);
         addNewGoalDialog.setVisibility(View.INVISIBLE);
         fadeBlurOut();
@@ -559,6 +564,8 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      * Closes the finish-goal dialog.
      */
     public void closeFinishGoalDialog() {
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getContext().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         finishGoalDialog.setVisibility(View.INVISIBLE);
         fadeBlurOut();
         finishGoalDialog.setClickable(false);

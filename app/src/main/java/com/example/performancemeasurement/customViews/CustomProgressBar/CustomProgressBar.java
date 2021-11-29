@@ -64,7 +64,7 @@ public class CustomProgressBar extends View {
             setBaseColor(typedArray.getColor(R.styleable.CustomProgressBar_base_color, getResources().getColor(R.color.round_corner_progress_bar_background_default)));
             setProgressColor(typedArray.getColor(R.styleable.CustomProgressBar_progress_color, getResources().getColor(R.color.round_corner_progress_bar_progress_default)));
             setRadius(typedArray.getFloat(R.styleable.CustomProgressBar_radius, getMeasuredHeight() / 2));
-            setTextSize(typedArray.getFloat(R.styleable.CustomProgressBar_textSize, 30));
+            setTextSize(typedArray.getFloat(R.styleable.CustomProgressBar_customProgressBarTextSize, 30));
             setText(typedArray.getString(R.styleable.CustomProgressBar_text));
             setProgress(typedArray.getFloat(R.styleable.CustomProgressBar_progress_percentage, 0));
             initGradientColor(getProgressColor(), getProgressColor());

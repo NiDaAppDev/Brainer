@@ -4,7 +4,7 @@
     <declare-styleable name="CustomProgressBar">
         <attr name="progress_percentage" format="float"/>
         <attr name="radius" format="float"/>
-        <attr name="textSize" format="float"/>
+        <attr name="customProgressBarTextSize" format="float"/>
         <attr name="base_color" format="integer"/>
         <attr name="progress_color" format="integer"/>
         <attr name="text" format="string"/>
