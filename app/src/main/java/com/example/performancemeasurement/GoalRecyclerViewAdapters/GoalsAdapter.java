@@ -1,12 +1,14 @@
 package com.example.performancemeasurement.GoalRecyclerViewAdapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.performancemeasurement.GoalAndDatabaseObjects.Goal;
@@ -61,6 +63,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @NonNull
     @Override
     public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -91,6 +94,11 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     public ArrayList<Goal> getGoals() {
         return goals;
+    }
+
+    public void updateGoalsList(ArrayList<Goal> goals){
+        this.goals = goals;
+        notifyDataSetChanged();
     }
 
     public void setGoals(ArrayList<Goal> goals) {

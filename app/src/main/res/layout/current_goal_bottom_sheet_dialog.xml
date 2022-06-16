@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="15dp"
+    android:nestedScrollingEnabled="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:elevation="15.0dip"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/wheel_picker_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/wheel_picker_title_text"
+            android:textSize="20sp"
+            android:textColor="@color/brain2"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wheel_picker_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:padding="10dp"
+            android:layout_below="@id/wheel_picker_title"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

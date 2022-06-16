@@ -8,10 +8,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import com.example.performancemeasurement.App;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.example.performancemeasurement.util.PrefUtil;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +32,8 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
 
     private final SQLiteDatabase sQLiteDatabase = getWritableDatabase();
+
+    private static final StatisticsDBHelper statisticsDB = new StatisticsDBHelper(App.appContext);
 
     public GoalDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,6 +53,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 GoalEntry.COLUMN_GOAL_PARENT + " TEXT NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_COUNTED_TIME + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_ESTIMATED_TIME + " INTEGER NOT NULL, " +
+                GoalEntry.COLUMN_GOAL_COUNTED_POMODORO + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_DIFFICULTY + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_EVOLVING + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_SATISFACTION + " INTEGER NOT NULL, " +
@@ -59,6 +70,16 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + GoalEntry.TABLE_NAME);
         onCreate(db);
+    }
+
+    public Goal getGoalByName(String goalName) {
+        ArrayList<Goal> goals = getAllGoalsArrayList();
+        for (Goal goal : goals) {
+            if (goal.getName().equals(goalName)) {
+                return goal;
+            }
+        }
+        return null;
     }
 
     public Cursor getGoalID(Goal goal) {
@@ -85,7 +106,16 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
         Cursor cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
-        String result = PublicMethods.formatDateTime(cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_TIMESTAMP)));
+        String result = PublicMethods.formatDateTime(cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_TIMESTAMP)));
+        cursor.close();
+        return result;
+    }
+
+    public String getGoalFinishDate(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor.moveToFirst();
+        String result = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_FINISH_DATE));
         cursor.close();
         return result;
     }
@@ -128,18 +158,19 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         Cursor cursor = getWritableDatabase().query(GoalEntry.TABLE_NAME, null, null, null, null, null, GoalEntry.COLUMN_GOAL_NAME + " ASC");
         ArrayList<Goal> goals = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            String name = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_NAME));
-            String description = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_DESCRIPTION));
-            String parent = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_PARENT));
-            int timeCounted = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_COUNTED_TIME));
-            int timeEstimated = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME));
-            int difficulty = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_DIFFICULTY));
-            int evolving = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_EVOLVING));
-            int satisfaction = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_SATISFACTION));
-            boolean achieved = cursor.getInt(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_ACHIEVED)) > 0;
-            ArrayList<String> tags = new ArrayList<>(Arrays.asList(cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
-            String finishDate = cursor.getString(cursor.getColumnIndex(GoalEntry.COLUMN_GOAL_FINISH_DATE));
-            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, difficulty, evolving, satisfaction, achieved, tags, finishDate);
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_NAME));
+            String description = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_DESCRIPTION));
+            String parent = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_PARENT));
+            int timeCounted = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_TIME));
+            int timeEstimated = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME));
+            int pomodoroCounted = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO));
+            int difficulty = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_DIFFICULTY));
+            int evolving = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_EVOLVING));
+            int satisfaction = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_SATISFACTION));
+            boolean achieved = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_ACHIEVED)) > 0;
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
+            String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_FINISH_DATE));
+            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, pomodoroCounted, difficulty, evolving, satisfaction, achieved, tags, finishDate);
             goals.add(goal);
         }
         cursor.close();
@@ -209,23 +240,51 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return sQLiteDatabase.rawQuery(query, null);
     }
 
+    public long getGoalCountedTime(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor.moveToFirst();
+        long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_TIME));
+        cursor.close();
+        return result;
+    }
+
+    public long getGoalEstimatedTime(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor.moveToFirst();
+        long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME));
+        cursor.close();
+        return result;
+    }
+
+    public long getGoalCountedPomodoro(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor.moveToFirst();
+        long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO));
+        cursor.close();
+        return result;
+    }
+
     public void addGoal(Goal goal) {
         if (!doesGoalExist(goal.getName()) && goal.getName().trim().length() != 0 && goal.getTimeEstimated() != 0) {
             String name = goal.getName();
             String description = PublicMethods.getValueOrDefault(goal.getDescription(), "");
             String parent = PublicMethods.getValueOrDefault(goal.getParentGoal(), "");
-            int timeCounted = PublicMethods.getValueOrDefault(goal.getTimeCounted(), 0);
-            int timeEstimated = PublicMethods.getValueOrDefault(goal.getTimeEstimated(), 100);
+            long timeCounted = PublicMethods.getValueOrDefault(goal.getTimeCounted(), 0);
+            long timeEstimated = PublicMethods.getValueOrDefault(goal.getTimeEstimated(), 100);
+            long pomodoroCounted = PublicMethods.getValueOrDefault(goal.getPomodoroCounted(), 0);
             int difficulty = PublicMethods.getValueOrDefault(goal.getDifficulty(), 0);
             int evolving = PublicMethods.getValueOrDefault(goal.getEvolving(), 0);
             int satisfaction = goal.getSatisfaction();
             boolean achieved = PublicMethods.getValueOrDefault(goal.isAchieved(), false);
             ArrayList<String> tagsArray = PublicMethods.getValueOrDefault(goal.getTagsAsArrayList(), new ArrayList<>());
-            String finishDate = PublicMethods.getValueOrDefault(goal.getFinishDate(), "");
+            String finishDate = PublicMethods.getValueOrDefault(goal.getFinishDate(App.appContext), "");
 
             StringBuilder tags = new StringBuilder();
             for (int i = 0; i < tagsArray.size(); i++) {
-                if (i > 0){
+                if (i > 0) {
                     tags.append(",");
                 }
                 tags.append(tagsArray.get(i));
@@ -240,6 +299,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             contentValues.put(GoalEntry.COLUMN_GOAL_PARENT, parent);
             contentValues.put(GoalEntry.COLUMN_GOAL_COUNTED_TIME, timeCounted);
             contentValues.put(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME, timeEstimated);
+            contentValues.put(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO, pomodoroCounted);
             contentValues.put(GoalEntry.COLUMN_GOAL_DIFFICULTY, difficulty);
             contentValues.put(GoalEntry.COLUMN_GOAL_EVOLVING, evolving);
             contentValues.put(GoalEntry.COLUMN_GOAL_SATISFACTION, satisfaction);
@@ -293,14 +353,29 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         sQLiteDatabase.execSQL(clearDBQuery);
     }
 
-    public void progressGoal() {
+    public void progressGoal(String goalName, long secondsProgressed) {
+        String updateGoalProgress = "UPDATE " + GoalEntry.TABLE_NAME +
+                " SET " + GoalEntry.COLUMN_GOAL_COUNTED_TIME + " = '" + (getGoalCountedTime(goalName) + secondsProgressed) +
+                "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        sQLiteDatabase.execSQL(updateGoalProgress);
+        statisticsDB.addMonthlySecondsOfWork((int) secondsProgressed);
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void pomodoroProgressGoal(String goalName) {
+        progressGoal(goalName, PrefUtil.getPomodoroLength() * 60);
+
+        String updateGoalPomodoro = "UPDATE " + GoalEntry.TABLE_NAME +
+                " SET " + GoalEntry.COLUMN_GOAL_COUNTED_POMODORO + " = '" + (getGoalCountedPomodoro(goalName) + 1) +
+                "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+
+        sQLiteDatabase.execSQL(updateGoalPomodoro);
     }
 
     public void editGoal(Goal goal, String newName, String newDescription, ArrayList<Goal> removedSubGoals) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(GoalEntry.COLUMN_GOAL_NAME, newName);
-        contentValues.put(GoalEntry.COLUMN_GOAL_DESCRIPTION, newDescription);
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(GoalEntry.COLUMN_GOAL_NAME, newName);
+//        contentValues.put(GoalEntry.COLUMN_GOAL_DESCRIPTION, newDescription);
 
         //sQLiteDatabase.update(GoalEntry.TABLE_NAME, contentValues, GoalEntry.COLUMN_GOAL_NAME + " = " + goal.getName(), null);
         boolean wasNameChanged = !goal.getName().equals(newName);
@@ -349,7 +424,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         Cursor allTagsCursor = sQLiteDatabase.rawQuery(query, null);
 
         for (allTagsCursor.moveToFirst(); !allTagsCursor.isAfterLast(); allTagsCursor.moveToNext()) {
-            tagsList.addAll(Arrays.asList(allTagsCursor.getString(allTagsCursor.getColumnIndex(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
+            tagsList.addAll(Arrays.asList(allTagsCursor.getString(allTagsCursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
         }
 
         allTagsCursor.close();
@@ -385,6 +460,51 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         sQLiteDatabase.execSQL(query);
     }
 
+    private int getActiveGoalsCount() {
+        return getActiveGoalsArrayList().size();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private ArrayList<Goal> getMonthlyAchievedGoals() {
+        ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
+        ArrayList<Goal> result = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+        int nowMonth = formatter.parseLocalDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date())).getMonthOfYear();
+        int nowYear = formatter.parseLocalDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date())).getYear();
+        for (Goal achievedGoal : achievedGoals) {
+            int goalMonth = formatter.parseLocalDate(achievedGoal.getFinishDate(App.appContext)).getMonthOfYear();
+            int goalYear = formatter.parseLocalDate(achievedGoal.getFinishDate(App.appContext)).getYear();
+            if (nowMonth == goalMonth && nowYear == goalYear) {
+                result.add(achievedGoal);
+            }
+        }
+        return result;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private int getMonthlyDifficultiesAverage() {
+        ArrayList<Goal> monthlyAchievedGoals = getMonthlyAchievedGoals();
+        int result = 0;
+        for (Goal monthlyAchievedGoal : monthlyAchievedGoals) {
+            result += monthlyAchievedGoal.getDifficulty();
+        }
+        return result / monthlyAchievedGoals.size();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public double getUserNeurons() {
+        try {
+            double monthlyAchievedGoals = getMonthlyAchievedGoals().size(),
+                    sumOfGoals = (getMonthlyAchievedGoals().size() + getActiveGoalsCount()),
+                    monthlyDifficultyAverage = getMonthlyDifficultiesAverage(),
+                    monthlyMinutesOfWork = statisticsDB.getMonthlyMinutesOfWork();
+            return ((monthlyAchievedGoals / sumOfGoals) * (monthlyDifficultyAverage / 3.0)) * (monthlyMinutesOfWork / sumOfGoals) * 1000;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     /**
      * Helper function that parses a given table into a string
      * and returns it for easy printing. The string consists of
@@ -402,7 +522,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             do {
                 for (String name : columnNames) {
                     tableString += String.format("%s: %s\n", name,
-                            allRows.getString(allRows.getColumnIndex(name)));
+                            allRows.getString(allRows.getColumnIndexOrThrow(name)));
                 }
                 tableString += "\n";
 

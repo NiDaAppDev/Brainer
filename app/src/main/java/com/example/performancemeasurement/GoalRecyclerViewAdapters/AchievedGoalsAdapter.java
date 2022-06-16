@@ -1,7 +1,5 @@
 package com.example.performancemeasurement.GoalRecyclerViewAdapters;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -11,7 +9,6 @@ import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -287,7 +284,6 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         if (achievedGoals.get(position) == null) {
             return;
         }
-        Log.d(TAG, "onBindViewHolder: " + achievedGoals);
 
         int resource;
         if (expandedItem != position) {
@@ -315,7 +311,7 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         holder.description.setText(description);
         holder.description.setOnTouchListener(this);
         holder.description.setMovementMethod(ScrollingMovementMethod.getInstance());
-        holder.finishDate.setText(currentGoal.getFinishDate());
+        holder.finishDate.setText(currentGoal.getFinishDate(context));
 
         int color = context.getResources().getColor(R.color.difficulty_gold);
         switch (currentGoal.getDifficulty()) {

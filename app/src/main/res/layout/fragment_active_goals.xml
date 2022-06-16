@@ -88,7 +88,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.github.mmin18.widget.RealtimeBlurView
-            android:id="@+id/blur_view"
+            android:id="@+id/blur_view_active_goals_fragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:elevation="5.0dip"
@@ -271,7 +271,7 @@
                         android:textSize="20.0sp" />
 
                     <EditText
-                        android:id="@+id/name_et"
+                        android:id="@+id/name_et_active_goals_fragment"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_label"
@@ -282,13 +282,13 @@
                         android:id="@+id/description_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/name_et"
+                        android:layout_below="@id/name_et_active_goals_fragment"
                         android:layout_gravity="center"
                         android:text="@string/description_of_new_goal_label_dialog"
                         android:textSize="20.0sp" />
 
                     <EditText
-                        android:id="@+id/description_et"
+                        android:id="@+id/description_et_active_goals_fragment"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/description_label"
@@ -296,11 +296,11 @@
                         android:textSize="20.0sp" />
 
                     <RelativeLayout
-                        android:id="@+id/cancel_btn"
+                        android:id="@+id/cancel_btn_active_goals_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et"
-                        android:layout_alignStart="@id/name_et"
+                        android:layout_below="@id/description_et_active_goals_fragment"
+                        android:layout_alignStart="@id/name_et_active_goals_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
@@ -317,11 +317,11 @@
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/add_btn"
+                        android:id="@+id/add_btn_active_goals_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et"
-                        android:layout_alignEnd="@id/description_et"
+                        android:layout_below="@id/description_et_active_goals_fragment"
+                        android:layout_alignEnd="@id/description_et_active_goals_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"

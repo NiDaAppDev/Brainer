@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    tools:context=".fragments.SettingsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/settings_pomodoro_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_pomodoro_title"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/settings_pomodoro_length_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/settings_pomodoro_length_title"
+            android:textSize="18sp"
+            android:textColor="@color/brain2"
+            app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.warkiz.tickseekbar.TickSeekBar
+            android:id="@+id/settings_pomodoro_length_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:tsb_min="15"
+            app:tsb_max="55"
+            app:tsb_progress="25"
+            app:tsb_show_tick_marks_type="divider"
+            app:tsb_show_tick_texts="below"
+            app:tsb_thumb_color="@color/colorPrimary"
+            app:tsb_thumb_size="15dp"
+            app:tsb_tick_marks_color="@color/colorPrimary"
+            app:tsb_tick_texts_color="@color/colorPrimary"
+            app:tsb_ticks_count="9"
+            app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_length_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+
+
+        <TextView
+            android:id="@+id/settings_pomodoro_time_out_length_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/settings_pomodoro_time_out_title"
+            android:textSize="18sp"
+            android:textColor="@color/brain2"
+            app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_length_seekbar"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.warkiz.tickseekbar.TickSeekBar
+            android:id="@+id/settings_pomodoro_time_out_length_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:tsb_min="5"
+            app:tsb_max="20"
+            app:tsb_progress="5"
+            app:tsb_show_tick_marks_type="divider"
+            app:tsb_show_tick_texts="below"
+            app:tsb_thumb_color="@color/colorPrimary"
+            app:tsb_thumb_size="15dp"
+            app:tsb_tick_marks_color="@color/colorPrimary"
+            app:tsb_tick_texts_color="@color/colorPrimary"
+            app:tsb_ticks_count="7"
+            app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_time_out_length_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+
+
+        <TextView
+            android:id="@+id/settings_timer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:text="@string/settings_timer_title"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_time_out_length_seekbar"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/timer_notify_pomodoro_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/settings_timer_notify_pomodoro_switch"
+            android:textColor="@color/brain2"
+            android:textSize="18sp"
+            app:useMaterialThemeColors="true"
+            android:checked="true"
+            app:thumbTint="@color/colorPrimary"
+            app:trackTint="@color/brain2"
+            app:layout_constraintTop_toBottomOf="@id/settings_timer_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

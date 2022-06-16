@@ -27,6 +27,8 @@ public class Goal {
 
     private int timeEstimated;
 
+    private int pomodoroCounted;
+
     private int difficulty;
 
     private int evolving;
@@ -42,17 +44,19 @@ public class Goal {
         this.startDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         this.timeCounted = 0;
         this.timeEstimated = 100;
+        this.pomodoroCounted = 0;
         this.achieved = false;
         this.tags = new ArrayList<>();
         this.finishDate = "";
     }
 
-    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
+    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int pomodoroCounted, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
         this.name = name;
         this.description = description;
         this.parentGoal = parentGoal;
         this.timeCounted = timeCounted;
         this.timeEstimated = timeEstimated;
+        this.pomodoroCounted = pomodoroCounted;
         this.difficulty = difficulty;
         this.evolving = evolving;
         this.satisfaction = satisfaction;
@@ -86,6 +90,10 @@ public class Goal {
         return this.timeEstimated;
     }
 
+    public int getPomodoroCounted() {
+        return pomodoroCounted;
+    }
+
     public int getDifficulty() {
         return difficulty;
     }
@@ -106,8 +114,14 @@ public class Goal {
         return tags.toArray(new String[0]);
     }
 
-    public String getFinishDate() {
-        return finishDate;
+    public String getFinishDate(Context context) {
+        db = new GoalDBHelper(context);
+        try {
+            return db.getGoalFinishDate(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean isAchieved() {
@@ -138,6 +152,10 @@ public class Goal {
         this.timeEstimated = timeEstimated;
     }
 
+    public void setPomodoroCounted(int pomodoroCounted) {
+        this.pomodoroCounted = pomodoroCounted;
+    }
+
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
     }
@@ -158,7 +176,7 @@ public class Goal {
         this.finishDate = finishDate;
     }
 
-    public int getProgress(){
+    public int getProgress() {
         return timeCounted * 100 / timeEstimated;
     }
 

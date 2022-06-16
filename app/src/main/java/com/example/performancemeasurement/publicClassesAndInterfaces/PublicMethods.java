@@ -1,59 +1,32 @@
 package com.example.performancemeasurement.publicClassesAndInterfaces;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
+
+import com.adroitandroid.chipcloud.Chip;
+import com.adroitandroid.chipcloud.ChipCloud;
+import com.example.performancemeasurement.App;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
+import com.example.performancemeasurement.Lottie.DialogHandler;
+import com.example.performancemeasurement.util.PrefUtil;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
-public class PublicMethods<T> extends Application {
+public class PublicMethods<T> {
 
-    public static Context appContext;
     public static Goal finishingGoal;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        PublicMethods.appContext = getApplicationContext();
-    }
-
-    public static <T> void addNewSharedPreferences(String preferenceName, String valuesName, ArrayList<T> values) {
-
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(preferenceName, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = gson.toJson(values);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(valuesName, json);
-        editor.apply();
-
-    }
-
-    public static <T> ArrayList<T> getSharedPreferences(String preferenceName, String valuesName) {
-
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(preferenceName, MODE_PRIVATE);
-        Gson gson = new Gson();
-        ArrayList<T> out = new ArrayList<>();
-        String json = sharedPreferences.getString(valuesName, "");
-        if (!json.isEmpty()) {
-            Type type = new TypeToken<ArrayList<T>>() {
-            }.getType();
-            out = gson.fromJson(json, type);
-        } else {
-            out = null;
-        }
-        return out;
-
-    }
 
     public static <T> ArrayList<T> arrayListWithout(ArrayList<T> arrayList, ArrayList<T> exceptions) {
         ArrayList<T> output = new ArrayList<>(arrayList);
@@ -94,6 +67,15 @@ public class PublicMethods<T> extends Application {
 
     }
 
+    public static String formatStopWatchTime(long millis) {
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     public static int getInverseColor(int color) {
         int red = Color.red(color);
         int green = Color.green(color);
@@ -103,13 +85,229 @@ public class PublicMethods<T> extends Application {
     }
 
     public static int positionOfGoalInGoalsArrayList(String goalName, ArrayList<Goal> goalsArrayList) {
-        int output = 0;
-        for (Goal goal1 : goalsArrayList) {
-            if (goalName.equals(goal1.getName())) {
-                return goalsArrayList.indexOf(goal1);
+        for (Goal goal : goalsArrayList) {
+            if (goalName.equals(goal.getName())) {
+                return goalsArrayList.indexOf(goal);
             }
         }
         return -1;
+    }
+
+    /**
+     * Sort the ActiveGoalsFragment cards.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void sortActiveGoals(Context context, PrefUtil.ActiveSortMode sortMode, boolean ascending, ArrayList<Goal> arrayListToSort) {
+        PrefUtil.setActiveSortMode(sortMode);
+        PrefUtil.setActiveAscending(ascending);
+        switch (sortMode) {
+            case Date:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        Date d1 = sdf.parse(o1.getStartDate(context)),
+                                d2 = sdf.parse(o2.getStartDate(context));
+                        return d1.compareTo(d2);
+                    } catch (ParseException e) {
+                        return 0;
+                    }
+                });
+                break;
+            case Name:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                break;
+            case Progress:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> o1.getProgress() - o2.getProgress());
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * Sort the AchievedGoalsFragment cards.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void sortAchievedGoals(Context context, PrefUtil.AchievedSortMode sortMode, boolean ascending, ArrayList<Goal> arrayListToSort, ChipCloud tagFilter, ArrayList<Integer> filters) {
+
+        PrefUtil.setAchievedSortMode(sortMode);
+        PrefUtil.setAchievedAscending(ascending);
+        PrefUtil.setAchievedGoalsFilters(filters);
+
+        ArrayList<Goal> filteredArrayListToRemoveFromOriginal = new ArrayList<>();
+
+        GoalDBHelper db = new GoalDBHelper(context);
+        arrayListToSort.clear();
+        arrayListToSort.addAll(db.getAchievedGoalsArrayList());
+
+        for (Goal goal : arrayListToSort) {
+            boolean goalHasOneOfTheTags = false;
+            for (int filterTag : filters) {
+                if (tagFilter != null && goal.getTagsAsArrayList().contains(((Chip) tagFilter.getChildAt(filterTag)).getText().toString())) {
+                    goalHasOneOfTheTags = true;
+                }
+            }
+            if (!goalHasOneOfTheTags) {
+                filteredArrayListToRemoveFromOriginal.add(goal);
+            }
+        }
+
+        arrayListToSort.removeAll(filteredArrayListToRemoveFromOriginal);
+
+
+        switch (sortMode) {
+            case Name:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                break;
+            case FinishDate:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        Date d1 = sdf.parse(o1.getFinishDate(context)),
+                                d2 = sdf.parse(o2.getFinishDate(context));
+                        return d1.compareTo(d2);
+                    } catch (ParseException e) {
+                        return 0;
+                    }
+                });
+                break;
+            case Difficulty:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> o1.getDifficulty() - o2.getDifficulty());
+                break;
+            case Evolving:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> o1.getEvolving() - o2.getEvolving());
+                break;
+            case Satisfaction:
+                Collections.sort(arrayListToSort, (o1, o2) -> {
+                    try {
+                        int numericO1 = Integer.parseInt(o1.getName()),
+                                numericO2 = Integer.parseInt(o2.getName());
+                        return numericO1 - numericO2;
+                    } catch (Exception e) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                Collections.sort(arrayListToSort, (o1, o2) -> o1.getSatisfaction() - o2.getSatisfaction());
+                break;
+            default:
+                break;
+        }
+
+        if (!ascending) {
+            Collections.reverse(arrayListToSort);
+        }
+
+    }
+
+
+
+    /**
+     * handles what happens when trying to save edits while name was changed and identical to
+     * another goals name.
+     *
+     */
+    public static void openIdenticalGoalNameWarningDialog(Context context, Activity activity, String name) {
+        DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
+        Runnable okProcedure;
+        okProcedure = new Runnable() {
+            @Override
+            public void run() {
+                /* Here handle whatever happens when user clicks the 'OK' button.*/
+            }
+        };
+        dialogHandler.showDialog(activity,
+                context,
+                "Goals Name Already Exist",
+                "The name \"" + name + "\" is already used on another goal. Please think of another name for your goal.",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_WARNING,
+                null);
+    }
+
+    /**
+     * handles what happens when trying to save edits while name was changed and identical to
+     * another goals name.
+     *
+     */
+    public static void openGoalNameNotValidWarningDialog(Context context, Activity activity, String name) {
+        DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
+        Runnable okProcedure;
+        okProcedure = new Runnable() {
+            @Override
+            public void run() {
+                /* Here handle whatever happens when user clicks the 'OK' button.*/
+            }
+        };
+        dialogHandler.showDialog(activity,
+                context,
+                "Goals Name Is Not Valid",
+                "The name \"" + name + "\" is not valid. Please think of another name for your goal.",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_WARNING,
+                null);
     }
 
     public static void setFinishingGoal(Goal finishingGoal) {
@@ -120,8 +318,9 @@ public class PublicMethods<T> extends Application {
         return finishingGoal;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public static Context getAppContext() {
-        return PublicMethods.appContext;
+        return App.appContext;
     }
 
 }

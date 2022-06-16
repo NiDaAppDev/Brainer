@@ -18,9 +18,6 @@
     <string name="description_of_new_goal_hint_dialog">Description Of The New Goal</string>
     <string name="cancel_adding_new_goal_dialog_button_text">Cancel</string>
     <string name="add_new_goal_dialog_button_text">Add New Goal</string>
-    <string name="goals_preferences_SharedPreferences_name">goalsPreferences</string>
-    <string name="brain_preferences_SharedPreferences_name">brainPreferences</string>
-    <string name="lightning_view_sizes_SharedPreferences_value_name">lightningViewSizes</string>
     <string name="edit_goal">Edit Goal</string>
     <string name="expand_goal">Expand Goal</string>
     <string name="finish">Finish Goal</string>
@@ -31,4 +28,20 @@
     <string name="finish_goal_dialog_finish_button_text">Finish</string>
     <string name="active_goals_fragment_menu_sort_item_label">Sort</string>
     <string name="sort_goals_dialog_button_text">Sort</string>
+    <string name="timer_notification_background_allowed_title">Goal In Progress</string>
+    <string name="time_out_notification_background_allowed_title">Time Out</string>
+    <string name="timer_notification_background_restricted_title">Background Activity is Restricted</string>
+    <string name="timer_notification_button_caption">STOP</string>
+    <string name="lose_pomodoro_dialog_content_text">Stopping the timer now will lead to losing all this session - Pomodoro must be complete in order to count. \n\nAre you sure you want to stop this session?</string>
+    <string name="lose_pomodoro_dialog_label">Are you sure?</string>
+    <string name="suggest_break_dialog_label">Take a Break?</string>
+    <string name="lose_pomodoro_dialog_no_button_text">No</string>
+    <string name="lose_pomodoro_dialog_yes_button_text">Yes</string>
+    <string name="settings_nav_text">Settings</string>
+    <string name="settings_pomodoro_title">Pomodoro</string>
+    <string name="settings_pomodoro_length_title">Pomodoro Session Length\n(In Minutes)</string>
+    <string name="settings_pomodoro_time_out_title">Pomodoro Session Time Out Length\n(In Minutes)</string>
+    <string name="settings_timer_title">Stopwatch</string>
+    <string name="settings_timer_notify_pomodoro_switch">Suggest taking a rest when the session passes the pomodoro session length</string>
+    <string name="wheel_picker_title_text">Choose a Goal to work on:</string>
 </resources>

@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +37,7 @@ import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.developer.mtextfield.ExtendedEditText;
 import com.developer.mtextfield.TextFieldBoxes;
-import com.example.performancemeasurement.GoalAndDatabaseObjects.DialogHandler;
+import com.example.performancemeasurement.Lottie.DialogHandler;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.Goal;
 import com.example.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
 import com.example.performancemeasurement.R;
@@ -44,11 +45,13 @@ import com.example.performancemeasurement.activities.MainActivity;
 import com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar;
 import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.example.performancemeasurement.util.PrefUtil;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.hootsuite.nachos.NachoTextView;
 import com.hootsuite.nachos.terminator.ChipTerminatorHandler;
 import com.hootsuite.nachos.validator.ChipifyingNachoValidator;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.warkiz.tickseekbar.TickSeekBar;
 
 import java.util.ArrayList;
@@ -76,7 +79,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     private final CircularRevealFrameLayout finishGoalDialog;
     private final TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
     private final NachoTextView tagPickerEditText;
-    private DialogHandler stopEditDialogHandler;
+    private DialogHandler dialogHandler;
     private final ExtendedFloatingActionButton fab;
 
     public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, NachoTextView tagPickerEditText) {
@@ -172,10 +175,12 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         activeGoals = db.getActiveGoalsArrayList();
     }
 
-    public void updateAddedActiveGoal() {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void updateAddedActiveGoal(String goalName) {
         activeGoals = db.getActiveGoalsArrayList();
-        notifyItemInserted(0);
-        scrollToPositionInRecyclerView(0, Objects.requireNonNull(recyclerView.getLayoutManager()));
+        PublicMethods.sortActiveGoals(context, PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoals);
+        notifyItemInserted(PublicMethods.positionOfGoalInGoalsArrayList(goalName, activeGoals));
+        scrollToPositionInRecyclerView(PublicMethods.positionOfGoalInGoalsArrayList(goalName, activeGoals), Objects.requireNonNull(recyclerView.getLayoutManager()));
     }
 
     /**
@@ -366,7 +371,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                         if (singleSelectedGoal == null) {
                             singleSelect(true);
                         } else {
-                            ((ActiveGoalsViewHolder) Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeGoals.indexOf(singleSelectedGoal)))).singleSelect(false);
+                            ((ActiveGoalsViewHolder) Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(PublicMethods.positionOfGoalInGoalsArrayList(singleSelectedGoal.getName(), activeGoals)))).singleSelect(false);
                             singleSelect(true);
                         }
                     }
@@ -701,7 +706,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                         break;
                     }
                     Log.d(TAG, "endEdit: not: (" + editedGoal.getName() + ", " + newName + ")");
-                    openIdenticalGoalNameWarningDialog(newName);
+                    PublicMethods.openIdenticalGoalNameWarningDialog(context, activity, newName);
                     doneEditing = false;
                     break;
                 case "delete":
@@ -816,8 +821,6 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         int timeCounted = currentGoal.getTimeCounted(),
                 timeEstimated = currentGoal.getTimeEstimated();
 
-        Log.d(TAG, "onBindViewHolder: " + name + ": " + startDateText);
-
         holder.shrunkProgressBar.setText(name);
         holder.shrunkProgressBar.setProgress((timeCounted * 100 / timeEstimated));
         holder.shrunkProgressBar.setRadius(300.0f);
@@ -858,7 +861,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
      * @return if the user wants to continue.
      */
     public boolean openStopEditWarningDialog(Goal editedGoal, int adapterPosition) {
-        stopEditDialogHandler = new DialogHandler();
+        dialogHandler = DialogHandler.getDialogHandler(context);
         Runnable okProcedure;
         okProcedure = new Runnable() {
             @Override
@@ -866,25 +869,14 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 scrollToPositionInRecyclerView(editedItem, Objects.requireNonNull(recyclerView.getLayoutManager()));
             }
         };
-        return stopEditDialogHandler.continueExpanding(activity, context, "Goal In Edit", "Changes were made to " + editedGoal.getName() + ". You cannot proceed while it's edited", "OK", okProcedure);
-    }
-
-    /**
-     * handles what happens when trying to save edits while name was changed and identical to
-     * another goals name.
-     *
-     * @returnif the user wants to continue.
-     */
-    public boolean openIdenticalGoalNameWarningDialog(String name) {
-        stopEditDialogHandler = new DialogHandler();
-        Runnable okProcedure;
-        okProcedure = new Runnable() {
-            @Override
-            public void run() {
-                /* Here handle whatever happens when user clicks the 'OK' button.*/
-            }
-        };
-        return stopEditDialogHandler.continueExpanding(activity, context, "Goals Name Already Exist", "The name \"" + name + "\" is already used on another goal. Please think of another name for your goal.", "OK", okProcedure);
+        return dialogHandler.showDialog(activity,
+                context,
+                "Goal In Edit",
+                "Changes were made to " + editedGoal.getName() + ". You cannot proceed while it's edited",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_WARNING,
+                null);
     }
 
     /**
@@ -894,7 +886,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
      * @return the dialog explaining why the user can't finish the goal (due to its unfinished goals).
      */
     public boolean openCantFinishGoalWarningDialog(Goal goal) {
-        stopEditDialogHandler = new DialogHandler();
+        dialogHandler = DialogHandler.getDialogHandler(context);
         Runnable okProcedure;
         okProcedure = new Runnable() {
             @Override
@@ -902,7 +894,14 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 /* Here handle whatever happens when user clicks the 'OK' button.*/
             }
         };
-        return stopEditDialogHandler.continueExpanding(activity, context, "Goal Has Active Subgoals", "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal).toString(), "OK", okProcedure);
+        return dialogHandler.showDialog(activity,
+                context,
+                "Goal Has Active (Unfinished) Subgoals",
+                "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal).toString().substring(1, db.getSubGoalsArrayListOf(goal).toString().length() - 1),
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_WARNING,
+                null);
     }
 
     /**

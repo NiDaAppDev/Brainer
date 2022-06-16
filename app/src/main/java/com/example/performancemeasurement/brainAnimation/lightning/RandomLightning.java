@@ -1,22 +1,34 @@
 package com.example.performancemeasurement.brainAnimation.lightning;
 
+import static com.example.performancemeasurement.util.Constants.BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME;
+import static com.example.performancemeasurement.util.Constants.LIGHTNING_VIEW_SIZES_PREFERENCE_NAME;
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PathEffect;
+import android.graphics.PathMeasure;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.performancemeasurement.R;
-import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.example.performancemeasurement.util.PrefUtil;
 
 import java.util.ArrayList;
 import java.util.Random;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class RandomLightning extends View {
 
@@ -33,8 +45,9 @@ public class RandomLightning extends View {
      * setBoundOnRuntime method:
      * this method sets the bounds of the lightning on runtime based on the view-of-the-lightnings size.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void setBoundsOnRuntime() {
-        ArrayList<Double> sizes1 = PublicMethods.getSharedPreferences(PublicMethods.getAppContext().getString(R.string.brain_preferences_SharedPreferences_name), PublicMethods.getAppContext().getString(R.string.lightning_view_sizes_SharedPreferences_value_name));
+        ArrayList<Double> sizes1 = PrefUtil.getArrayListPreferences(BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME, LIGHTNING_VIEW_SIZES_PREFERENCE_NAME);
         ArrayList<Integer> sizes = new ArrayList<>();
         if (sizes1 != null) {
             for (int i = 0; i < sizes1.size(); i++) {
@@ -63,18 +76,21 @@ public class RandomLightning extends View {
      * these constructors initialize the class when created, with different arguments, not affecting
      * the initialization (they all call the init1() and init2() methods).
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public RandomLightning(Context context) {
         super(context);
         init1();
         init2();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public RandomLightning(Context context, AttributeSet attrs) {
         super(context, attrs);
         init1();
         init2();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public RandomLightning(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init1();
@@ -143,6 +159,7 @@ public class RandomLightning extends View {
      * this method initializes everything that is set in the beginning and should not change, and
      * has nothing to do with the animations.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void init1() {
         setBoundsOnRuntime();
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -393,18 +410,19 @@ public class RandomLightning extends View {
      *
      * @param timesAMinute is the amount of lightning generated in a minute.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void startLightningsInFrequencyOf(int timesAMinute) {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
+        if(timesAMinute > 0) {
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
                 init1();
                 init2();
-                /*invalidate();*/
+                invalidate();
                 if (stop == 0) {
                     startLightningsInFrequencyOf(timesAMinute);
                 }
-            }
-        }, 60000 / timesAMinute);
+            }, 60000 / timesAMinute);
+        }
     }
 
     /**

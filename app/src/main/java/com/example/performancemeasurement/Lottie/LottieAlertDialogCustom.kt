@@ -8,6 +8,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.animation.Animation
@@ -22,6 +23,7 @@ class LottieAlertDialogCustom : AlertDialog
 {
     private var mContext : Context
     private var mType:Int?=null
+    private var customAnimationFileName:String?=null
     private var mTitle:String? = null
     private var mDescription:String? = null
     private var mPositiveText:String? = null
@@ -49,6 +51,7 @@ class LottieAlertDialogCustom : AlertDialog
     private constructor(
             context: Context,
             type: Int?,
+            customName: String?,
             title: String?,
             description: String?,
             positiveText: String?,
@@ -66,6 +69,7 @@ class LottieAlertDialogCustom : AlertDialog
     ) : super(context) {
         this.mContext = context
         this.mType = type
+        this.customAnimationFileName = customName
         this.mTitle = title
         this.mDescription = description
         this.mPositiveText = positiveText
@@ -89,7 +93,8 @@ class LottieAlertDialogCustom : AlertDialog
 
     data class Builder(
             private val context: Context? = null,
-            private val type:Int? = null
+            private val type:Int? = null,
+            private val customName: String? = null
     )
     {
         private var title:String? = null
@@ -121,12 +126,13 @@ class LottieAlertDialogCustom : AlertDialog
         fun setNegativeTextColor(color:Int?) : Builder= apply { this.negativeTextColor = color ; return@apply}
         fun setNoneButtonColor(color:Int?) : Builder= apply { this.noneBtnColor = color ; return@apply}
         fun setNoneTextColor(color:Int?) : Builder= apply { this.noneTextColor = color ; return@apply}
-        fun build() = LottieAlertDialogCustom(context!!,type,title, description, positiveText,
+        fun build() = LottieAlertDialogCustom(context!!,type,customName,title,description,positiveText,
                 negativeText,noneText,positiveListener,negativeListener,noneListener,
                 positiveBtnColor,positiveTextColor,negativeBtnColor,negativeTextColor,noneBtnColor,noneTextColor)
 
         fun getContext() : Context? {return context}
         fun getType() : Int? { return  type}
+        fun getCustomName() : String? { return customName}
         fun getTitle() : String? { return  title}
         fun getDescription() : String? { return  description}
         fun getPositiveText() : String? { return  positiveText}
@@ -178,6 +184,7 @@ class LottieAlertDialogCustom : AlertDialog
         if (mDescription!=null)
         {
             tvDescription.setText(mDescription)
+            tvDescription.gravity = View.TEXT_ALIGNMENT_TEXT_START
             tvDescription.visibility=View.VISIBLE
         }
         else
@@ -241,6 +248,7 @@ class LottieAlertDialogCustom : AlertDialog
             btnNone.setTextColor(Color.parseColor("#000000"))
 
         // TYPE CONTROL
+        lAnimation.repeatCount=0
         if (mType == DialogTypes.TYPE_LOADING)
         {
             lAnimation.setAnimation("loading.json")
@@ -249,22 +257,22 @@ class LottieAlertDialogCustom : AlertDialog
         else if (mType == DialogTypes.TYPE_SUCCESS)
         {
             lAnimation.setAnimation("success.json")
-            lAnimation.repeatCount=0
         }
         else if (mType == DialogTypes.TYPE_ERROR)
         {
             lAnimation.setAnimation("error.json")
-            lAnimation.repeatCount=0
         }
         else if (mType == DialogTypes.TYPE_WARNING)
         {
             lAnimation.setAnimation("warning.json")
-            lAnimation.repeatCount=0
         }
         else if (mType == DialogTypes.TYPE_QUESTION)
         {
             lAnimation.setAnimation("question.json")
-            lAnimation.repeatCount=0
+        }
+        else if (mType == DialogTypes.TYPE_CUSTOM)
+        {
+            lAnimation.setAnimation(customAnimationFileName)
         }
         lAnimation.playAnimation()
     }
