@@ -171,8 +171,10 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         singleSelectedGoal = null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void updateGoalsList() {
         activeGoals = db.getActiveGoalsArrayList();
+        PublicMethods.sortActiveGoals(context, PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoals);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -326,6 +328,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
              * controls what happens when an active-goal items edit->cancel button is clicked.
              */
             btnCancel.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View v) {
                     Goal currentGoal = activeGoals.get(getAdapterPosition());
@@ -337,6 +340,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
              * controls what happens when an active-goal items edit->save button is clicked.
              */
             btnSave.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View v) {
                     Goal currentGoal = activeGoals.get(getAdapterPosition());
@@ -348,9 +352,13 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
              * controls what happens when an active-goal items edit->delete button is clicked.
              */
             btnDelete.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View v) {
                     Goal currentGoal = activeGoals.get(getAdapterPosition());
+                    if(PrefUtil.getCurrentGoal().equals(currentGoal.getName())){
+                        PrefUtil.setCurrentGoal("");
+                    }
                     endEdit(currentGoal, currentGoal.getName(), currentGoal.getDescription(), removedSubGoals, "delete");
                 }
             });
@@ -691,6 +699,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
          * @param removedSubGoals is the new subGoals list to be saved as the goals subGoals (if it's different from the old one).
          * @param endTitle        is the kind of ending of the edit - "save", "delete" or "cancel" - that param decides if the edits will be saved, the goal will be deleted from the database, or the edits will just be ignored, respectively
          */
+        @RequiresApi(api = Build.VERSION_CODES.M)
         private void endEdit(Goal editedGoal, String newName, String newDescription, ArrayList<Goal> removedSubGoals, String endTitle) {
 
             boolean doneEditing = true;
@@ -706,7 +715,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                         break;
                     }
                     Log.d(TAG, "endEdit: not: (" + editedGoal.getName() + ", " + newName + ")");
-                    PublicMethods.openIdenticalGoalNameWarningDialog(context, activity, newName);
+                    PublicMethods.openIdenticalGoalNameErrorDialog(context, activity, newName);
                     doneEditing = false;
                     break;
                 case "delete":
@@ -727,7 +736,6 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 closeEditPanel(true);
                 editedItem = -1;
             }
-
 
         }
 

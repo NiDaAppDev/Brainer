@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.widget.EditText;
 
 import androidx.annotation.RequiresApi;
 
@@ -261,13 +262,11 @@ public class PublicMethods<T> {
     }
 
 
-
     /**
      * handles what happens when trying to save edits while name was changed and identical to
      * another goals name.
-     *
      */
-    public static void openIdenticalGoalNameWarningDialog(Context context, Activity activity, String name) {
+    public static void openIdenticalGoalNameErrorDialog(Context context, Activity activity, String name) {
         DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
         Runnable okProcedure;
         okProcedure = new Runnable() {
@@ -282,23 +281,19 @@ public class PublicMethods<T> {
                 "The name \"" + name + "\" is already used on another goal. Please think of another name for your goal.",
                 "OK",
                 okProcedure,
-                DialogTypes.TYPE_WARNING,
+                DialogTypes.TYPE_ERROR,
                 null);
     }
 
     /**
      * handles what happens when trying to save edits while name was changed and identical to
      * another goals name.
-     *
      */
-    public static void openGoalNameNotValidWarningDialog(Context context, Activity activity, String name) {
+    public static void openGoalNameNotValidErrorDialog(Context context, Activity activity, String name) {
         DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
         Runnable okProcedure;
-        okProcedure = new Runnable() {
-            @Override
-            public void run() {
-                /* Here handle whatever happens when user clicks the 'OK' button.*/
-            }
+        okProcedure = () -> {
+            /* Here handle whatever happens when user clicks the 'OK' button.*/
         };
         dialogHandler.showDialog(activity,
                 context,
@@ -306,7 +301,60 @@ public class PublicMethods<T> {
                 "The name \"" + name + "\" is not valid. Please think of another name for your goal.",
                 "OK",
                 okProcedure,
-                DialogTypes.TYPE_WARNING,
+                DialogTypes.TYPE_ERROR,
+                null);
+    }
+
+    /**
+     * handles what happens when trying to create a new goal without inserting an estimation.
+     */
+    public static void openGoalTimeEstimatedNotValidErrorDialog(Context context, Activity activity) {
+        DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
+        Runnable okProcedure = () -> {
+            /* Here handle whatever happens when user clicks the 'OK' button.*/
+        };
+        dialogHandler.showDialog(activity,
+                context,
+                "Time Estimated Is Not Valid",
+                "You must estimate the goal's duration in order to create it.",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_ERROR,
+                null);
+    }
+
+
+    public static int getNewGoalsTimeEstimated(EditText newGoalsTimeEstimated) {
+        int days, hours, minutes;
+        try {
+            days = Integer.parseInt(newGoalsTimeEstimated.getText().toString().substring(0, 2));
+            hours = Integer.parseInt(newGoalsTimeEstimated.getText().toString().substring(7, 9));
+            minutes = Integer.parseInt(newGoalsTimeEstimated.getText().toString().substring(14, 16));
+        } catch (Exception e) {
+            return 0;
+        }
+        return ((days * 1440) + (hours * 60) + minutes) * 60;
+    }
+
+    /**
+     * handles what happens when trying to create a new goal while timer or pomodoro is running.
+     */
+    public static void openTimerIsRunningErrorDialog(Context context, Activity activity) {
+        DialogHandler dialogHandler = DialogHandler.getDialogHandler(context);
+        Runnable okProcedure = new Runnable() {
+            @Override
+            public void run() {
+                /* Here handle whatever happens when user clicks the 'OK' button.*/
+            }
+        };
+        dialogHandler.showDialog(activity,
+                context,
+                "Timer Is Running",
+                "You cannot create a new goal while another one is in progress." +
+                        "\nPlease finish the current goal's session or stop the timer to create a new goal.",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_ERROR,
                 null);
     }
 

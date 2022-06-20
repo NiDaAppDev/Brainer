@@ -45,7 +45,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.ViewCompat;
@@ -78,6 +77,8 @@ import com.polyak.iconswitch.IconSwitch;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import br.com.sapereaude.maskedEditText.MaskedEditText;
+
 public class OpeningFragment extends Fragment implements IOnFocusListenable, IOnBackPressed {
 
     public enum TimerState {
@@ -92,11 +93,11 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     private static IconSwitch timeMethodSwitch;
     private static FloatingActionButton playPauseBtn, addNewGoalBtn;
     private static GoalsAdapter activeGoalsAdapter;
-    private CardView currentGoalPickerContainer;
     private RelativeLayout addBtn, cancelAddBtn;
     private static RealtimeBlurView blurBackground;
     private static CircularRevealFrameLayout addNewGoalDialog;
     private EditText newGoalsName, newGoalsDescription;
+    private MaskedEditText newGoalsTimeEstimated;
     private BottomSheetDialog currentGoalPickerDialog;
     private RecyclerView currentGoalPicker;
     private static CustomProgressBarButton currentGoalProgressBarButton;
@@ -303,6 +304,8 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         cancelAddBtn = v.findViewById(R.id.cancel_btn_opening_fragment);
         newGoalsName = v.findViewById(R.id.name_et_opening_fragment);
         newGoalsDescription = v.findViewById(R.id.description_et_opening_fragment);
+        newGoalsTimeEstimated = v.findViewById(R.id.time_estimation_et_opening_fragment);
+
         initCurrentGoalPicker();
         initCurrentGoalBar();
         updateCurrentGoalBar();
@@ -350,7 +353,6 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         currentGoalPickerDialog.setContentView(R.layout.current_goal_bottom_sheet_dialog);
         currentGoalPickerDialog.setCancelable(true);
         currentGoalPickerDialog.setTitle(R.string.wheel_picker_title_text);
-        currentGoalPickerContainer = v.findViewById(R.id.goal_picker_container);
         currentGoalPicker = currentGoalPickerDialog.findViewById(R.id.wheel_picker_recyclerview);
         activeGoalsAdapter = new GoalsAdapter(getContext(), db.getActiveGoalsArrayList());
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, false);
@@ -372,9 +374,9 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     /**
      * Initializes all the Buttons' clicks (and similar to buttons and clicks).
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initButtonsClick() {
         timeMethodSwitch.setCheckedChangeListener(new IconSwitch.CheckedChangeListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onCheckChanged(IconSwitch.Checked current) {
                 switch (current) {
@@ -389,7 +391,6 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         });
 
         playPauseBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 playPauseAction();
@@ -413,23 +414,27 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         });
 
         addBtn.setOnClickListener(view -> {
-            Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString());
+            Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString(), PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated));
             ArrayList<String> allGoalsNames = new ArrayList<>();
             for (Goal goal : db.getAllGoalsArrayList()) {
                 allGoalsNames.add(goal.getName());
             }
             if (allGoalsNames.contains(newGoal.getName())) {
-                PublicMethods.openIdenticalGoalNameWarningDialog(requireContext(), activity, newGoal.getName());
+                PublicMethods.openIdenticalGoalNameErrorDialog(requireContext(), activity, newGoal.getName());
             } else if (newGoal.getName().trim().isEmpty()) {
-                PublicMethods.openGoalNameNotValidWarningDialog(requireContext(), activity, newGoal.getName());
+                PublicMethods.openGoalNameNotValidErrorDialog(requireContext(), activity, newGoal.getName());
+            } else if (newGoalsTimeEstimated.getText().toString().isEmpty() || PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated) == 0) {
+                PublicMethods.openGoalTimeEstimatedNotValidErrorDialog(requireContext(), activity);
             } else {
                 db.addGoal(newGoal);
+                initCurrentGoalPicker();
                 closeAddNewGoalDialog();
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         });
 
         cancelAddBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 closeAddNewGoalDialog();
@@ -870,12 +875,16 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     /**
      * Opens the add-new-active-goal dialog.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void openAddNewGoalDialog() {
-
-        //fab.setExpanded(true);
-        addNewGoalDialog.setVisibility(View.VISIBLE);
-        fadeBlurIn(blurBackground);
-        addNewGoalDialog.setClickable(true);
+        if (PrefUtil.getTimerState() == TimerState.Running) {
+            PublicMethods.openTimerIsRunningErrorDialog(requireContext(), activity);
+        } else {
+            //fab.setExpanded(true);
+            addNewGoalDialog.setVisibility(View.VISIBLE);
+            fadeBlurIn(blurBackground);
+            addNewGoalDialog.setClickable(true);
+        }
 
     }
 
@@ -883,6 +892,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     /**
      * Closes the add-new-active-goal dialog.
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void closeAddNewGoalDialog() {
 
         final InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -895,7 +905,9 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
         newGoalsName.setText("");
         newGoalsDescription.setText("");
+        newGoalsTimeEstimated.setText("");
 
+        updateCurrentGoalBar();
     }
 
 

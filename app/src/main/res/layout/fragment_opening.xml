@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.OpeningFragment"
-    android:background="@drawable/opening_background">
+    android:background="@drawable/opening_background"
+    tools:context=".fragments.OpeningFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,19 +19,19 @@
             android:id="@+id/time_method_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/brain_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:isw_icon_size="35dp"
+            app:isw_active_tint_icon_left="@color/white"
+            app:isw_active_tint_icon_right="@color/white"
             app:isw_icon_left="@drawable/tomato"
             app:isw_icon_right="@drawable/timer"
-            app:isw_active_tint_icon_left="@color/white"
+            app:isw_icon_size="35dp"
             app:isw_inactive_tint_icon_left="@color/stop_red"
-            app:isw_active_tint_icon_right="@color/white"
             app:isw_inactive_tint_icon_right="@color/lightning_blur"
             app:isw_thumb_color_left="@color/stop_red"
-            app:isw_thumb_color_right="@color/lightning_blur"/>
+            app:isw_thumb_color_right="@color/lightning_blur"
+            app:layout_constraintBottom_toTopOf="@id/brain_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/brain_image"
@@ -39,43 +39,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginEnd="60dp"
-            app:layout_constraintTop_toTopOf="@id/parent"
             app:layout_constraintBottom_toBottomOf="@id/parent"
-            app:layout_constraintStart_toStartOf="@id/parent"
             app:layout_constraintEnd_toEndOf="@id/parent"
-            app:srcCompat="@drawable/brain_image"/>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/goal_picker_container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:elevation="15dp"
-            app:cardCornerRadius="20dp"
-            android:layout_marginBottom="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout"
-            android:visibility="invisible">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="30dp"
-                android:paddingBottom="30dp"
-                android:layout_centerHorizontal="true"
-                android:elevation="15.0dip"
-                android:gravity="center">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/main_goal_wheel_picker_recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintStart_toStartOf="@id/parent"
+            app:layout_constraintTop_toTopOf="@id/parent"
+            app:srcCompat="@drawable/brain_image" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -96,8 +64,8 @@
                 android:elevation="15dp"
                 android:foreground="@drawable/fab_add_new_goal_opening_fragment_border"
                 android:src="@drawable/plus"
-                app:tint="@color/black"
-                app:rippleColor="@color/brain2" />
+                app:rippleColor="@color/brain2"
+                app:tint="@color/black" />
 
             <com.example.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
                 android:id="@+id/goal_progress_bar"
@@ -107,9 +75,9 @@
                 android:layout_marginBottom="7dp"
                 android:layout_weight="5"
                 android:clickable="false"
+                android:duplicateParentState="true"
                 android:elevation="15dp"
                 android:focusable="true"
-                android:duplicateParentState="true"
                 app:enable_gradient="true"
                 app:enable_press="true"
                 app:progress_percentage="100"
@@ -127,8 +95,8 @@
                 android:elevation="15dp"
                 android:foreground="@drawable/fab_green_play_pause_opening_fragment_border"
                 android:src="@drawable/play"
-                app:tint="@color/black"
-                app:rippleColor="@color/stop_red" />
+                app:rippleColor="@color/stop_red"
+                app:tint="@color/black" />
 
 
         </LinearLayout>
@@ -137,12 +105,12 @@
             android:id="@+id/blur_view_opening_fragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:elevation="5.0dip"
             android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:realtimeBlurRadius="20.0dip"
             app:realtimeOverlayColor="#88000000" />
 
@@ -150,14 +118,14 @@
             android:id="@+id/add_new_goal_dialog_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="15.0dip"
             android:elevation="10.0dip"
             android:visibility="invisible"
-            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior">
+            app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/add_new_goal_dialog"
@@ -189,7 +157,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/add_new_goal_dialog_label"
-                        android:layout_gravity="center"
                         android:text="@string/name_of_new_goal_label_dialog"
                         android:textSize="20.0sp" />
 
@@ -206,7 +173,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_et_opening_fragment"
-                        android:layout_gravity="center"
                         android:text="@string/description_of_new_goal_label_dialog"
                         android:textSize="20.0sp" />
 
@@ -218,12 +184,33 @@
                         android:hint="@string/description_of_new_goal_hint_dialog"
                         android:textSize="20.0sp" />
 
+                    <TextView
+                        android:id="@+id/time_estimation_label_opening_fragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/description_et_opening_fragment"
+                        android:text="@string/time_estimation_of_new_goal_label_dialog"
+                        android:textSize="20.0sp" />
+
+                    <br.com.sapereaude.maskedEditText.MaskedEditText
+                        android:id="@+id/time_estimation_et_opening_fragment"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/time_estimation_label_opening_fragment"
+                        android:inputType="numberDecimal"
+                        app:allowed_chars="0123456789"
+                        app:mask="00 d : 00 h : 00 m"
+                        app:char_representation="0"
+                        android:hint="@string/time_estimation_of_new_goal_hint_dialog"
+                        app:keep_hint="true"
+                        android:textSize="20.0sp"/>
+
                     <RelativeLayout
                         android:id="@+id/cancel_btn_opening_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et_opening_fragment"
-                        android:layout_alignStart="@id/name_et_opening_fragment"
+                        android:layout_below="@id/time_estimation_et_opening_fragment"
+                        android:layout_alignStart="@id/time_estimation_et_opening_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
@@ -243,8 +230,8 @@
                         android:id="@+id/add_btn_opening_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et_opening_fragment"
-                        android:layout_alignEnd="@id/description_et_opening_fragment"
+                        android:layout_below="@id/time_estimation_et_opening_fragment"
+                        android:layout_alignEnd="@id/time_estimation_et_opening_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"

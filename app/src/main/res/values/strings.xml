@@ -12,7 +12,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="name_of_new_goal_label_dialog">New Goal\'s Name: </string>
+    <string name="name_of_new_goal_label_dialog">New Goal\'s Name:</string>
     <string name="name_of_new_goal_hint_dialog">Name Of New Goal</string>
     <string name="description_of_new_goal_label_dialog">New Goal\'s Description:</string>
     <string name="description_of_new_goal_hint_dialog">Description Of The New Goal</string>
@@ -44,4 +44,6 @@
     <string name="settings_timer_title">Stopwatch</string>
     <string name="settings_timer_notify_pomodoro_switch">Suggest taking a rest when the session passes the pomodoro session length</string>
     <string name="wheel_picker_title_text">Choose a Goal to work on:</string>
+    <string name="time_estimation_of_new_goal_label_dialog">New Goal\'s Estimated Duration:</string>
+    <string name="time_estimation_of_new_goal_hint_dialog">000000</string>
 </resources>

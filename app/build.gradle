@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.github.AchmadHafid:LottieDialog:4.12.0'
     implementation 'com.polyak:icon-switch:1.0.0'
     implementation 'net.danlew:android.joda:2.10.14'
+    implementation 'ru.egslava:MaskedEditText:1.0.5'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

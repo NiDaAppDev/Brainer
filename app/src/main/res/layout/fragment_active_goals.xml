@@ -295,12 +295,34 @@
                         android:hint="@string/description_of_new_goal_hint_dialog"
                         android:textSize="20.0sp" />
 
+                    <TextView
+                        android:id="@+id/time_estimation_label_active_goals_fragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/description_et_active_goals_fragment"
+                        android:text="@string/time_estimation_of_new_goal_label_dialog"
+                        android:textSize="20.0sp" />
+
+
+                    <br.com.sapereaude.maskedEditText.MaskedEditText
+                        android:id="@+id/time_estimation_et_active_goals_fragment"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/time_estimation_label_active_goals_fragment"
+                        android:inputType="numberDecimal"
+                        app:allowed_chars="0123456789"
+                        app:mask="00 d : 00 h : 00 m"
+                        app:char_representation="0"
+                        android:hint="@string/time_estimation_of_new_goal_hint_dialog"
+                        app:keep_hint="true"
+                        android:textSize="20.0sp"/>
+
                     <RelativeLayout
                         android:id="@+id/cancel_btn_active_goals_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et_active_goals_fragment"
-                        android:layout_alignStart="@id/name_et_active_goals_fragment"
+                        android:layout_below="@id/time_estimation_et_active_goals_fragment"
+                        android:layout_alignStart="@id/time_estimation_et_active_goals_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"
@@ -320,8 +342,8 @@
                         android:id="@+id/add_btn_active_goals_fragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/description_et_active_goals_fragment"
-                        android:layout_alignEnd="@id/description_et_active_goals_fragment"
+                        android:layout_below="@id/time_estimation_et_active_goals_fragment"
+                        android:layout_alignEnd="@id/time_estimation_et_active_goals_fragment"
                         android:layout_margin="15.0dip"
                         android:background="@drawable/ripple_button_background"
                         android:clickable="true"

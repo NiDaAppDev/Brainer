@@ -50,6 +50,19 @@ public class Goal {
         this.finishDate = "";
     }
 
+    public Goal(String name, String description, int timeEstimated) {
+        this.name = name;
+        this.description = description;
+        this.parentGoal = "";
+        this.startDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+        this.timeCounted = 0;
+        this.timeEstimated = timeEstimated;
+        this.pomodoroCounted = 0;
+        this.achieved = false;
+        this.tags = new ArrayList<>();
+        this.finishDate = "";
+    }
+
     public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int pomodoroCounted, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
         this.name = name;
         this.description = description;

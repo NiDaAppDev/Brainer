@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import br.com.sapereaude.maskedEditText.MaskedEditText;
+
 public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
 
     View v;
@@ -60,6 +62,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     RadioButton byNameRadio, byProgressRadio, ascRadio, descRadio;
     RelativeLayout cancelAddingNewGoal, addNewGoal, cancelSetAsSubgoalOf, setAsSubgoalOf, cancelFinishGoal, finishGoalButton, sortGoalsButton;
     EditText newGoalsName, newGoalsDescription;
+    MaskedEditText newGoalsTimeEstimated;
     TickSeekBar difficultySeekBar, evolvingSeekBar, satisfactionSeekBar;
     NachoTextView tagPickerEditText;
     Chip defaultTag;
@@ -120,6 +123,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         finishGoalButton = v.findViewById(R.id.finish_goal_dialog_finish_button);
         newGoalsName = v.findViewById(R.id.name_et_active_goals_fragment);
         newGoalsDescription = v.findViewById(R.id.description_et_active_goals_fragment);
+        newGoalsTimeEstimated = v.findViewById(R.id.time_estimation_et_active_goals_fragment);
 
         shrinkFabActions();
 
@@ -151,12 +155,17 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 if (mainActiveGoalsAdapter.getMultiSelected().size() > 0) {
                     for (Goal selectedGoal : mainActiveGoalsAdapter.getMultiSelected()) {
                         db.removeGoal(selectedGoal);
+
+                        activeGoalsArrayList = db.getActiveGoalsArrayList();
+
+                        PublicMethods.sortActiveGoals(requireContext(), PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoalsArrayList);
                         mainActiveGoalsAdapter.notifyItemRemoved(PublicMethods.positionOfGoalInGoalsArrayList(selectedGoal.getName(), activeGoalsArrayList));
                     }
                     mainActiveGoalsAdapter.emptyMultiSelected();
                     mainActiveGoalsAdapter.updateGoalsList();
                 }
                 mainActiveGoalsAdapter.setMultiSelectable(false);
+
             }
         });
 
@@ -205,15 +214,17 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString());
+                Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString(), PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated));
                 ArrayList<String> allGoalsNames = new ArrayList<>();
                 for (Goal goal : db.getAllGoalsArrayList()) {
                     allGoalsNames.add(goal.getName());
                 }
                 if (allGoalsNames.contains(newGoal.getName())) {
-                    PublicMethods.openIdenticalGoalNameWarningDialog(requireContext(), requireActivity(),newGoal.getName());
+                    PublicMethods.openIdenticalGoalNameErrorDialog(requireContext(), requireActivity(), newGoal.getName());
                 } else if (newGoal.getName().trim().isEmpty()) {
-                    PublicMethods.openGoalNameNotValidWarningDialog(requireContext(), requireActivity(), newGoal.getName());
+                    PublicMethods.openGoalNameNotValidErrorDialog(requireContext(), requireActivity(), newGoal.getName());
+                } else if (newGoalsTimeEstimated.getText().toString().isEmpty() || PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated) == 0) {
+                    PublicMethods.openGoalTimeEstimatedNotValidErrorDialog(requireContext(), requireActivity());
                 } else {
                     db.addGoal(newGoal);
                     closeAddNewGoalDialog();
@@ -414,7 +425,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void finishGoal() {
-        if(!PrefUtil.getCurrentGoal().equals(PublicMethods.getFinishingGoal().toString()) || PrefUtil.getTimerState() != OpeningFragment.TimerState.Running) {
+        if (!PrefUtil.getCurrentGoal().equals(PublicMethods.getFinishingGoal().toString()) || PrefUtil.getTimerState() != OpeningFragment.TimerState.Running) {
             ArrayList<String> tagsArray = new ArrayList<>();
             if (!tagPickerEditText.getText().toString().equals("")) {
                 List<com.hootsuite.nachos.chip.Chip> allTagsSelected = tagPickerEditText.getAllChips();
@@ -528,13 +539,16 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     /**
      * Opens the add-new-active-goal dialog.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void openAddNewGoalDialog() {
-
-        //fab.setExpanded(true);
-        addNewGoalDialog.setVisibility(View.VISIBLE);
-        fadeBlurIn();
-        addNewGoalDialog.setClickable(true);
-
+        if (PrefUtil.getTimerState() == OpeningFragment.TimerState.Running) {
+            PublicMethods.openTimerIsRunningErrorDialog(requireContext(), requireActivity());
+        } else {
+            //fab.setExpanded(true);
+            addNewGoalDialog.setVisibility(View.VISIBLE);
+            fadeBlurIn();
+            addNewGoalDialog.setClickable(true);
+        }
     }
 
 
@@ -553,6 +567,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
 
         newGoalsName.setText("");
         newGoalsDescription.setText("");
+        newGoalsTimeEstimated.setText("");
 
     }
 
