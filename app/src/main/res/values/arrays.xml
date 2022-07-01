@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="TimeZonesLy">
+        <item>Hourly</item>
+        <item>Daily</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string-array name="TimeZones">
+        <item>Today</item>
+        <item>This Week</item>
+        <item>This Month</item>
+        <item>This Year</item>
+    </string-array>
+
+</resources>

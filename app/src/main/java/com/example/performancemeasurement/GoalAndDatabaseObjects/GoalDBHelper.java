@@ -22,6 +22,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -198,6 +200,108 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return achievedGoals;
     }
 
+    public ArrayList<Goal> getMostlyPomodoroAchievedGoalsArrayList() {
+        ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
+        ArrayList<Goal> mostlyPomodoroAchievedGoals = new ArrayList<>();
+        for(Goal goal : achievedGoals) {
+            if((float)goal.getPomodoroCounted() * 25f > ((float)goal.getTimeCounted() / 60f) - ((float)goal.getPomodoroCounted() * 25f)) {
+                mostlyPomodoroAchievedGoals.add(goal);
+            }
+        }
+        return mostlyPomodoroAchievedGoals;
+    }
+
+    public ArrayList<Goal> getMostlyRegularAchievedGoalsArrayList() {
+        ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
+        ArrayList<Goal> mostlyRegularAchievedGoals = new ArrayList<>();
+        for(Goal goal : achievedGoals) {
+            if((float)goal.getPomodoroCounted() * 25f < ((float)goal.getTimeCounted() / 60f) - ((float)goal.getPomodoroCounted() * 25f)) {
+                mostlyRegularAchievedGoals.add(goal);
+            }
+        }
+        return mostlyRegularAchievedGoals;
+    }
+
+    public float getPomodoroDifficultyAverage() {
+        ArrayList<Goal> pomodoroAchievedGoals = getMostlyPomodoroAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : pomodoroAchievedGoals) {
+            result += goal.getDifficulty();
+        }
+        result /= pomodoroAchievedGoals.size();
+        return result;
+    }
+
+    public float getRegularDifficultyAverage() {
+        ArrayList<Goal> regularAchievedGoals = getMostlyRegularAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : regularAchievedGoals) {
+            result += goal.getDifficulty();
+        }
+        result /= regularAchievedGoals.size();
+        return result;
+    }
+
+    public float getPomodoroSatisfactionAverage() {
+        ArrayList<Goal> pomodoroAchievedGoals = getMostlyPomodoroAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : pomodoroAchievedGoals) {
+            result += goal.getSatisfaction();
+        }
+        result /= pomodoroAchievedGoals.size();
+        return result;
+    }
+
+    public float getRegularSatisfactionAverage() {
+        ArrayList<Goal> regularAchievedGoals = getMostlyRegularAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : regularAchievedGoals) {
+            result += goal.getSatisfaction();
+        }
+        result /= regularAchievedGoals.size();
+        return result;
+    }
+
+    public float getPomodoroEvolvingAverage() {
+        ArrayList<Goal> pomodoroAchievedGoals = getMostlyPomodoroAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : pomodoroAchievedGoals) {
+            result += goal.getEvolving();
+        }
+        result /= pomodoroAchievedGoals.size();
+        return result;
+    }
+
+    public float getRegularEvolvingAverage() {
+        ArrayList<Goal> regularAchievedGoals = getMostlyRegularAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : regularAchievedGoals) {
+            result += goal.getEvolving();
+        }
+        result /= regularAchievedGoals.size();
+        return result;
+    }
+
+    public float getPomodoroEvaluationAverage() {
+        ArrayList<Goal> pomodoroAchievedGoals = getMostlyPomodoroAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : pomodoroAchievedGoals) {
+            result += (100 - Math.abs(goal.getProgress() - 100)) / 20f;
+        }
+        result /= pomodoroAchievedGoals.size();
+        return result;
+    }
+
+    public float getRegularEvaluationAverage() {
+        ArrayList<Goal> regularAchievedGoals = getMostlyRegularAchievedGoalsArrayList();
+        float result = 0f;
+        for(Goal goal : regularAchievedGoals) {
+            result += (100 - Math.abs(goal.getProgress() - 100)) / 20f;
+        }
+        result /= regularAchievedGoals.size();
+        return result;
+    }
+
     public ArrayList<Goal> getSubGoalsArrayListOf(Goal goal) {
         ArrayList<Goal> subGoals = new ArrayList<>();
         for (Goal subGoal : getAllGoalsArrayList()) {
@@ -264,6 +368,15 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO));
         cursor.close();
+        return result;
+    }
+
+    public long getAllTimePomodoroCount(){
+        ArrayList<Goal> goals = getAllGoalsArrayList();
+        long result = 0;
+        for(Goal goal : goals) {
+            result += goal.getPomodoroCounted();
+        }
         return result;
     }
 
@@ -353,15 +466,16 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         sQLiteDatabase.execSQL(clearDBQuery);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void progressGoal(String goalName, long secondsProgressed) {
         String updateGoalProgress = "UPDATE " + GoalEntry.TABLE_NAME +
                 " SET " + GoalEntry.COLUMN_GOAL_COUNTED_TIME + " = '" + (getGoalCountedTime(goalName) + secondsProgressed) +
                 "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
         sQLiteDatabase.execSQL(updateGoalProgress);
-        statisticsDB.addMonthlySecondsOfWork((int) secondsProgressed);
+        statisticsDB.addHourlySecondsOfWork((int) secondsProgressed);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void pomodoroProgressGoal(String goalName) {
         progressGoal(goalName, PrefUtil.getPomodoroLength() * 60);
 
@@ -370,6 +484,8 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 "' WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
 
         sQLiteDatabase.execSQL(updateGoalPomodoro);
+
+        statisticsDB.addCurrentHourNeurons();
     }
 
     public void editGoal(Goal goal, String newName, String newDescription, ArrayList<Goal> removedSubGoals) {
@@ -460,12 +576,12 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         sQLiteDatabase.execSQL(query);
     }
 
-    private int getActiveGoalsCount() {
+    public int getActiveGoalsCount() {
         return getActiveGoalsArrayList().size();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private ArrayList<Goal> getMonthlyAchievedGoals() {
+    public ArrayList<Goal> getMonthlyAchievedGoals() {
         ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
         ArrayList<Goal> result = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
@@ -482,8 +598,11 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private int getMonthlyDifficultiesAverage() {
+    public int getMonthlyDifficultiesAverage() {
         ArrayList<Goal> monthlyAchievedGoals = getMonthlyAchievedGoals();
+        if(monthlyAchievedGoals.isEmpty()){
+            return 0;
+        }
         int result = 0;
         for (Goal monthlyAchievedGoal : monthlyAchievedGoals) {
             result += monthlyAchievedGoal.getDifficulty();
@@ -497,8 +616,11 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             double monthlyAchievedGoals = getMonthlyAchievedGoals().size(),
                     sumOfGoals = (getMonthlyAchievedGoals().size() + getActiveGoalsCount()),
                     monthlyDifficultyAverage = getMonthlyDifficultiesAverage(),
-                    monthlyMinutesOfWork = statisticsDB.getMonthlyMinutesOfWork();
-            return ((monthlyAchievedGoals / sumOfGoals) * (monthlyDifficultyAverage / 3.0)) * (monthlyMinutesOfWork / sumOfGoals) * 1000;
+                    monthlyMinutesOfWork = statisticsDB.getCurrentMonthMinutesOfWork();
+            double result =((monthlyAchievedGoals / sumOfGoals) * (monthlyDifficultyAverage / 3.0)) * (monthlyMinutesOfWork / sumOfGoals) * 1000;
+            statisticsDB.payMonthlyNeurons(LocalDate.now().getMonth(), Year.of(LocalDate.now().getYear()));
+            Log.d(TAG, "getUserNeurons: Hi");
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }

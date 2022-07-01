@@ -59,9 +59,6 @@ import java.util.Objects;
 
 import it.emperor.animatedcheckbox.AnimatedCheckBox;
 
-//TODO: fix bug {When opening a goal with edit button, the other opened goal won't close up}.
-//TODO: add finish button
-
 public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.ActiveGoalsViewHolder> implements View.OnTouchListener {
 
     private final Context context;
@@ -613,6 +610,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 }
             }
             btnEdit.setVisibility(View.INVISIBLE);
+            startDate.setVisibility(View.GONE);
             btnFinish.setVisibility(View.GONE);
             editPanel.setVisibility(View.VISIBLE);
             title.setVisibility(View.INVISIBLE);
@@ -654,6 +652,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             }
 
             btnEdit.setVisibility(View.VISIBLE);
+            startDate.setVisibility(View.VISIBLE);
             editPanel.setVisibility(View.GONE);
             btnFinish.setVisibility(View.VISIBLE);
             title.setVisibility(View.VISIBLE);

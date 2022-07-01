@@ -94,7 +94,7 @@
             android:elevation="5.0dip"
             android:visibility="invisible"
             app:realtimeBlurRadius="20.0dip"
-            app:realtimeOverlayColor="#88000000" />
+            app:realtimeOverlayColor="@color/blur_color" />
 
         <com.google.android.material.circularreveal.CircularRevealFrameLayout
             android:id="@+id/active_goals_fragment_sort_goals_dialog_container"

@@ -6,9 +6,15 @@ public class StatisticsContract {
     private StatisticsContract() {
     }
     public static final class StatisticsEntry implements BaseColumns {
-        public static final String COLUMN_MONTH_OF_YEAR = "monthOfYear";
+        public static final String COLUMN_DATE = "date";
 
-        public static final String COLUMN_MONTHLY_SECONDS_OF_WORK = "monthlySecondsOfWork";
+        public static final String COLUMN_HOUR = "hour";
+
+        public static final String COLUMN_HOURLY_SECONDS_OF_WORK = "hourlySecondsOfWork";
+
+        public static final String COLUMN_HOURLY_NEURONS = "hourlyNeurons";
+
+        public static final String COLUMN_PAYED_MONTHLY_NEURONS = "payedMonthlyNeurons";
 
         public static final String TABLE_NAME = "statistics";
     }

@@ -448,7 +448,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
      * @param goalName         is the name of the current goal in progress.
      * @param timerMillisExtra is the time that the timer has counted during the work session.
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private static void onTimerStopped(String goalName, long timerMillisExtra, Context context) {
         db.progressGoal(goalName, timerMillisExtra / 1000);
         updateCurrentGoalBar();

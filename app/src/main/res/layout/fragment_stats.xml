@@ -3,12 +3,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.StatsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/stats_nav_text" />
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+                android:id="@+id/work_time_division_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/first_divider"
+                app:title="@string/hourly_division_of_work_time_chart_title"
+                app:chart_type="horizontalBarChart"
+                android:entries="@array/TimeZonesLy"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/first_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintTop_toBottomOf="@id/work_time_division_chart"
+                app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_division_chart"
+                app:dividerColor="@color/gray_light"/>
+
+            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+                android:id="@+id/pomodoro_vs_regular_division_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/first_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/second_divider"
+                app:title="@string/timer_mode_division_chart_title"
+                app:chart_type="pieChart" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/second_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintTop_toBottomOf="@id/pomodoro_vs_regular_division_chart"
+                app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_results_chart"
+                app:dividerColor="@color/gray_light"/>
+
+            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+                android:id="@+id/pomodoro_vs_regular_results_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/second_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/third_divider"
+                app:title="Timer Mode Results"
+                app:chart_type="spiderChart" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/third_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintTop_toBottomOf="@id/pomodoro_vs_regular_results_chart"
+                app:layout_constraintBottom_toTopOf="@id/neurons_progress_chart"
+                app:dividerColor="@color/gray_light"/>
+
+            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+                android:id="@+id/neurons_progress_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/third_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:title="Neurons Progress"
+                app:chart_type="lineChart"
+                android:entries="@array/TimeZones"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </FrameLayout>

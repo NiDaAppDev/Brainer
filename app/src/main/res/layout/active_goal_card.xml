@@ -377,14 +377,4 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </FrameLayout>
-
-    <com.github.mmin18.widget.RealtimeBlurView
-        android:id="@+id/blur"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/activeCardHolder"
-        android:layout_alignBottom="@id/activeCardHolder"
-        android:visibility="invisible"
-        app:realtimeBlurRadius="20.0dip"
-        app:realtimeOverlayColor="#88000000" />
 </RelativeLayout>

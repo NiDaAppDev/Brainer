@@ -34,6 +34,7 @@ import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedR
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.example.performancemeasurement.util.PrefUtil;
+import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -56,7 +57,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     ExtendedFloatingActionButton fab;
     FloatingActionButton addAsSubgoalsFab, deleteFab;
     TextView addAsSubgoalsLabel, deleteLabel;
-    View blurBackground;
+    RealtimeBlurView blurBackground;
     CircularRevealFrameLayout addNewGoalDialog, setAsSubgoalOfDialog, finishGoalDialog, sortGoalsDialog;
     RadioGroup sortByGroup, ascDescGroup;
     RadioButton byNameRadio, byProgressRadio, ascRadio, descRadio;
@@ -155,7 +156,6 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
                 if (mainActiveGoalsAdapter.getMultiSelected().size() > 0) {
                     for (Goal selectedGoal : mainActiveGoalsAdapter.getMultiSelected()) {
                         db.removeGoal(selectedGoal);
-
                         activeGoalsArrayList = db.getActiveGoalsArrayList();
 
                         PublicMethods.sortActiveGoals(requireContext(), PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoalsArrayList);

@@ -15,4 +15,17 @@
         <attr name="enable_gradient" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="CustomChart">
+        <attr name="title" format="string"/>
+        <attr name="unlocked" format="boolean"/>
+        <attr name="chart_type" format="enum">
+            <enum name="barChart" value="0"/>
+            <enum name="horizontalBarChart" value="1"/>
+            <enum name="pieChart" value="2"/>
+            <enum name="spiderChart" value="3"/>
+            <enum name="lineChart" value="4"/>
+        </attr>
+        <attr name="android:entries"/>
+    </declare-styleable>
+
 </resources>

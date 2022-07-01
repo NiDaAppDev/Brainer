@@ -34,6 +34,7 @@ import com.example.performancemeasurement.customViews.NestedRecyclerView.NestedR
 import com.example.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.example.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.example.performancemeasurement.util.PrefUtil;
+import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class AchievedGoalsFragment extends Fragment implements IOnBackPressed {
     View v;
     NestedRecyclerView achievedGoalsList;
     AchievedGoalsAdapter mainAchievedGoalsAdapter;
-    View blurBackground;
+    RealtimeBlurView blurBackground;
     CircularRevealFrameLayout sortGoalsDialog;
     RadioGroup sortByGroup, ascDescGroup;
     RadioButton byNameRadio, byFinishDateRadio, byDifficultyRadio, byEvolvingRadio, bySatisfactionRadio, ascRadio, descRadio;

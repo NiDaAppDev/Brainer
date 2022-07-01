@@ -46,4 +46,6 @@
     <string name="wheel_picker_title_text">Choose a Goal to work on:</string>
     <string name="time_estimation_of_new_goal_label_dialog">New Goal\'s Estimated Duration:</string>
     <string name="time_estimation_of_new_goal_hint_dialog">000000</string>
+    <string name="hourly_division_of_work_time_chart_title">Hourly Division Of Work Time</string>
+    <string name="timer_mode_division_chart_title">Timer Mode Division</string>
 </resources>
