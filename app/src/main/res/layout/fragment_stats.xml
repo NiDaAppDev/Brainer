@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/work_time_division_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -25,6 +25,8 @@
                 app:layout_constraintBottom_toTopOf="@id/first_divider"
                 app:title="@string/hourly_division_of_work_time_chart_title"
                 app:chart_type="horizontalBarChart"
+                app:bottom_end_axis_title="Minutes"
+                app:top_end_axis_title="Minutes"
                 android:entries="@array/TimeZonesLy"/>
 
             <com.google.android.material.divider.MaterialDivider
@@ -38,7 +40,7 @@
                 app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_division_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/pomodoro_vs_regular_division_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +62,7 @@
                 app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_results_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/pomodoro_vs_regular_results_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +84,7 @@
                 app:layout_constraintBottom_toTopOf="@id/neurons_progress_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.example.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/neurons_progress_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,6 +94,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:title="Neurons Progress"
                 app:chart_type="lineChart"
+                app:top_start_axis_title="Neurons"
                 android:entries="@array/TimeZones"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

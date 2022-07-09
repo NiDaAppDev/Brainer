@@ -67,7 +67,7 @@
                 app:rippleColor="@color/brain2"
                 app:tint="@color/black" />
 
-            <com.example.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
+            <com.nidaappdev.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
                 android:id="@+id/goal_progress_bar"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

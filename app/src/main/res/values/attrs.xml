@@ -25,6 +25,10 @@
             <enum name="spiderChart" value="3"/>
             <enum name="lineChart" value="4"/>
         </attr>
+        <attr name="top_start_axis_title" format="string"/>
+        <attr name="top_end_axis_title" format="string"/>
+        <attr name="bottom_start_axis_title" format="string"/>
+        <attr name="bottom_end_axis_title" format="string"/>
         <attr name="android:entries"/>
     </declare-styleable>
 

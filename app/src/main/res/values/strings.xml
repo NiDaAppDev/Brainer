@@ -48,4 +48,19 @@
     <string name="time_estimation_of_new_goal_hint_dialog">000000</string>
     <string name="hourly_division_of_work_time_chart_title">Hourly Division Of Work Time</string>
     <string name="timer_mode_division_chart_title">Timer Mode Division</string>
+    <string name="enter_user_name_hint">Enter Email</string>
+    <string name="enter_password_hint">Enter Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="register_text">Register</string>
+    <string name="sign_in_text">Sign In</string>
+    <string name="register_suggestion_TV_text">New User? Register Here</string>
+    <string name="or_TV_text">Or Sign In With</string>
+    <string name="user_sign_in_TV_text">Sign in with your user:</string>
+
+
+    <string name="facebook_app_id" translatable="false">1234</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1234</string>
+    <string name="facebook_client_token" translatable="false">56789</string>
+    <string name="achievements_nav_text">Achievements</string>
+
 </resources>

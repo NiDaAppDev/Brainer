@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "976996764303",
+    "project_id": "performance-measurements",
+    "storage_bucket": "performance-measurements.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976996764303:android:5c4c817c7a32a350a23efa",
+        "android_client_info": {
+          "package_name": "com.nidaappdev.performancemeasurement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "976996764303-s26p1qeh99m1655hdcsuv7h0r8d7vrba.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5q-YH0Jj6j50-SDoGBuWDjDtfi5GLmKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "976996764303-s26p1qeh99m1655hdcsuv7h0r8d7vrba.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

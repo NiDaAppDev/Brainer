@@ -112,7 +112,8 @@
     <color name="secondary_text_disabled_material_dark">#36ffffff</color>
     <color name="secondary_text_disabled_material_light">#24000000</color>
     <color name="start_green">#ff4caf50</color>
-    <color name="stats">#ff009900</color>
+    <color name="achieved_goals">#ff009900</color>
+    <color name="stats">#2198EF</color>
     <color name="stop_red">#ffc20000</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
     <color name="switch_thumb_disabled_material_light">#ffbdbdbd</color>

@@ -14,7 +14,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <com.example.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
+            <com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
                 android:id="@+id/achieved_goals_recycler_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

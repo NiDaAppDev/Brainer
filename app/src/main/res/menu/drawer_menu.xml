@@ -18,13 +18,17 @@
 
         <item
             android:id="@+id/nav_achieved_goals"
-            android:icon="@drawable/trophy"
+            android:icon="@drawable/fui_ic_check_circle_black_128dp"
             android:title="@string/achieved_goals_nav_text"/>
 
         <item
             android:id="@+id/nav_stats"
             android:icon="@drawable/statistics"
             android:title="@string/stats_nav_text"/>
+
+        <item android:id="@+id/nav_achievements"
+            android:icon="@drawable/trophy"
+            android:title="@string/achievements_nav_text"/>
 
         <item
             android:id="@+id/nav_tips_and_tricks"

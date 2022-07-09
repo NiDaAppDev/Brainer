@@ -44,7 +44,7 @@
                         android:weightSum="11.0"
                         android:visibility="visible">
 
-                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                        <com.nidaappdev.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
                             android:id="@+id/shrunk_active_goal_progress_bar"
                             android:layout_width="0.0dip"
                             android:layout_height="50.0dip"
@@ -81,7 +81,7 @@
                         android:weightSum="11.0"
                         android:visibility="invisible">
 
-                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                        <com.nidaappdev.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
                             android:id="@+id/selectable_active_goal_progress_bar"
                             android:layout_width="0.0dip"
                             android:layout_height="50.0dip"
@@ -164,7 +164,7 @@
                                 android:layout_height="wrap_content" />
                         </com.developer.mtextfield.TextFieldBoxes>
 
-                        <com.example.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
+                        <com.nidaappdev.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar
                             android:id="@+id/expanded_active_goal_progress_bar"
                             android:layout_width="wrap_content"
                             android:layout_height="30.0dip"

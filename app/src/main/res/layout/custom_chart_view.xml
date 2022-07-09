@@ -25,15 +25,6 @@
             android:textColor="@color/brain2"
             tools:text="Title Of Custom Chart View"/>
 
-<!--        <Spinner-->
-<!--            android:id="@+id/chart_picker"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@id/titleTV"-->
-<!--            android:elevation="10dip"-->
-<!--            android:spinnerMode="dropdown"-->
-<!--            android:backgroundTint="@color/brain1" />-->
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/charts_container"
             android:layout_width="match_parent"
@@ -94,6 +85,42 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 android:layout_margin="10dp" />
+
+            <TextView
+                android:id="@+id/top_start_axis_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/bar_chart"
+                app:layout_constraintStart_toStartOf="@id/bar_chart"
+                android:textColor="@color/brain1"
+                tools:text="top_start_label"/>
+
+            <TextView
+                android:id="@+id/top_end_axis_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/bar_chart"
+                app:layout_constraintEnd_toEndOf="@id/bar_chart"
+                android:textColor="@color/brain1"
+                tools:text="top_end_label"/>
+
+            <TextView
+                android:id="@+id/bottom_start_axis_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bar_chart"
+                app:layout_constraintStart_toStartOf="@id/bar_chart"
+                android:textColor="@color/brain1"
+                tools:text="bottom_start_label"/>
+
+            <TextView
+                android:id="@+id/bottom_end_axis_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bar_chart"
+                app:layout_constraintEnd_toEndOf="@id/bar_chart"
+                android:textColor="@color/brain1"
+                tools:text="bottom_end_label"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
