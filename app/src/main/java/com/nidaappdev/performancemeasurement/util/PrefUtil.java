@@ -5,10 +5,12 @@ import static com.nidaappdev.performancemeasurement.App.settingsReference;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_ASCENDING_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_FILTERS_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_SORT_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.TUTORIAL_SHAREDPREFERENCES_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACTIVE_GOALS_ASCENDING_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACTIVE_GOALS_SORT_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.CURRENT_ACTIVE_GOAL_SHAREDPREFERENCES_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.CURRENT_GOAL_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.FINISHED_TUTORIAL_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_LENGTH_IN_MINUTES_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_TIME_OUT_LENGTH_IN_MINUTES_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.STARTED_BEFORE_ESTIMATION;
@@ -246,6 +248,14 @@ public class PrefUtil {
 
     public static boolean startedBeforeEstimation() {
         return getBooleanPreference(CURRENT_ACTIVE_GOAL_SHAREDPREFERENCES_NAME, STARTED_BEFORE_ESTIMATION);
+    }
+
+    public static void setFinishedTutorial(boolean finishedTutorial) {
+        addNewOrEditSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME, finishedTutorial);
+    }
+
+    public static boolean finishedTutorial() {
+        return getBooleanPreference(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME);
     }
 
     public static void clearAllSharedPreferences() {

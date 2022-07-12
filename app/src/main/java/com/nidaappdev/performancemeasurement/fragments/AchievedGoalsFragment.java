@@ -25,9 +25,9 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.adroitandroid.chipcloud.ChipCloud;
 import com.adroitandroid.chipcloud.ChipListener;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
-import com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters.AchievedGoalsAdapter;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.AchievedGoalsAdapter;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.activities.MainActivity;
 import com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;

@@ -1,4 +1,4 @@
-package com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters;
+package com.nidaappdev.performancemeasurement.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,13 +28,12 @@ import com.adroitandroid.chipcloud.ChipCloud;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.activities.MainActivity;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
 import com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
-import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -71,7 +71,7 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
 
     public class AchievedGoalsViewHolder extends RecyclerView.ViewHolder {
 
-        MaterialCardView parentCard;
+        CardView parentCard;
         LinearLayout shrunkContainer, subGoalsTitleContainer;
         RelativeLayout expandedContainer, subGoalsRecyclerViewContainer;
         ImageButton btnExpandShrink, btnBackToParent;
@@ -313,7 +313,7 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
         holder.description.setMovementMethod(ScrollingMovementMethod.getInstance());
         holder.finishDate.setText(currentGoal.getFinishDate());
 
-        int color = context.getResources().getColor(R.color.difficulty_gold);
+        int color;
         switch (currentGoal.getDifficulty()) {
             case 1:
                 color = context.getResources().getColor(R.color.difficulty_bronze);
@@ -321,16 +321,15 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
             case 2:
                 color = context.getResources().getColor(R.color.difficulty_silver);
                 break;
-            case 3:
-                color = context.getResources().getColor(R.color.difficulty_gold);
-                break;
             case 4:
                 color = context.getResources().getColor(R.color.difficulty_purple);
                 break;
             case 5:
                 color = context.getResources().getColor(R.color.difficulty_black);
                 break;
+            case 3:
             default:
+                color = context.getResources().getColor(R.color.difficulty_gold);
                 break;
         }
         holder.parentCard.setCardBackgroundColor(color);

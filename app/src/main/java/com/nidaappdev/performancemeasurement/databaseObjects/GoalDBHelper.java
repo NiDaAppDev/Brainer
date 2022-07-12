@@ -1,9 +1,26 @@
-package com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects;
+package com.nidaappdev.performancemeasurement.databaseObjects;
 
 
 import static android.content.ContentValues.TAG;
 import static com.nidaappdev.performancemeasurement.App.goalsDBReference;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.*;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ACHIEVED;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DESCRIPTION;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DIFFICULTY;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ESTIMATED_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_EVOLVING;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_FINISH_DATE;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_NAME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_PARENT;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_SATISFACTION;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_TAGS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.TABLE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.achievementsDescriptions;
+import static com.nidaappdev.performancemeasurement.util.Constants.achievementsIconsRes;
+import static com.nidaappdev.performancemeasurement.util.Constants.achievementsNames;
+import static com.nidaappdev.performancemeasurement.util.Constants.achievementsRequirements;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,15 +33,20 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.nidaappdev.performancemeasurement.App;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry;
+import com.nidaappdev.performancemeasurement.customObjects.Achievement;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +80,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 GoalEntry.COLUMN_GOAL_COUNTED_TIME + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_ESTIMATED_TIME + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_COUNTED_POMODORO + " INTEGER NOT NULL, " +
+                COLUMN_GOAL_COUNTED_POMODORO_TIME + " INTEGER NOT NULL, " +
                 COLUMN_GOAL_DIFFICULTY + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_EVOLVING + " INTEGER NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_SATISFACTION + " INTEGER NOT NULL, " +
@@ -168,13 +191,14 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             int timeCounted = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_TIME));
             int timeEstimated = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME));
             int pomodoroCounted = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO));
+            int pomodoroCountedTime = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GOAL_COUNTED_POMODORO_TIME));
             int difficulty = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GOAL_DIFFICULTY));
             int evolving = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_EVOLVING));
             int satisfaction = cursor.getInt(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_SATISFACTION));
             boolean achieved = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GOAL_ACHIEVED)) > 0;
             ArrayList<String> tags = new ArrayList<>(Arrays.asList(cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_TAGS)).split(",")));
             String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_FINISH_DATE));
-            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, pomodoroCounted, difficulty, evolving, satisfaction, achieved, tags, finishDate);
+            Goal goal = new Goal(name, description, parent, timeCounted, timeEstimated, pomodoroCounted, pomodoroCountedTime, difficulty, evolving, satisfaction, achieved, tags, finishDate);
             goals.add(goal);
         }
         cursor.close();
@@ -202,11 +226,133 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return achievedGoals;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public boolean isWorkTimeDivisionChartUnlocked() {
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            float dailyMinutesOfWork = statisticsDB.getDailyMinutesOfWork(dayOfWeek);
+            if(dailyMinutesOfWork > 0) {
+                return true;
+            }
+        }
+        for (Month month : Month.values()) {
+            float monthlyMinutesOfWork = statisticsDB.getMonthlyMinutesOfWork(month);
+            if(monthlyMinutesOfWork > 0) {
+                return true;
+            }
+        }
+        for (float i = 0f; i < 24f; i++) {
+            float hourlyMinutesOfWork = statisticsDB.getHourlyMinutesOfWork((int) i);
+            if(hourlyMinutesOfWork > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTimerModeDivisionChartUnlocked() {
+        return statisticsDB.getAllTimeMinutesOfWork() > 0;
+    }
+
+    public boolean isTimerModeResultsChartUnlocked() {
+        return !(Float.isNaN(getPomodoroDifficultyAverage()) && Float.isNaN(getRegularDifficultyAverage()));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public boolean isNeuronsProgressChartUnlocked() {
+        DateTime dt = new DateTime();
+        int todayOfWeek = (dt.getDayOfWeek() % 7);
+        int todayOfMonth = dt.getDayOfMonth();
+        int nowMonth = dt.getMonthOfYear();
+        float nowHour = dt.getHourOfDay();
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            if(dayOfWeek.plus(1).ordinal() <= todayOfWeek) {
+                long todayNeurons = statisticsDB.getDayOfThisWeekNeurons(dayOfWeek);
+                if(todayNeurons > 0) {
+                    return true;
+                }
+            }
+        }
+        for (int dayOfMonth = 1; dayOfMonth <= todayOfMonth; dayOfMonth++) {
+            long todayNeurons = statisticsDB.getDayOfThisMonthNeurons(dayOfMonth);
+            if(todayNeurons > 0) {
+                return true;
+            }
+        }
+        for (Month month : Month.values()) {
+            long thisMonthsNeurons = statisticsDB.getMonthOfThisYearNeurons(month);
+            if(thisMonthsNeurons > 0) {
+                return true;
+            }
+            if(month.equals(Month.of(nowMonth))){
+                break;
+            }
+        }
+        for (float hour = 0f; hour <= nowHour; hour++) {
+            long currentHourNeurons = statisticsDB.getHourOfTodayNeurons((int) hour);
+            if(currentHourNeurons > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isAchievementAchieved(int achievementIndex) {
+        switch (achievementIndex) {
+            case 0:
+                return PrefUtil.finishedTutorial();
+            case 1:
+                return getAllGoalsArrayList().size() > 0;
+            case 2:
+                return getAllGoalsArrayList().size() >= 50;
+            case 3:
+                return getAllTimePomodoroCount() > 0;
+            case 4:
+                return getAllTimePomodoroCount() >= 10;
+            case 5:
+                return getAchievedGoalsArrayList().size() > 0;
+            case 6:
+                return getAchievedGoalsArrayList().size() >= 10;
+            case 7:
+                return isWorkTimeDivisionChartUnlocked();
+            case 8:
+                return isTimerModeDivisionChartUnlocked();
+            case 9:
+                return isTimerModeResultsChartUnlocked();
+            case 10:
+                return isNeuronsProgressChartUnlocked();
+            case 11:
+                return statisticsDB.getAllTimeHighestNeurons() >= 1;
+            case 12:
+                return statisticsDB.getAllTimeHighestNeurons() >= 50;
+            case 13:
+                return statisticsDB.getAllTimeHighestNeurons() >= 100;
+            case 14:
+                return statisticsDB.getAllTimeHighestNeurons() >= 500;
+            case 15:
+                return statisticsDB.getAllTimeHighestNeurons() >= 1000;
+            default:
+                return false;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public ArrayList<Achievement> getAchievementsArrayList() {
+        ArrayList<Achievement> achievements = new ArrayList<>();
+        for(int i = 0; i < achievementsNames.length; i ++) {
+            Achievement achievement = new Achievement(achievementsNames[i], achievementsDescriptions[i], achievementsRequirements[i], achievementsIconsRes[i], isAchievementAchieved(i));
+            achievements.add(achievement);
+        }
+        return achievements;
+    }
+
     public ArrayList<Goal> getMostlyPomodoroAchievedGoalsArrayList() {
         ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
         ArrayList<Goal> mostlyPomodoroAchievedGoals = new ArrayList<>();
         for (Goal goal : achievedGoals) {
-            if ((float) goal.getPomodoroCounted() * 25f > ((float) goal.getTimeCounted() / 60f) - ((float) goal.getPomodoroCounted() * 25f)) {
+            if ((float) goal.getPomodoroCountedTime() / 60f > ((float) goal.getTimeCounted() / 60f) - ((float) goal.getPomodoroCountedTime() / 60f)) {
                 mostlyPomodoroAchievedGoals.add(goal);
             }
         }
@@ -339,10 +485,10 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             if (goals.indexOf(goal) >= 1) {
                 goalsNames.append(", ");
             }
-            goalsNames.append(goal.getName());
+            goalsNames.append("'").append(goal.getName()).append("'");
         }
         goalsNames.append(")");
-        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + COLUMN_GOAL_ACHIEVED + " = 0" + " AND " + GoalEntry.COLUMN_GOAL_NAME + " NOT IN " + goalsNames;
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + COLUMN_GOAL_ACHIEVED + " = 0" + " AND " + COLUMN_GOAL_NAME + " NOT IN " + goalsNames;
         return sQLiteDatabase.rawQuery(query, null);
     }
 
@@ -373,11 +519,29 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public long getGoalCountedPomodoroTime(String goalName) {
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
+        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor.moveToFirst();
+        long result = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_GOAL_COUNTED_POMODORO_TIME));
+        cursor.close();
+        return result;
+    }
+
     public long getAllTimePomodoroCount() {
         ArrayList<Goal> goals = getAllGoalsArrayList();
         long result = 0;
         for (Goal goal : goals) {
             result += goal.getPomodoroCounted();
+        }
+        return result;
+    }
+
+    public long getAllTimePomodoroTimeCount() {
+        ArrayList<Goal> goals = getAllGoalsArrayList();
+        long result = 0;
+        for (Goal goal : goals) {
+            result += goal.getPomodoroCountedTime();
         }
         return result;
     }
@@ -390,6 +554,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             int timeCounted = PublicMethods.getValueOrDefault(goal.getTimeCounted(), 0);
             int timeEstimated = PublicMethods.getValueOrDefault(goal.getTimeEstimated(), 100);
             int pomodoroCounted = PublicMethods.getValueOrDefault(goal.getPomodoroCounted(), 0);
+            int pomodoroCountedTime = PublicMethods.getValueOrDefault(goal.getPomodoroCountedTime(), 0);
             int difficulty = PublicMethods.getValueOrDefault(goal.getDifficulty(), 0);
             int evolving = PublicMethods.getValueOrDefault(goal.getEvolving(), 0);
             int satisfaction = goal.getSatisfaction();
@@ -415,6 +580,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             contentValues.put(COLUMN_GOAL_COUNTED_TIME, timeCounted);
             contentValues.put(COLUMN_GOAL_ESTIMATED_TIME, timeEstimated);
             contentValues.put(COLUMN_GOAL_COUNTED_POMODORO, pomodoroCounted);
+            contentValues.put(COLUMN_GOAL_COUNTED_POMODORO_TIME, pomodoroCountedTime);
             contentValues.put(COLUMN_GOAL_DIFFICULTY, difficulty);
             contentValues.put(COLUMN_GOAL_EVOLVING, evolving);
             contentValues.put(COLUMN_GOAL_SATISFACTION, satisfaction);
@@ -430,6 +596,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             goalData.put(COLUMN_GOAL_COUNTED_TIME, timeCounted);
             goalData.put(COLUMN_GOAL_ESTIMATED_TIME, timeEstimated);
             goalData.put(COLUMN_GOAL_COUNTED_POMODORO, pomodoroCounted);
+            goalData.put(COLUMN_GOAL_COUNTED_POMODORO_TIME, pomodoroCountedTime);
             goalData.put(COLUMN_GOAL_DIFFICULTY, difficulty);
             goalData.put(COLUMN_GOAL_EVOLVING, evolving);
             goalData.put(COLUMN_GOAL_SATISFACTION, satisfaction);
@@ -500,15 +667,20 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     public void pomodoroProgressGoal(String goalName) {
         progressGoal(goalName, PrefUtil.getPomodoroLength() * 60);
 
-        String updateGoalPomodoro = "UPDATE " + TABLE_NAME +
+        String updateGoalPomodoroCount = "UPDATE " + TABLE_NAME +
                 " SET " + COLUMN_GOAL_COUNTED_POMODORO + " = '" + (getGoalCountedPomodoro(goalName) + 1) +
                 "' WHERE " + COLUMN_GOAL_NAME + " = '" + goalName + "'";
 
-        sQLiteDatabase.execSQL(updateGoalPomodoro);
+        String updateGoalPomodoroTime = "UPDATE " + TABLE_NAME +
+                " SET " + COLUMN_GOAL_COUNTED_POMODORO_TIME + " = '" + (getGoalCountedPomodoroTime(goalName) + (PrefUtil.getPomodoroLength() * 60)) +
+                "' WHERE " + COLUMN_GOAL_NAME + " = '" + goalName + "'";
 
+        sQLiteDatabase.execSQL(updateGoalPomodoroCount);
+        sQLiteDatabase.execSQL(updateGoalPomodoroTime);
 
         HashMap<String, Object> pomodoroData = new HashMap<>();
         pomodoroData.put(COLUMN_GOAL_COUNTED_POMODORO, getGoalCountedPomodoro(goalName) + 1);
+        pomodoroData.put(COLUMN_GOAL_COUNTED_POMODORO_TIME, getGoalCountedPomodoroTime(goalName) + (PrefUtil.getPomodoroLength() * 60));
         goalsDBReference.document(goalName).update(pomodoroData);
     }
 

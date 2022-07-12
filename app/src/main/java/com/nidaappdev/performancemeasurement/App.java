@@ -1,22 +1,25 @@
 package com.nidaappdev.performancemeasurement;
 
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ACHIEVED;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_TIME;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DESCRIPTION;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DIFFICULTY;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ESTIMATED_TIME;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_EVOLVING;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_FINISH_DATE;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_NAME;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_PARENT;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_SATISFACTION;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_TAGS;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_DATE;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOUR;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_NEURONS;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_SECONDS_OF_WORK;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_PAYED_MONTHLY_NEURONS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ACHIEVED;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DESCRIPTION;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_DIFFICULTY;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ESTIMATED_TIME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_EVOLVING;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_FINISH_DATE;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_NAME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_PARENT;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_SATISFACTION;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_TAGS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper.GOALS_DATABASE_NAME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_DATE;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOUR;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_NEURONS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_SECONDS_OF_WORK;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_PAYED_MONTHLY_NEURONS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper.STATISTICS_DATABASE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.GOALS_DB_COLLECTION_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_LENGTH_IN_MINUTES_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_TIME_OUT_LENGTH_IN_MINUTES_PREFERENCE_NAME;
@@ -43,9 +46,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsDBHelper;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 
@@ -130,8 +133,10 @@ public class App extends Application {
         Handler handler = new Handler();
         initCloudReferences();
         progressButton.setIndeterminateProgressMode(false);
-        goalDB.clearDB();
-        statisticsDB.clearDB();
+        appContext.deleteDatabase(GOALS_DATABASE_NAME);
+        goalDB = new GoalDBHelper(appContext);
+        appContext.deleteDatabase(STATISTICS_DATABASE_NAME);
+        statisticsDB = new StatisticsDBHelper(appContext);
         PrefUtil.clearAllSharedPreferences();
         settingsReference.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -171,12 +176,13 @@ public class App extends Application {
                                     PublicMethods.getValueOrDefault(String.valueOf(goalData.get(COLUMN_GOAL_NAME)), ""),
                                     PublicMethods.getValueOrDefault(String.valueOf(goalData.get(COLUMN_GOAL_DESCRIPTION)), ""),
                                     PublicMethods.getValueOrDefault(String.valueOf(goalData.get(COLUMN_GOAL_PARENT)), ""),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_COUNTED_TIME)).intValue(), 0),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_ESTIMATED_TIME)).intValue(), 0),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_COUNTED_POMODORO)).intValue(), 0),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_DIFFICULTY)).intValue(), 0),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_EVOLVING)).intValue(), 0),
-                                    PublicMethods.getValueOrDefault(((Long) goalData.get(COLUMN_GOAL_SATISFACTION)).intValue(), 0),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_COUNTED_TIME), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_ESTIMATED_TIME), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_COUNTED_POMODORO), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_COUNTED_POMODORO_TIME), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_DIFFICULTY), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_EVOLVING), 0).intValue(),
+                                    PublicMethods.getValueOrDefault((Long) goalData.get(COLUMN_GOAL_SATISFACTION), 0).intValue(),
                                     PublicMethods.getValueOrDefault((Boolean) goalData.get(COLUMN_GOAL_ACHIEVED), false),
                                     PublicMethods.getValueOrDefault(new ArrayList<>(Arrays.asList(goalData.get(COLUMN_GOAL_TAGS).toString().split(","))), new ArrayList<>()),
                                     PublicMethods.getValueOrDefault(String.valueOf(goalData.get(COLUMN_GOAL_FINISH_DATE)), "")

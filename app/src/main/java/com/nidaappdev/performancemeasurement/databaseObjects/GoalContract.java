@@ -1,4 +1,4 @@
-package com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects;
+package com.nidaappdev.performancemeasurement.databaseObjects;
 
 import android.provider.BaseColumns;
 
@@ -16,6 +16,8 @@ public class GoalContract {
         public static final String COLUMN_GOAL_ESTIMATED_TIME = "estimatedTime";
 
         public static final String COLUMN_GOAL_COUNTED_POMODORO = "countedPomodoro";
+
+        public static final String COLUMN_GOAL_COUNTED_POMODORO_TIME = "countedPomodoroTime";
 
         public static final String COLUMN_GOAL_DIFFICULTY = "difficulty";
 

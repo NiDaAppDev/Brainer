@@ -1,6 +1,8 @@
-package com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects;
+package com.nidaappdev.performancemeasurement.customObjects;
 
 import android.content.Context;
+
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class Goal {
 
     private int pomodoroCounted;
 
+    private int pomodoroCountedTime;
+
     private int difficulty;
 
     private int evolving;
@@ -45,6 +49,7 @@ public class Goal {
         this.timeCounted = 0;
         this.timeEstimated = 100;
         this.pomodoroCounted = 0;
+        this.pomodoroCountedTime = 0;
         this.achieved = false;
         this.tags = new ArrayList<>();
         this.finishDate = "";
@@ -58,18 +63,20 @@ public class Goal {
         this.timeCounted = 0;
         this.timeEstimated = timeEstimated;
         this.pomodoroCounted = 0;
+        this.pomodoroCountedTime = 0;
         this.achieved = false;
         this.tags = new ArrayList<>();
         this.finishDate = "";
     }
 
-    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int pomodoroCounted, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
+    public Goal(String name, String description, String parentGoal, int timeCounted, int timeEstimated, int pomodoroCounted, int pomodoroCountedTime, int difficulty, int evolving, int satisfaction, boolean achieved, ArrayList<String> tags, String finishDate) {
         this.name = name;
         this.description = description;
         this.parentGoal = parentGoal;
         this.timeCounted = timeCounted;
         this.timeEstimated = timeEstimated;
         this.pomodoroCounted = pomodoroCounted;
+        this.pomodoroCountedTime = pomodoroCountedTime;
         this.difficulty = difficulty;
         this.evolving = evolving;
         this.satisfaction = satisfaction;
@@ -105,6 +112,10 @@ public class Goal {
 
     public int getPomodoroCounted() {
         return pomodoroCounted;
+    }
+
+    public int getPomodoroCountedTime() {
+        return pomodoroCountedTime;
     }
 
     public int getDifficulty() {
@@ -161,6 +172,10 @@ public class Goal {
 
     public void setPomodoroCounted(int pomodoroCounted) {
         this.pomodoroCounted = pomodoroCounted;
+    }
+
+    public void setPomodoroCountedTime(int pomodoroCountedTime) {
+        this.pomodoroCountedTime = pomodoroCountedTime;
     }
 
     public void setDifficulty(int difficulty) {

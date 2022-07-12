@@ -1,5 +1,8 @@
 package com.nidaappdev.performancemeasurement.util;
 
+import com.nidaappdev.performancemeasurement.App;
+import com.nidaappdev.performancemeasurement.R;
+
 public class Constants {
     /**
      * SharedPreferences Files Names
@@ -7,6 +10,7 @@ public class Constants {
     public static final String BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME = "brainPreferences";
     public static final String TIMER_PREFERENCES_SHAREDPREFERENCES_NAME = "timerPreferences";
     public static final String CURRENT_ACTIVE_GOAL_SHAREDPREFERENCES_NAME = "currentGoalPreferences";
+    public static final String TUTORIAL_SHAREDPREFERENCES_NAME = "tutorialPreferences";
 
     /**
      * Measures Preferences
@@ -67,5 +71,86 @@ public class Constants {
     public static final String SETTINGS_COLLECTION_NAME = "settings";
     public static final String GOALS_DB_COLLECTION_NAME = "goalsDB";
     public static final String STATISTICS_DB_COLLECTION_NAME = "statisticsDB";
+
+    /**
+     * Tutorial Related
+     */
+    public static final String FINISHED_TUTORIAL_PREFERENCE_NAME = "finishedTutorial";
+
+    /**
+     * Achievements Related
+     */
+    public static final String[] achievementsNames = new String[]{
+            "Learner",
+            "Planner",
+            "Multi Tasker",
+            "Smart Worker",
+            "Committed To Success",
+            "Rookie Achiever",
+            "Expert Achiever",
+            "Charter I",
+            "Charter II",
+            "Charter III",
+            "Charter IV",
+            "Zeus I",
+            "Zeus II",
+            "Zeus III",
+            "Zeus IV",
+            "God Of Gods"
+    };
+    public static final String[] achievementsDescriptions = new String[]{
+            "You've finished the tutorial.",
+            "You've created a goal at least once.",
+            "You've created 50 goals or more.",
+            "You've finished a Pomodoro session at least once.",
+            "You've finished at least 10 Pomodoro sessions",
+            "You've completed a goal at least once.",
+            "You've completed at least 10 goals",
+            "You've unlocked the \"" + App.appContext.getString(R.string.division_of_work_time_chart_title) + "\" chart.",
+            "You've unlocked the \"" + App.appContext.getString(R.string.timer_mode_division_chart_title) + "\" chart.",
+            "You've unlocked the \"" + App.appContext.getString(R.string.timer_mode_results_chart_title) + "\".",
+            "You've unlocked the \"" + App.appContext.getString(R.string.neurons_progress_chart_title) + "\".",
+            "You've got enough neurons to get at least one lightning per minute in the main page.",
+            "You've got enough neurons to get at least 50 lightnings per minute in the main page.",
+            "You've got enough neurons to get at least 100 lightnings per minute in the main page.",
+            "You've got enough neurons to get at least 500 lightnings per minute in the main page.",
+            "You've got enough neurons to get at least 1000 lightnings per minute in the main page."
+    };
+    public static final String[] achievementsRequirements = new String[]{
+            "Finish the tutorial",
+            "Create a goal",
+            "Create at least 50 goals",
+            "Finish a Pomodoro session once",
+            "Finish 10 Pomodoro sessions",
+            "Finish a goal",
+            "Finish 10 goals",
+            "Run one of the timer modes",
+            "Finish a goal",
+            "Finish a goal",
+            "Get neurons",
+            "Get neurons",
+            "Get at least 50 neurons",
+            "Get at least 100 neurons",
+            "Get at least 500 neurons",
+            "Get at least 1000 neurons"
+    };
+    public static final int[] achievementsIconsRes = new int[]{
+            R.drawable.learner,
+            R.drawable.planner,
+            R.drawable.multi_tasker,
+            R.drawable.smart_worker,
+            R.drawable.committed_to_success,
+            R.drawable.rookie_achiever,
+            R.drawable.expert_achiever,
+            R.drawable.charter_1,
+            R.drawable.charter_2,
+            R.drawable.charter_3,
+            R.drawable.charter_4,
+            R.drawable.zeus_1,
+            R.drawable.zeus_2,
+            R.drawable.zeus_3,
+            R.drawable.zeus_4,
+            R.drawable.god_of_gods
+    };
 
 }

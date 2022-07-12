@@ -1,4 +1,4 @@
-package com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters;
+package com.nidaappdev.performancemeasurement.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.os.Build;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
 import com.nidaappdev.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 

@@ -1,12 +1,13 @@
 package com.nidaappdev.performancemeasurement.fragments;
 
 
-import static android.content.ContentValues.TAG;
+import static com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart.IMPROVE_TIP;
+import static com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart.INFORMATIVE_TIP;
+import static com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart.NOT_ENOUGH_DATA_TIP;
 
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,21 +44,22 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 import com.google.android.material.tabs.TabLayout;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.customViews.StatsClasses.AxisValueFormatters.DayAxisValueFormatter;
 import com.nidaappdev.performancemeasurement.customViews.StatsClasses.AxisValueFormatters.HourAxisValueFormatter;
 import com.nidaappdev.performancemeasurement.customViews.StatsClasses.AxisValueFormatters.MonthAxisValueFormatter;
 import com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart;
 import com.nidaappdev.performancemeasurement.customViews.StatsClasses.RadarMarkerView;
-import com.nidaappdev.performancemeasurement.util.PrefUtil;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
+import com.nidaappdev.performancemeasurement.util.Constants;
 
 import org.joda.time.DateTime;
 
 import java.time.DayOfWeek;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class StatsFragment extends Fragment {
 
     private CustomChart workTimeDivisionChart, pomodoroVSRegularDivisionChart, pomodoroVSRegularResultsChart, neuronsProgressChart;
     private ScrollView scrollView;
-    private static StatisticsDBHelper db;
+    private static StatisticsDBHelper statisticsDB;
     private static GoalDBHelper goalDB;
 
     private static HashMap<String, String> tips = new HashMap<>();
@@ -81,7 +83,7 @@ public class StatsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stats, container, false);
 
-        db = new StatisticsDBHelper(requireContext());
+        statisticsDB = new StatisticsDBHelper(requireContext());
         goalDB = new GoalDBHelper(requireContext());
 
         scrollView = v.findViewById(R.id.scrollView);
@@ -135,6 +137,11 @@ public class StatsFragment extends Fragment {
         workTimeDivisionChart.initTipList(tips, CustomChart.TipType.Informative, false);
 
         ((HorizontalBarChart) workTimeDivisionChart.getChart()).animateY(1000, Easing.EaseInOutQuad);
+        if(!goalDB.isWorkTimeDivisionChartUnlocked()) {
+            workTimeDivisionChart.getChartPicker().setElevation(0f);
+        } else {
+            workTimeDivisionChart.getChartPicker().setElevation(1f);
+        }
         workTimeDivisionChart.invalidate();
 
         XAxis xl = ((HorizontalBarChart) workTimeDivisionChart.getChart()).getXAxis();
@@ -170,11 +177,11 @@ public class StatsFragment extends Fragment {
 
         ArrayList<PieEntry> entries = new ArrayList<>();
         float pomodoroPercent, regularPercent;
-        if( db.getAllTimeMinutesOfWork() <= 0) {
+        if(statisticsDB.getAllTimeMinutesOfWork() <= 0) {
             pomodoroPercent = 0;
             regularPercent = 0;
         } else {
-            pomodoroPercent = (((float) (goalDB.getAllTimePomodoroCount()) * PrefUtil.getPomodoroLength()) / (float) db.getAllTimeMinutesOfWork()) * 100f;
+            pomodoroPercent = ((((float) goalDB.getAllTimePomodoroTimeCount()) / 60f) / (float) statisticsDB.getAllTimeMinutesOfWork()) * 100f;
             regularPercent = 100f - pomodoroPercent;
         }
         entries.add(new PieEntry(pomodoroPercent, "Pomodoro"));
@@ -207,9 +214,10 @@ public class StatsFragment extends Fragment {
         l.setYOffset(0f);
 
         HashMap<String, String> tips = new HashMap<>();
-        tips.put("IMPROVE_TIP", "We suggest you use the Pomodoro mode more often.");
-        pomodoroVSRegularDivisionChart.initTipList(tips, CustomChart.TipType.Suggestive, pomodoroPercent > 70);
+        tips.put(IMPROVE_TIP, "We suggest you use the Pomodoro mode more often.");
+        tips.put(NOT_ENOUGH_DATA_TIP, Constants.achievementsRequirements[8] + " to unlock this chart.");
 
+        pomodoroVSRegularDivisionChart.initTipList(tips, CustomChart.TipType.Suggestive, pomodoroPercent > 70);
         ((PieChart) pomodoroVSRegularDivisionChart.getChart()).invalidate();
     }
 
@@ -266,6 +274,7 @@ public class StatsFragment extends Fragment {
         data.setDrawValues(false);
 
         ((RadarChart) pomodoroVSRegularResultsChart.getChart()).setData(data);
+
         ((RadarChart) pomodoroVSRegularResultsChart.getChart()).invalidate();
 
         XAxis xAxis = ((RadarChart) pomodoroVSRegularResultsChart.getChart()).getXAxis();
@@ -336,7 +345,8 @@ public class StatsFragment extends Fragment {
         }
 
         HashMap<String, String> tips = new HashMap<>();
-        tips.put("IMPROVE_TIP", currentTip.toString());
+        tips.put(IMPROVE_TIP, currentTip.toString());
+        tips.put(NOT_ENOUGH_DATA_TIP, Constants.achievementsRequirements[9] + " to unlock this chart.");
 
         pomodoroVSRegularResultsChart.initTipList(tips, CustomChart.TipType.Suggestive, tipsArrayList.isEmpty());
     }
@@ -391,6 +401,11 @@ public class StatsFragment extends Fragment {
         neuronsProgressChart.initTipList(tips, CustomChart.TipType.Informative, false);
 
         ((LineChart) neuronsProgressChart.getChart()).animateY(1000, Easing.EaseInOutQuad);
+        if(!goalDB.isNeuronsProgressChartUnlocked()) {
+            neuronsProgressChart.getChartPicker().setElevation(0f);
+        } else {
+            neuronsProgressChart.getChartPicker().setElevation(1f);
+        }
         neuronsProgressChart.invalidate();
 
         XAxis x = ((LineChart) neuronsProgressChart.getChart()).getXAxis();
@@ -460,14 +475,14 @@ public class StatsFragment extends Fragment {
         switch (workTimeDivisionChart.getPickerSelectedItem()) {
             case "Daily":
                 for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-                    float dailyMinutesOfWork = db.getDailyMinutesOfWork(dayOfWeek);
-                    workEntries.add(new BarEntry((dayOfWeek.ordinal() + 1) % 7, dailyMinutesOfWork));
+                    float dailyMinutesOfWork = statisticsDB.getDailyMinutesOfWork(dayOfWeek);
+                    workEntries.add(new BarEntry(dayOfWeek.plus(1).ordinal(), dailyMinutesOfWork));
                     if (dailyMinutesOfWork == bestTime) {
-                        bestTimes.add((dayOfWeek.ordinal() + 1) % 7);
+                        bestTimes.add(dayOfWeek.plus(1).ordinal());
                     } else if (dailyMinutesOfWork > bestTime) {
                         bestTime = (int) dailyMinutesOfWork;
                         bestTimes.clear();
-                        bestTimes.add((dayOfWeek.ordinal() + 1) % 7);
+                        bestTimes.add(dayOfWeek.plus(1).ordinal());
                     }
                 }
 
@@ -481,13 +496,13 @@ public class StatsFragment extends Fragment {
                     }
                     bestTimesStr.append(DayOfWeek.of(bestDayUnit).name());
                 }
-                tips.put("INFORMATIVE_TIP", "You work best on " + bestTimesStr);
+                tips.put(INFORMATIVE_TIP, "You work best on " + bestTimesStr);
 
                 workTimeDivisionChart.setTitle("Daily Division Of Work Time");
                 break;
             case "Monthly":
                 for (Month month : Month.values()) {
-                    float monthlyMinutesOfWork = db.getMonthlyMinutesOfWork(month);
+                    float monthlyMinutesOfWork = statisticsDB.getMonthlyMinutesOfWork(month);
                     workEntries.add(new BarEntry(month.ordinal(), monthlyMinutesOfWork));
                     if (monthlyMinutesOfWork == bestTime) {
                         bestTimes.add(month.ordinal());
@@ -508,14 +523,14 @@ public class StatsFragment extends Fragment {
                     }
                     bestTimesStr.append(Month.of(bestMonthUnit + 1).name());
                 }
-                tips.put("INFORMATIVE_TIP", "You work best on " + bestTimesStr);
+                tips.put(INFORMATIVE_TIP, "You work best on " + bestTimesStr);
 
                 workTimeDivisionChart.setTitle("Monthly Division Of Work Time");
                 break;
             case "Hourly":
             default:
                 for (float i = 0f; i < 24f; i++) {
-                    float hourlyMinutesOfWork = db.getHourlyMinutesOfWork((int) i);
+                    float hourlyMinutesOfWork = statisticsDB.getHourlyMinutesOfWork((int) i);
                     workEntries.add(new BarEntry(i, hourlyMinutesOfWork));
                     if (hourlyMinutesOfWork == bestTime) {
                         bestTimes.add((int) i);
@@ -536,12 +551,14 @@ public class StatsFragment extends Fragment {
                     }
                     bestTimesStr.append(bestHourUnit).append(":00");
                 }
-                tips.put("INFORMATIVE_TIP", "You work best on " + bestTimesStr);
+                tips.put(INFORMATIVE_TIP, "You work best on " + bestTimesStr);
 
                 workTimeDivisionChart.setTitle("Hourly Division Of Work Time");
                 break;
         }
 
+
+        tips.put(NOT_ENOUGH_DATA_TIP, Constants.achievementsRequirements[7] + " to unlock this chart.");
         return workEntries;
     }
 
@@ -562,24 +579,24 @@ public class StatsFragment extends Fragment {
             case "This Week":
                 long weekDailyNeurons = 0;
                 for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-                    if((dayOfWeek.ordinal() + 1) % 7 <= todayOfWeek) {
-                        long todayNeurons = db.getDayOfThisWeekNeurons(dayOfWeek.plus(6));
+                    if(dayOfWeek.plus(1).ordinal() <= todayOfWeek) {
+                        long todayNeurons = statisticsDB.getDayOfThisWeekNeurons(dayOfWeek);
                         weekDailyNeurons += todayNeurons;
-                        if((dayOfWeek.ordinal() + 6) % 7 > 0) {
-                            neuronsEntries.add(new Entry((dayOfWeek.ordinal()), (float) weekDailyNeurons));
+                        if(dayOfWeek.plus(1).ordinal() > 0) {
+                            neuronsEntries.add(new Entry((dayOfWeek.plus(1).ordinal()), (float) weekDailyNeurons));
                         } else {
-                            neuronsEntries.add(new Entry((dayOfWeek.ordinal()), todayNeurons));
+                            neuronsEntries.add(new Entry((dayOfWeek.plus(1).ordinal()), todayNeurons));
                         }
                         if (todayNeurons == mostNeuronsHolder) {
-                            mostNeurons.add((dayOfWeek.ordinal() + 6) % 7);
+                            mostNeurons.add(dayOfWeek.plus(1).ordinal());
                         } else if (todayNeurons > mostNeuronsHolder) {
                             mostNeuronsHolder = (int) todayNeurons;
                             mostNeurons.clear();
-                            mostNeurons.add((dayOfWeek.ordinal() + 6) % 7);
+                            mostNeurons.add(dayOfWeek.plus(1).ordinal());
                         }
                     }
                 }
-
+                Collections.sort(neuronsEntries, (entry1, entry2) -> (int)(entry1.getX() - entry2.getX()));
                 for (int bestDayUnit : mostNeurons) {
                     if (mostNeurons.indexOf(bestDayUnit) != 0) {
                         if (mostNeurons.indexOf(bestDayUnit) != mostNeurons.size() - 1) {
@@ -588,16 +605,16 @@ public class StatsFragment extends Fragment {
                             mostNeuronsStr.append(" and ");
                         }
                     }
-                    mostNeuronsStr.append(DayOfWeek.of(bestDayUnit + 1).name());
+                    mostNeuronsStr.append(DayOfWeek.of(bestDayUnit).name());
                 }
-                tips.put("INFORMATIVE_TIP", "This week your strong day" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
+                tips.put(INFORMATIVE_TIP, "This week your strong day" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
 
                 neuronsProgressChart.setTitle("This Week's Neurons");
                 break;
             case "This Month":
                 long monthDailyNeurons = 0;
                 for (int dayOfMonth = 1; dayOfMonth <= todayOfMonth; dayOfMonth++) {
-                    long todayNeurons = db.getDayOfThisMonthNeurons(dayOfMonth);
+                    long todayNeurons = statisticsDB.getDayOfThisMonthNeurons(dayOfMonth);
                     monthDailyNeurons += todayNeurons;
                     neuronsEntries.add(new Entry(dayOfMonth, (float) monthDailyNeurons));
                     if (todayNeurons == mostNeuronsHolder) {
@@ -620,14 +637,14 @@ public class StatsFragment extends Fragment {
                     }
                     mostNeuronsStr.append(bestDayUnit);
                 }
-                tips.put("INFORMATIVE_TIP", "This month your strong day" + (mostNeurons.size() > 1 ? "s were the " : " was the ") + mostNeuronsStr);
+                tips.put(INFORMATIVE_TIP, "This month your strong day" + (mostNeurons.size() > 1 ? "s were the " : " was the ") + mostNeuronsStr);
 
                 neuronsProgressChart.setTitle("This Month's Neurons");
                 break;
             case "This Year":
                 long monthlyNeurons = 0;
                 for (Month month : Month.values()) {
-                    long thisMonthsNeurons = db.getMonthOfThisYearNeurons(month);
+                    long thisMonthsNeurons = statisticsDB.getMonthOfThisYearNeurons(month);
                     monthlyNeurons += thisMonthsNeurons;
                     neuronsEntries.add(new Entry(month.ordinal(), (float) monthlyNeurons));
                     if (thisMonthsNeurons == mostNeuronsHolder) {
@@ -653,7 +670,7 @@ public class StatsFragment extends Fragment {
                     }
                     mostNeuronsStr.append(Month.of(bestMonthUnit + 1).name());
                 }
-                tips.put("INFORMATIVE_TIP", "This year your strong month" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
+                tips.put(INFORMATIVE_TIP, "This year your strong month" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
 
                 neuronsProgressChart.setTitle("This Year's Neurons");
                 break;
@@ -661,13 +678,13 @@ public class StatsFragment extends Fragment {
             default:
                 long hourlyNeurons = 0;
                 for (float hour = 0f; hour <= nowHour; hour++) {
-                    long currentHour = db.getHourOfTodayNeurons((int) hour);
-                     hourlyNeurons += currentHour;
+                    long currentHourNeurons = statisticsDB.getHourOfTodayNeurons((int) hour);
+                     hourlyNeurons += currentHourNeurons;
                     neuronsEntries.add(new Entry(hour, (float) hourlyNeurons));
-                    if (currentHour == mostNeuronsHolder) {
+                    if (currentHourNeurons == mostNeuronsHolder) {
                         mostNeurons.add((int) hour);
-                    } else if (currentHour > mostNeuronsHolder) {
-                        mostNeuronsHolder = (int) currentHour;
+                    } else if (currentHourNeurons > mostNeuronsHolder) {
+                        mostNeuronsHolder = (int) currentHourNeurons;
                         mostNeurons.clear();
                         mostNeurons.add((int) hour);
                     }
@@ -687,12 +704,13 @@ public class StatsFragment extends Fragment {
                     }
                     mostNeuronsStr.append(mHours[bestHourUnit]);
                 }
-                tips.put("INFORMATIVE_TIP", "Today your strong hour" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
+                tips.put(INFORMATIVE_TIP, "Today your strong hour" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
 
                 neuronsProgressChart.setTitle("Today's Neurons");
                 break;
         }
-        Log.d(TAG, "getNeuronsProgressChartData: " + neuronsEntries.toString());
+
+        tips.put(NOT_ENOUGH_DATA_TIP, Constants.achievementsRequirements[10] + " to unlock this chart.");
         return neuronsEntries;
     }
 

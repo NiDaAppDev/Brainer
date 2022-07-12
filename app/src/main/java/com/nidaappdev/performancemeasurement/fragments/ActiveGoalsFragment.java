@@ -25,21 +25,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
-import com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters.ActiveGoalsAdapter;
-import com.nidaappdev.performancemeasurement.R;
-import com.nidaappdev.performancemeasurement.activities.MainActivity;
-import com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
-import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
-import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
-import com.nidaappdev.performancemeasurement.util.PrefUtil;
 import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hootsuite.nachos.NachoTextView;
+import com.nidaappdev.performancemeasurement.R;
+import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.ActiveGoalsAdapter;
+import com.nidaappdev.performancemeasurement.activities.MainActivity;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
+import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.nidaappdev.performancemeasurement.util.PrefUtil;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
 import com.warkiz.tickseekbar.SeekParams;
 import com.warkiz.tickseekbar.TickSeekBar;
@@ -351,7 +351,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             }
             progress = new Random().nextInt(100) + 1;
 
-            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, 0, false, new ArrayList<String>(), "");
+            goal = new Goal(Integer.toString(i), i + "" + i, parent, progress, 100, 0, 0, 0, 0, 0, false, new ArrayList<String>(), "");
             db.addGoal(goal);
         }
         mainActiveGoalsAdapter.swapCursor(db.getActiveGoalsCursor());
@@ -428,6 +428,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
         if (!PrefUtil.getCurrentGoal().equals(PublicMethods.getFinishingGoal().toString()) || PrefUtil.getTimerState() != OpeningFragment.TimerState.Running) {
             ArrayList<String> tagsArray = new ArrayList<>();
             if (!tagPickerEditText.getText().toString().equals("")) {
+                tagPickerEditText.chipifyAllUnterminatedTokens();
                 List<com.hootsuite.nachos.chip.Chip> allTagsSelected = tagPickerEditText.getAllChips();
                 for (com.hootsuite.nachos.chip.Chip chip : allTagsSelected) {
                     tagsArray.add(chip.getText().toString());
@@ -607,7 +608,7 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
     public void initSetAsSubgoalOfGoalsList(View v) {
         setAsSubgoalOfGoalsList = v.findViewById(R.id.set_as_subgoal_dialog_recycler_view);
         setAsSubgoalOfGoalsArrayList = db.getPossibleParentGoalsArrayListOf(mainActiveGoalsAdapter.getMultiSelected());
-        PublicMethods.sortActiveGoals(requireContext(), sortMode, ascending, setAsSubgoalOfGoalsArrayList);
+        PublicMethods.sortActiveGoals(requireContext(), PublicMethods.getValueOrDefault(sortMode, PrefUtil.ActiveSortMode.Date), ascending, setAsSubgoalOfGoalsArrayList);
         setAsSubgoalOfGoalsAdapter = new ActiveGoalsAdapter(getContext(),
                 db.getPossibleParentGoalsArrayListOf(mainActiveGoalsAdapter.getMultiSelected()),
                 db.getPossibleParentGoalsCursor(mainActiveGoalsAdapter.getMultiSelected()),

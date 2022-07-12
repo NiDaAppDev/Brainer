@@ -23,6 +23,11 @@ public class MonthAxisValueFormatter extends ValueFormatter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public String getAxisLabel(float value, AxisBase axis) {
-        return mMonths[(int) (value % mMonths.length)];
+        try {
+            return mMonths[(int) (value % mMonths.length)];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return mMonths[0];
+        }
     }
 }

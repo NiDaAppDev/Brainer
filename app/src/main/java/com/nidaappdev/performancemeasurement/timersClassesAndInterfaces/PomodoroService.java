@@ -178,6 +178,8 @@ public class PomodoroService extends Service {
         pomodoroNotificationBuilder
                 .setContentText(String.format("%s is in progress\nThis session remains: %s until finished", goalName, PublicMethods.formatStopWatchTime(millisRemaining)))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(enableScreenOverlayText))
+                .setColor(getResources().getColor(R.color.colorPrimary))
+                .setColorized(true)
                 .addAction(R.drawable.stop, actionButtonTitle, pendingIntent);
     }
 

@@ -22,6 +22,11 @@ public class DayAxisValueFormatter extends ValueFormatter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public String getAxisLabel(float value, AxisBase axis) {
-        return mDays[(int) (value % mDays.length)];
+        try {
+            return mDays[(int) (value % mDays.length)];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return mDays[0];
+        }
     }
 }

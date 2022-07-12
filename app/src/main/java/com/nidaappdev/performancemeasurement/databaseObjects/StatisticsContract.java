@@ -1,4 +1,4 @@
-package com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects;
+package com.nidaappdev.performancemeasurement.databaseObjects;
 
 import android.provider.BaseColumns;
 

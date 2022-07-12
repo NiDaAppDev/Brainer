@@ -55,14 +55,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
-import com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters.GoalsAdapter;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.GoalsAdapter;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.activities.MainActivity;
 import com.nidaappdev.performancemeasurement.brainAnimation.lightning.RandomLightning;
 import com.nidaappdev.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton;
+import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnFocusListenable;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
@@ -88,7 +89,8 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     private ArrayList<RandomLightning> randomLightnings;
     private ImageView brainImage;
     private View v;
-    private static GoalDBHelper db;
+    private static GoalDBHelper goalDB;
+    private static StatisticsDBHelper statsDB;
     private static MainActivity activity;
     private static IconSwitch timeMethodSwitch;
     private static FloatingActionButton playPauseBtn, addNewGoalBtn;
@@ -166,7 +168,9 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_opening, container, false);
 
-        db = new GoalDBHelper(getContext());
+        goalDB = new GoalDBHelper(getContext());
+
+        statsDB = new StatisticsDBHelper(getContext());
 
         initObjects(v);
 
@@ -234,7 +238,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
         setupLightningsBounds();
 
-        int lightningFrequency = (int) db.getUserNeurons();
+        int lightningFrequency = (int) statsDB.getCurrentAllTimeNeurons();
         int lightningsAmount = (int) Math.ceil(lightningFrequency / 60.0);
 
         brainWidth = brainImage.getMaxWidth();
@@ -354,7 +358,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         currentGoalPickerDialog.setCancelable(true);
         currentGoalPickerDialog.setTitle(R.string.wheel_picker_title_text);
         currentGoalPicker = currentGoalPickerDialog.findViewById(R.id.wheel_picker_recyclerview);
-        activeGoalsAdapter = new GoalsAdapter(getContext(), db.getActiveGoalsArrayList());
+        activeGoalsAdapter = new GoalsAdapter(getContext(), goalDB.getActiveGoalsArrayList());
         final CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, false);
         layoutManager.setPostLayoutListener((CarouselLayoutManager.PostLayoutListener) new CarouselZoomPostLayoutListener());
         currentGoalPicker.setLayoutManager(layoutManager);
@@ -366,7 +370,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onItemClick(int position) {
-                selectNewCurrentGoal(db.getActiveGoalsArrayList().get(position).getName());
+                selectNewCurrentGoal(goalDB.getActiveGoalsArrayList().get(position).getName());
             }
         });
     }
@@ -416,7 +420,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         addBtn.setOnClickListener(view -> {
             Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString(), PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated));
             ArrayList<String> allGoalsNames = new ArrayList<>();
-            for (Goal goal : db.getAllGoalsArrayList()) {
+            for (Goal goal : goalDB.getAllGoalsArrayList()) {
                 allGoalsNames.add(goal.getName());
             }
             if (allGoalsNames.contains(newGoal.getName())) {
@@ -426,7 +430,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
             } else if (newGoalsTimeEstimated.getText().toString().isEmpty() || PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated) == 0) {
                 PublicMethods.openGoalTimeEstimatedNotValidErrorDialog(requireContext(), activity);
             } else {
-                db.addGoal(newGoal);
+                goalDB.addGoal(newGoal);
                 initCurrentGoalPicker();
                 closeAddNewGoalDialog();
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -450,13 +454,13 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static void onTimerStopped(String goalName, long timerMillisExtra, Context context) {
-        db.progressGoal(goalName, timerMillisExtra / 1000);
+        goalDB.progressGoal(goalName, timerMillisExtra / 1000);
         updateCurrentGoalBar();
         LocalBroadcastManager.getInstance(context).unregisterReceiver(endTimerReceiver);
-        if (PrefUtil.startedBeforeEstimation() && db.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() > 100) {
+        if (PrefUtil.startedBeforeEstimation() && goalDB.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() > 100) {
             openEstimateBetterDialog(context);
         }
-        activeGoalsAdapter.updateGoalsList(db.getActiveGoalsArrayList());
+        activeGoalsAdapter.updateGoalsList(goalDB.getActiveGoalsArrayList());
     }
 
 
@@ -468,7 +472,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         updateRunning(true, context);
         LocalBroadcastManager.getInstance(context).registerReceiver(endTimerReceiver, new IntentFilter(SAVE_GOAL_PROGRESS_INTENT_ACTION));
         sendCommandToStartTimerService(context, PrefUtil.getCurrentGoal());
-        PrefUtil.setStartedBeforeEstimation(db.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() < 100);
+        PrefUtil.setStartedBeforeEstimation(goalDB.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() < 100);
     }
 
     /**
@@ -544,7 +548,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         currentGoalProgressBarButton.setEnabled(false);
         LocalBroadcastManager.getInstance(context).registerReceiver(endTimerReceiver, new IntentFilter(SAVE_GOAL_PROGRESS_INTENT_ACTION));
         sendCommandToStartPomodoroService(context, PrefUtil.getCurrentGoal());
-        PrefUtil.setStartedBeforeEstimation(db.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() < 100);
+        PrefUtil.setStartedBeforeEstimation(goalDB.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() < 100);
     }
 
     /**
@@ -651,15 +655,15 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static void onPomodoroFinished(Context context, String goalName) {
-        db.pomodoroProgressGoal(goalName);
+        goalDB.pomodoroProgressGoal(goalName);
         updateCurrentGoalBar();
         openPomodoroFinishedDialog(context);
         setToggleEnabled(true, timeMethodSwitch);
         currentGoalProgressBarButton.setEnabled(true);
-        if (PrefUtil.startedBeforeEstimation() && db.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() > 100) {
+        if (PrefUtil.startedBeforeEstimation() && goalDB.getGoalByName(PrefUtil.getCurrentGoal()).getProgress() > 100) {
             openEstimateBetterDialog(context);
         }
-        activeGoalsAdapter.updateGoalsList(db.getActiveGoalsArrayList());
+        activeGoalsAdapter.updateGoalsList(goalDB.getActiveGoalsArrayList());
     }
 
     private static void openEstimateBetterDialog(Context context) {
@@ -842,7 +846,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private static void updateCurrentGoalBar() {
-        Goal goal = db.getGoalByName(PrefUtil.getCurrentGoal());
+        Goal goal = goalDB.getGoalByName(PrefUtil.getCurrentGoal());
         if (goal != null && !goal.isAchieved()) {
             currentGoalProgressBarButton.setText(goal.getName());
             currentGoalProgressBarButton.setProgress(goal.getProgress());
@@ -859,8 +863,8 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void openWheelPickerInPos() {
         currentGoalPickerDialog.show();
-        if (PublicMethods.positionOfGoalInGoalsArrayList(PrefUtil.getCurrentGoal(), db.getActiveGoalsArrayList()) != -1) {
-            currentGoalPicker.scrollToPosition(PublicMethods.positionOfGoalInGoalsArrayList(PrefUtil.getCurrentGoal(), db.getActiveGoalsArrayList()));
+        if (PublicMethods.positionOfGoalInGoalsArrayList(PrefUtil.getCurrentGoal(), goalDB.getActiveGoalsArrayList()) != -1) {
+            currentGoalPicker.scrollToPosition(PublicMethods.positionOfGoalInGoalsArrayList(PrefUtil.getCurrentGoal(), goalDB.getActiveGoalsArrayList()));
         }
     }
 

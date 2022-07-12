@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters.ActiveGoalsAdapter;
+import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.ActiveGoalsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

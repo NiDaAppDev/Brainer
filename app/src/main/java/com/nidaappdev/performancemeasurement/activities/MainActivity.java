@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, achievementsFragment).commit();
                 setNavMenuItemThemeColors(getResources().getColor(R.color.gold));
                 Objects.requireNonNull(getSupportActionBar()).setTitle("Achievements");
+                break;
             case R.id.nav_tips_and_tricks:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, tipsAndTricksFragment).commit();
                 setNavMenuItemThemeColors(getResources().getColor(R.color.light));
@@ -303,6 +304,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             PrefUtil.setPomodoroLength(25);
             PrefUtil.setPomodoroTimeOutLength(5);
             PrefUtil.setSuggestBreak(true);
+            PrefUtil.setActiveSortMode(PrefUtil.ActiveSortMode.Date);
+            PrefUtil.setAchievedSortMode(PrefUtil.AchievedSortMode.FinishDate);
+            PrefUtil.setActiveAscending(false);
+            PrefUtil.setAchievedAscending(false);
         }
     }
 }

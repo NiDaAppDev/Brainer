@@ -23,7 +23,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/first_divider"
-                app:title="@string/hourly_division_of_work_time_chart_title"
+                app:title="@string/division_of_work_time_chart_title"
                 app:chart_type="horizontalBarChart"
                 app:bottom_end_axis_title="Minutes"
                 app:top_end_axis_title="Minutes"
@@ -70,7 +70,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/third_divider"
-                app:title="Timer Mode Results"
+                app:title="@string/timer_mode_results_chart_title"
                 app:chart_type="spiderChart" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -88,11 +88,12 @@
                 android:id="@+id/neurons_progress_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 app:layout_constraintTop_toBottomOf="@id/third_divider"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:title="Neurons Progress"
+                app:title="@string/neurons_progress_chart_title"
                 app:chart_type="lineChart"
                 app:top_start_axis_title="Neurons"
                 android:entries="@array/TimeZones"/>

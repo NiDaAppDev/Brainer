@@ -17,6 +17,11 @@ public class HourAxisValueFormatter extends ValueFormatter {
 
     @Override
     public String getAxisLabel(float value, AxisBase axis) {
-        return mHours[(int) (value % mHours.length)];
+        try {
+            return mHours[(int) (value % mHours.length)];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return mHours[0];
+        }
     }
 }

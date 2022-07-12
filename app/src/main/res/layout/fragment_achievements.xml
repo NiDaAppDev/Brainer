@@ -5,12 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".fragments.AchievementsFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
+            <com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
+                android:id="@+id/achievements_recycler_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:nestedScrollingEnabled="false"
+                android:scrollbars="vertical" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </FrameLayout>

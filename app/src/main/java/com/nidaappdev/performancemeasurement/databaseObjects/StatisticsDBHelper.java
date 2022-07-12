@@ -1,12 +1,12 @@
-package com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects;
+package com.nidaappdev.performancemeasurement.databaseObjects;
 
 import static com.nidaappdev.performancemeasurement.App.statisticsDBReference;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_DATE;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOUR;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_NEURONS;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_SECONDS_OF_WORK;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.COLUMN_PAYED_MONTHLY_NEURONS;
-import static com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry.TABLE_NAME;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_DATE;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOUR;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_NEURONS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_HOURLY_SECONDS_OF_WORK;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.COLUMN_PAYED_MONTHLY_NEURONS;
+import static com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry.TABLE_NAME;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,7 +18,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.nidaappdev.performancemeasurement.App;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.StatisticsContract.StatisticsEntry;
+import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsContract.StatisticsEntry;
 
 import org.joda.time.DateTime;
 
@@ -225,6 +225,20 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
             }
         }
         return result;
+    }
+
+    public int getAllTimeHighestNeurons() {
+        String query = "SELECT * FROM " + TABLE_NAME;
+        int sum = 0, highest = 0;
+        try(Cursor cursor = sQLiteDatabase.rawQuery(query, null)) {
+            while (cursor.moveToNext()) {
+                sum += cursor.getInt(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_HOURLY_NEURONS));
+                if(sum > highest) {
+                    highest = sum;
+                }
+            }
+        }
+        return highest;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

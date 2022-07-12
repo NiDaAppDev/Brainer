@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/transparent">
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/achievedCardView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_marginBottom="15dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="15.0dip"
-            app:cardElevation="7.5dip">
+            app:cardElevation="7.5dp">
 
             <LinearLayout
                 android:id="@+id/shrunk_achieved_goal_container"
@@ -265,7 +265,7 @@
 
             </RelativeLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
     </FrameLayout>
 

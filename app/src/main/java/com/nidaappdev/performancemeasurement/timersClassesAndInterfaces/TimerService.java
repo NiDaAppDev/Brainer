@@ -171,6 +171,8 @@ public class TimerService extends Service {
         timerNotificationBuilder
                 .setContentText(String.format("%s is in progress\nThis session length: %s", goalName, PublicMethods.formatStopWatchTime(timeInMillis)))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(enableScreenOverlayText))
+                .setColor(getResources().getColor(R.color.colorPrimary))
+                .setColorized(true)
                 .addAction(R.drawable.stop, actionButtonTitle, pendingIntent);
     }
 

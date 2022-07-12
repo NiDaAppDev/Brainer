@@ -37,6 +37,11 @@ public class CustomChart extends ConstraintLayout {
 
     private String title, top_start_axis_title, top_end_axis_title, bottom_start_axis_title, bottom_end_axis_title;
 
+    public static final String IMPROVE_TIP = "IMPROVE_TIP",
+            DOING_GREAT_TIP = "DOING_GREAT_TIP",
+            INFORMATIVE_TIP = "INFORMATIVE_TIP",
+            NOT_ENOUGH_DATA_TIP = "NOT_ENOUGH_DATA_TIP";
+
     private boolean unlocked;
 
     public enum ChartType {barChart, horizontalBarChart, pieChart, spiderChart, lineChart}
@@ -83,7 +88,7 @@ public class CustomChart extends ConstraintLayout {
             }
         }
 
-        titleTV = findViewById(R.id.titleTV);
+        titleTV = findViewById(R.id.chart_titleTV);
         chartPicker = findViewById(R.id.chart_picker);
         barChart = findViewById(R.id.bar_chart);
         horizontalBarChart = findViewById(R.id.horizontal_bar_chart);
@@ -188,16 +193,16 @@ public class CustomChart extends ConstraintLayout {
         }
         this.tipType = tipType;
 
-        if (!tips.containsKey("IMPROVE_TIP")) {
+        if (!tips.containsKey(IMPROVE_TIP)) {
             this.tips.put("IMPROVE_TIP", "You can do better!");
         }
-        if (!tips.containsKey("DOING_GREAT_TIP")) {
+        if (!tips.containsKey(DOING_GREAT_TIP)) {
             this.tips.put("DOING_GREAT_TIP", "You're doing great!\nKeep up the hard work.");
         }
-        if (!tips.containsKey("INFORMATIVE_TIP")) {
+        if (!tips.containsKey(INFORMATIVE_TIP)) {
             this.tips.put("INFORMATIVE_TIP", "This is an informative tip.");
         }
-        if (!tips.containsKey("NOT_ENOUGH_DATA_TIP")) {
+        if (!tips.containsKey(NOT_ENOUGH_DATA_TIP)) {
             this.tips.put("NOT_ENOUGH_DATA_TIP", "Not enough data to analyze.\nCome back when you add more goals to your resume.");
         }
         initTip(getTipKey(isAnalyzeGood));

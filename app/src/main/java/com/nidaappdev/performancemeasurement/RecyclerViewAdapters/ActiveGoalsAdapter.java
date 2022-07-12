@@ -1,4 +1,4 @@
-package com.nidaappdev.performancemeasurement.GoalRecyclerViewAdapters;
+package com.nidaappdev.performancemeasurement.RecyclerViewAdapters;
 
 import static android.content.ContentValues.TAG;
 
@@ -38,12 +38,13 @@ import com.azoft.carousellayoutmanager.CenterScrollListener;
 import com.developer.mtextfield.ExtendedEditText;
 import com.developer.mtextfield.TextFieldBoxes;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.Goal;
-import com.nidaappdev.performancemeasurement.GoalAndDatabaseObjects.GoalDBHelper;
+import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.activities.MainActivity;
 import com.nidaappdev.performancemeasurement.customViews.CustomProgressBar.CustomProgressBar;
 import com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView;
+import com.nidaappdev.performancemeasurement.fragments.OpeningFragment;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
@@ -293,6 +294,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
              * controls what happens when an active-goal items finish button is clicked.
              */
             btnFinish.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View v) {
                     ArrayList<Goal> subgoals = db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition()));
@@ -304,7 +306,9 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                         }
                     }
                     if (activeSubgoalUnderGoal) {
-                        openCantFinishGoalWarningDialog(activeGoals.get(getAdapterPosition()));
+                        openCantFinishGoalSubgoalErrorDialog(activeGoals.get(getAdapterPosition()));
+                    }else if(activeGoals.get(getAdapterPosition()).getName().equals(PrefUtil.getCurrentGoal()) && PrefUtil.getTimerState().equals(OpeningFragment.TimerState.Running)){
+                        openCantFinishGoalActiveErrorDialog(activeGoals.get(getAdapterPosition()));
                     } else {
                         finishGoal(activeGoals.get(getAdapterPosition()));
                     }
@@ -892,7 +896,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
      * @param goal is the goal the user tries to finish.
      * @return the dialog explaining why the user can't finish the goal (due to its unfinished goals).
      */
-    public boolean openCantFinishGoalWarningDialog(Goal goal) {
+    public boolean openCantFinishGoalSubgoalErrorDialog(Goal goal) {
         dialogHandler = DialogHandler.getDialogHandler(context);
         Runnable okProcedure;
         okProcedure = new Runnable() {
@@ -907,7 +911,26 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                 "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal).toString().substring(1, db.getSubGoalsArrayListOf(goal).toString().length() - 1),
                 "OK",
                 okProcedure,
-                DialogTypes.TYPE_WARNING,
+                DialogTypes.TYPE_ERROR,
+                null);
+    }
+
+    private boolean openCantFinishGoalActiveErrorDialog(Goal goal) {
+        dialogHandler = DialogHandler.getDialogHandler(context);
+        Runnable okProcedure;
+        okProcedure = new Runnable() {
+            @Override
+            public void run() {
+                /* Here handle whatever happens when user clicks the 'OK' button.*/
+            }
+        };
+        return dialogHandler.showDialog(activity,
+                context,
+                "Goal Is In Progress",
+                "The goal \"" + goal.getName() + "\" is currently in progress.\nYou can't finish a goal while it's still in progress.",
+                "OK",
+                okProcedure,
+                DialogTypes.TYPE_ERROR,
                 null);
     }
 
