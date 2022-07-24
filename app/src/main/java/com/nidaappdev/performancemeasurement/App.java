@@ -32,6 +32,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -52,6 +53,8 @@ import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,10 +136,8 @@ public class App extends Application {
         Handler handler = new Handler();
         initCloudReferences();
         progressButton.setIndeterminateProgressMode(false);
-        appContext.deleteDatabase(GOALS_DATABASE_NAME);
-        goalDB = new GoalDBHelper(appContext);
-        appContext.deleteDatabase(STATISTICS_DATABASE_NAME);
-        statisticsDB = new StatisticsDBHelper(appContext);
+        goalDB = goalDB.recreateDB(appContext);
+        statisticsDB = statisticsDB.recreateDB(appContext);
         PrefUtil.clearAllSharedPreferences();
         settingsReference.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {

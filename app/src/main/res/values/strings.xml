@@ -64,5 +64,10 @@
     <string name="fb_login_protocol_scheme" translatable="false">fb1234</string>
     <string name="facebook_client_token" translatable="false">56789</string>
     <string name="achievements_nav_text">Achievements</string>
+    <string name="settings_tutorial_title">Tutorial</string>
+    <string name="settings_tutorial_sub_title">Don\'t show tutorial on:</string>
+    <string name="main_page_tutorial_checkbox">Main Page</string>
+    <string name="active_goals_page_tutorial_checkbox">Active Goals Page</string>
+    <string name="achieved_goals_page_tutorial_checkbox">Achieved Goals Page</string>
 
 </resources>

@@ -468,7 +468,7 @@ public class StatsFragment extends Fragment {
     private List<BarEntry> getWorkDivisionChartData() {
         List<BarEntry> workEntries = new ArrayList<>();
         ArrayList<Integer> bestTimes = new ArrayList<>();
-        int bestTime = 0;
+        float bestTime = 0;
 
         StringBuilder bestTimesStr = new StringBuilder();
 
@@ -480,7 +480,7 @@ public class StatsFragment extends Fragment {
                     if (dailyMinutesOfWork == bestTime) {
                         bestTimes.add(dayOfWeek.plus(1).ordinal());
                     } else if (dailyMinutesOfWork > bestTime) {
-                        bestTime = (int) dailyMinutesOfWork;
+                        bestTime = dailyMinutesOfWork;
                         bestTimes.clear();
                         bestTimes.add(dayOfWeek.plus(1).ordinal());
                     }
@@ -494,7 +494,11 @@ public class StatsFragment extends Fragment {
                             bestTimesStr.append(" and ");
                         }
                     }
-                    bestTimesStr.append(DayOfWeek.of(bestDayUnit).name());
+                    if(bestDayUnit == 0) {
+                        bestTimesStr.append(DayOfWeek.of(7).name());
+                    } else {
+                        bestTimesStr.append(DayOfWeek.of(bestDayUnit).name());
+                    }
                 }
                 tips.put(INFORMATIVE_TIP, "You work best on " + bestTimesStr);
 
@@ -507,7 +511,7 @@ public class StatsFragment extends Fragment {
                     if (monthlyMinutesOfWork == bestTime) {
                         bestTimes.add(month.ordinal());
                     } else if (monthlyMinutesOfWork > bestTime) {
-                        bestTime = (int) monthlyMinutesOfWork;
+                        bestTime = monthlyMinutesOfWork;
                         bestTimes.clear();
                         bestTimes.add(month.ordinal());
                     }
@@ -535,7 +539,7 @@ public class StatsFragment extends Fragment {
                     if (hourlyMinutesOfWork == bestTime) {
                         bestTimes.add((int) i);
                     } else if (hourlyMinutesOfWork > bestTime) {
-                        bestTime = (int) hourlyMinutesOfWork;
+                        bestTime = hourlyMinutesOfWork;
                         bestTimes.clear();
                         bestTimes.add((int) i);
                     }
@@ -605,7 +609,11 @@ public class StatsFragment extends Fragment {
                             mostNeuronsStr.append(" and ");
                         }
                     }
-                    mostNeuronsStr.append(DayOfWeek.of(bestDayUnit).name());
+                    if(bestDayUnit == 0) {
+                        mostNeuronsStr.append(DayOfWeek.of(7).name());
+                    } else {
+                        mostNeuronsStr.append(DayOfWeek.of(bestDayUnit).name());
+                    }
                 }
                 tips.put(INFORMATIVE_TIP, "This week your strong day" + (mostNeurons.size() > 1 ? "s were " : " was ") + mostNeuronsStr);
 

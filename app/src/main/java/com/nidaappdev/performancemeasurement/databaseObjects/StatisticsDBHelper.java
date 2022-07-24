@@ -40,12 +40,15 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
 
-    private final SQLiteDatabase sQLiteDatabase = getWritableDatabase();
+    private static SQLiteDatabase sQLiteDatabase;
 
     private static final GoalDBHelper goalDB = new GoalDBHelper(App.appContext);
 
+    private static Cursor cursor;
+
     public StatisticsDBHelper(Context context) {
         super(context, STATISTICS_DATABASE_NAME, null, DATABASE_VERSION);
+        sQLiteDatabase = getWritableDatabase();
     }
 
     @Override
@@ -60,6 +63,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
                 StatisticsEntry.COLUMN_HOURLY_NEURONS + " REAL NOT NULL, " +
                 StatisticsEntry.COLUMN_PAYED_MONTHLY_NEURONS + " BOOLEAN NOT NULL)";
         db.execSQL(SQL_CREATE_STATISTICS_TABLE);
+        sQLiteDatabase = db;
     }
 
     @Override
@@ -75,7 +79,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + StatisticsEntry.COLUMN_DATE + " = '" + simpleDateFormat.format(new Date())
                 + "' AND " + StatisticsEntry.COLUMN_HOUR + " = " + hour;
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
             return false;
@@ -87,7 +91,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
     private boolean doesHourExist(int hour) {
         String query = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + StatisticsEntry.COLUMN_HOUR + " = " + hour;
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
             return false;
@@ -104,6 +108,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 LocalDate cursorDate = LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_DATE)), dateTimeFormatter);
                 if (DayOfWeek.from(cursorDate).equals(dayOfWeek)) {
+                    cursor.close();
                     return true;
                 }
             }
@@ -119,6 +124,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 LocalDate cursorDate = LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_DATE)), dateTimeFormatter);
                 if (Month.from(cursorDate).equals(month)) {
+                    cursor.close();
                     return true;
                 }
             }
@@ -136,6 +142,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
                 LocalDate cursorDate = LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_DATE)), dateTimeFormatter);
                 LocalDate nowDate = LocalDate.parse(simpleDateFormat.format(new Date()), dateTimeFormatter);
                 if (YearMonth.from(cursorDate).equals(YearMonth.from(nowDate))) {
+                    cursor.close();
                     return true;
                 }
             }
@@ -463,7 +470,9 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
                     + "' AND " + StatisticsEntry.COLUMN_HOUR + " = " + 0;
             try (Cursor cursor = sQLiteDatabase.rawQuery(query, null)) {
                 cursor.moveToFirst();
-                return cursor.getInt(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_HOURLY_NEURONS));
+                int result = cursor.getInt(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_HOURLY_NEURONS));
+                cursor.close();
+                return result;
             }
         }
         return 0;
@@ -583,6 +592,7 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
             LocalDate cursorDate = LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow(StatisticsEntry.COLUMN_DATE)), dateTimeFormatter);
             LocalDate checkDate = LocalDate.parse(LocalDate.of(year.getValue(), month.getValue(), 1).format(dateTimeFormatter), dateTimeFormatter);
             if (cursorDate.isAfter(checkDate) || cursorDate.isEqual(checkDate) || (cursorDate.getYear() == checkDate.getYear() && cursorDate.getMonth().equals(checkDate.getMonth()))) {
+                cursor.close();
                 return true;
             }
         }
@@ -637,5 +647,27 @@ public class StatisticsDBHelper extends SQLiteOpenHelper {
     public void clearDB(){
         String query = "DELETE FROM " + TABLE_NAME;
         sQLiteDatabase.execSQL(query);
+    }
+
+    public void closeGoalDB() {
+        goalDB.close();
+    }
+
+    public void deleteDB(Context context) {
+        if(sQLiteDatabase.isOpen()) {
+            sQLiteDatabase.close();
+        }
+        if(cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        this.close();
+        goalDB.closeStatisticsDB();
+        context.deleteDatabase(STATISTICS_DATABASE_NAME);
+    }
+
+    public StatisticsDBHelper recreateDB(Context context) {
+        deleteDB(context);
+        sQLiteDatabase = getWritableDatabase();
+        return new StatisticsDBHelper(context);
     }
 }

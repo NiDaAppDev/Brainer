@@ -4,7 +4,16 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.nidaappdev.performancemeasurement.App.settingsReference;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_ASCENDING_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_FILTERS_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_PAGE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVED_GOALS_SORT_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.ACHIEVEMENTS_PAGE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.ACTIVE_GOALS_PAGE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.MAIN_PAGE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.SETTINGS_PAGE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.SKIPPED_TUTORIAL_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.STATS_PAGE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.TUTORIAL_PAGE_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.TUTORIAL_SHAREDPREFERENCES_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACTIVE_GOALS_ASCENDING_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.ACTIVE_GOALS_SORT_PREFERENCE_NAME;
@@ -18,6 +27,7 @@ import static com.nidaappdev.performancemeasurement.util.Constants.SUGGEST_BREAK
 import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_PREFERENCES_SHAREDPREFERENCES_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_STATE_PREFERENCE_NAME;
 import static com.nidaappdev.performancemeasurement.util.Constants.TIME_METHOD_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.util.Constants.TUTORIAL_STATION_INDEX_PREFERENCE_NAME;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -250,24 +260,56 @@ public class PrefUtil {
         return getBooleanPreference(CURRENT_ACTIVE_GOAL_SHAREDPREFERENCES_NAME, STARTED_BEFORE_ESTIMATION);
     }
 
-    public static void setFinishedTutorial(boolean finishedTutorial) {
-        addNewOrEditSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME, finishedTutorial);
+    public static void setFinishedTutorial(String pageName, boolean finishedTutorial) {
+        addNewOrEditSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME + pageName, finishedTutorial);
+    }
+
+    public static boolean finishedTutorial(String pageName) {
+        return getBooleanPreference(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME + pageName);
     }
 
     public static boolean finishedTutorial() {
-        return getBooleanPreference(TUTORIAL_SHAREDPREFERENCES_NAME, FINISHED_TUTORIAL_PREFERENCE_NAME);
+        return finishedTutorial(MAIN_PAGE_NAME) &&
+                finishedTutorial(ACTIVE_GOALS_PAGE_NAME) &&
+                finishedTutorial(ACHIEVED_GOALS_PAGE_NAME);
+    }
+
+    public static void setSkippedTutorial(String pageName, boolean skippedTutorial) {
+        addNewOrEditSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, SKIPPED_TUTORIAL_PREFERENCE_NAME + pageName, skippedTutorial);
+    }
+
+    public static boolean skippedTutorial(String pageName) {
+        return getBooleanPreference(TUTORIAL_SHAREDPREFERENCES_NAME, SKIPPED_TUTORIAL_PREFERENCE_NAME + pageName);
+    }
+
+    public static boolean skippedTutorial() {
+        return skippedTutorial(MAIN_PAGE_NAME) &&
+                skippedTutorial(ACTIVE_GOALS_PAGE_NAME) &&
+                skippedTutorial(ACHIEVED_GOALS_PAGE_NAME);
+    }
+
+    public static void setTutorialStationIndex(String pageName, int tutorialIndex) {
+        addNewOrEditSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, TUTORIAL_STATION_INDEX_PREFERENCE_NAME + pageName, tutorialIndex);
+    }
+
+    public static int getTutorialStationIndex(String pageName) {
+        return getIntPreference(TUTORIAL_SHAREDPREFERENCES_NAME, TUTORIAL_STATION_INDEX_PREFERENCE_NAME + pageName);
     }
 
     public static void clearAllSharedPreferences() {
-        SharedPreferences sharedPreferences = appContext.getSharedPreferences("brainPreferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = appContext.getSharedPreferences(BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear().apply();
 
-        sharedPreferences = appContext.getSharedPreferences("timerPreferences", MODE_PRIVATE);
+        sharedPreferences = appContext.getSharedPreferences(TIMER_PREFERENCES_SHAREDPREFERENCES_NAME, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.clear().apply();
 
-        sharedPreferences = appContext.getSharedPreferences("currentGoalPreferences", MODE_PRIVATE);
+        sharedPreferences = appContext.getSharedPreferences(CURRENT_ACTIVE_GOAL_SHAREDPREFERENCES_NAME, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.clear().apply();
+
+        sharedPreferences = appContext.getSharedPreferences(TUTORIAL_SHAREDPREFERENCES_NAME, MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.clear().apply();
     }

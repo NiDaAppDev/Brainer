@@ -4,6 +4,7 @@ import static android.Manifest.permission.FOREGROUND_SERVICE;
 import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.nidaappdev.performancemeasurement.util.Constants.GO_TO_OPENING_FRAGMENT;
+import static com.nidaappdev.performancemeasurement.util.Constants.MAIN_PAGE_NAME;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;

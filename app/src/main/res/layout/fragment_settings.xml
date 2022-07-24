@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!--Pomodoro Settings Section-->
         <TextView
             android:id="@+id/settings_pomodoro_title"
             android:layout_width="wrap_content"
@@ -51,7 +52,6 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
 
-
         <TextView
             android:id="@+id/settings_pomodoro_time_out_length_title"
             android:layout_width="wrap_content"
@@ -81,10 +81,9 @@
             app:layout_constraintTop_toBottomOf="@id/settings_pomodoro_time_out_length_title"
             app:layout_constraintStart_toStartOf="parent"/>
 
-
-
+        <!--Stopwatch Settings Section-->
         <TextView
-            android:id="@+id/settings_timer_title"
+            android:id="@+id/settings_stopwatch_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
@@ -95,7 +94,7 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/timer_notify_pomodoro_switch"
+            android:id="@+id/stopwatch_notify_pomodoro_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -106,9 +105,67 @@
             android:checked="true"
             app:thumbTint="@color/switch_thumb_tint"
             app:trackTint="@color/switch_track_tint"
-            app:layout_constraintTop_toBottomOf="@id/settings_timer_title"
+            app:layout_constraintTop_toBottomOf="@id/settings_stopwatch_title"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <!--Stopwatch Settings Section-->
+        <TextView
+            android:id="@+id/settings_tutorial_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:text="@string/settings_tutorial_title"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/stopwatch_notify_pomodoro_switch"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/settings_tutorial_sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/settings_tutorial_sub_title"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/settings_tutorial_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <CheckBox
+            android:id="@+id/main_page_tutorial_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_tutorial_sub_title"
+            android:buttonTint="@color/brain1"
+            android:saveEnabled="false"
+            android:textColor="@color/brain2"
+            android:textSize="18sp"
+            android:text="@string/main_page_tutorial_checkbox"/>
+
+        <CheckBox
+            android:id="@+id/active_goals_page_tutorial_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_page_tutorial_checkbox"
+            android:buttonTint="@color/brain1"
+            android:saveEnabled="false"
+            android:textColor="@color/brain2"
+            android:textSize="18sp"
+            android:text="@string/active_goals_page_tutorial_checkbox"/>
+
+        <CheckBox
+            android:id="@+id/achieved_goals_page_tutorial_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/active_goals_page_tutorial_checkbox"
+            android:buttonTint="@color/brain1"
+            android:saveEnabled="false"
+            android:textColor="@color/brain2"
+            android:textSize="18sp"
+            android:text="@string/achieved_goals_page_tutorial_checkbox"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

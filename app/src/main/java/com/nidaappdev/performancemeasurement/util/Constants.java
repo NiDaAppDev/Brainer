@@ -5,6 +5,16 @@ import com.nidaappdev.performancemeasurement.R;
 
 public class Constants {
     /**
+     * Pages Names
+     */
+    public static final String MAIN_PAGE_NAME = "Main";
+    public static final String ACTIVE_GOALS_PAGE_NAME = "ActiveGoals";
+    public static final String ACHIEVED_GOALS_PAGE_NAME = "AchievedGoals";
+    public static final String STATS_PAGE_NAME = "Stats";
+    public static final String ACHIEVEMENTS_PAGE_NAME = "Achievements";
+    public static final String SETTINGS_PAGE_NAME = "Settings";
+
+    /**
      * SharedPreferences Files Names
      */
     public static final String BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME = "brainPreferences";
@@ -76,6 +86,25 @@ public class Constants {
      * Tutorial Related
      */
     public static final String FINISHED_TUTORIAL_PREFERENCE_NAME = "finishedTutorial";
+    public static final String SKIPPED_TUTORIAL_PREFERENCE_NAME = "skippedTutorial";
+    public static final String TUTORIAL_PAGE_PREFERENCE_NAME = "tutorialPage";
+    public static final String TUTORIAL_STATION_INDEX_PREFERENCE_NAME = "tutorialStationIndex";
+    public static final String TUTORIAL_FIRST_EXAMPLE_GOAL_NAME = "Study for the math exam";
+    public static final String TUTORIAL_FIRST_EXAMPLE_GOAL_DESCRIPTION = "Study as hard as I can so I won't fail.\n" +
+            ".\n" +
+            ".\n" +
+            ".\n" +
+            "Good luck to me!";
+    public static final String TUTORIAL_FIRST_EXAMPLE_GOAL_TIME_ESTIMATED = "000200";
+    public static final String TUTORIAL_SECOND_EXAMPLE_GOAL_NAME = "Study trigonometry for the math exam";
+    public static final String TUTORIAL_SECOND_EXAMPLE_GOAL_DESCRIPTION = "Sin, Cos and Tan";
+    public static final String TUTORIAL_SECOND_EXAMPLE_GOAL_TIME_ESTIMATED = "000100";
+    public static int DEFAULT_MASK_COLOR = 0x70000000;
+    public static long DEFAULT_DELAY_MILLIS = 0;
+    public static long DEFAULT_FADE_DURATION = 700;
+    public static int DEFAULT_TARGET_PADDING = 10;
+    public static int DEFAULT_COLOR_TEXTVIEW_INFO = 0xFF000000;
+    public static int DEFAULT_DOT_SIZE = 55;
 
     /**
      * Achievements Related

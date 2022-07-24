@@ -11,7 +11,11 @@ import androidx.annotation.RequiresApi;
 import com.adroitandroid.chipcloud.Chip;
 import com.adroitandroid.chipcloud.ChipCloud;
 import com.nidaappdev.performancemeasurement.App;
+import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.Focus.Focus;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialConfiguration;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialView;
 import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
@@ -22,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -147,6 +152,10 @@ public class PublicMethods<T> {
                 Collections.sort(arrayListToSort, (o1, o2) -> o1.getProgress() - o2.getProgress());
             default:
                 break;
+        }
+
+        if (!ascending) {
+            Collections.reverse(arrayListToSort);
         }
     }
 
@@ -364,6 +373,15 @@ public class PublicMethods<T> {
 
     public static Goal getFinishingGoal() {
         return finishingGoal;
+    }
+
+    public static TutorialConfiguration tutorialConfig() {
+        TutorialConfiguration configuration = new TutorialConfiguration();
+        configuration.setFocusType(Focus.ALL);
+        configuration.setDotViewEnabled(true);
+        configuration.setDismissOnTouch(false);
+        configuration.setColorTextViewInfo(App.appContext.getResources().getColor(R.color.brain1));
+        return configuration;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

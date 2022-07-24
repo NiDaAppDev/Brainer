@@ -9,6 +9,16 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <View
+            android:id="@+id/tutorialNoTarget"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBaseline_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"/>
+
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
@@ -387,7 +397,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/add_new_active_activity_dialog_background"
                     android:gravity="center"
-                    android:padding="15.0dip">
+                    android:padding="15.0dip"
+                    android:clipToPadding="false">
 
                     <TextView
                         android:id="@+id/select_parent_subgoal_label"
@@ -589,14 +600,27 @@
                                 android:text="which tag would you categorize it under?"
                                 android:textSize="20sp" />
 
-                            <com.hootsuite.nachos.NachoTextView
-                                android:id="@+id/tag_picker_edit_text"
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tag_picker_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tag_picker_label"
-                                app:chipBackground="@color/chip_custom_color"
-                                app:chipTextColor="@color/chip_text_custom_color"
-                                android:hint="'Other' by default, create or choose other tags"/>
+                                style="@style/TextInputLayout"
+                                android:textColorHint="@color/brain2"
+                                app:hintTextColor="@color/brain2"
+                                android:hint="'Other' by default, create or choose other tags">
+
+
+                                <com.hootsuite.nachos.NachoTextView
+                                    android:id="@+id/tag_picker_edit_text"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textColorHint="@color/brain2"
+                                    app:chipBackground="@color/chip_custom_color"
+                                    app:chipTextColor="@color/chip_text_custom_color"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
 
                         </RelativeLayout>
 

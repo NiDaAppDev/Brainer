@@ -5,20 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.nidaappdev.performancemeasurement.activities.MainActivity.pomodoroServiceIntent;
 import static com.nidaappdev.performancemeasurement.activities.MainActivity.timeOutServiceIntent;
 import static com.nidaappdev.performancemeasurement.activities.MainActivity.timerServiceIntent;
-import static com.nidaappdev.performancemeasurement.util.Constants.ACTION_STOP_SERVICE;
-import static com.nidaappdev.performancemeasurement.util.Constants.BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.LIGHTNING_VIEW_SIZES_PREFERENCE_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_SERVICE_POMODORO_FINISHED_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_SERVICE_STOP_FOR_REAL_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.POMODORO_TIME_OUT_SERVICE_TIME_OUT_FINISHED_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.SAVE_GOAL_PROGRESS_INTENT_ACTION;
-import static com.nidaappdev.performancemeasurement.util.Constants.SUGGEST_BREAK_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_NOTIFICATION_SERVICE_CURRENT_GOAL_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_NOTIFICATION_SERVICE_TIME_IN_MILLIS_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_NOTIFICATION_SERVICE_UPDATE_PLAY_PAUSE_BUTTON_EXTRA_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_PREFERENCES_SHAREDPREFERENCES_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIMER_STATE_PREFERENCE_NAME;
-import static com.nidaappdev.performancemeasurement.util.Constants.TIME_METHOD_PREFERENCE_NAME;
+import static com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods.tutorialConfig;
+import static com.nidaappdev.performancemeasurement.util.Constants.*;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +21,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +44,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.nidaappdev.performancemeasurement.customObjects.Goal;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.Focus.Focus;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.Shape.ShapeType;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialConfiguration;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialSequence;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialSequenceListener;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialView;
+import com.nidaappdev.performancemeasurement.customViews.Tutorial.TutorialViewListener;
 import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.GoalsAdapter;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
@@ -67,6 +65,7 @@ import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnBackPressed;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.IOnFocusListenable;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
+import com.nidaappdev.performancemeasurement.util.Constants;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -76,6 +75,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.polyak.iconswitch.IconSwitch;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import br.com.sapereaude.maskedEditText.MaskedEditText;
@@ -88,7 +88,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
     private ArrayList<RandomLightning> randomLightnings;
     private ImageView brainImage;
-    private View v;
+    private View v, tutorialNoTarget;
     private static GoalDBHelper goalDB;
     private static StatisticsDBHelper statsDB;
     private static MainActivity activity;
@@ -105,8 +105,10 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     private static CustomProgressBarButton currentGoalProgressBarButton;
     private static Ringtone ringtone;
     private static Uri path;
-    private int brainWidth = 0, brainHeight = 0;
+    private static boolean openPomodoroFinishedDialog = false;
     private static DialogHandler dialogHandler;
+    private static TutorialView.Builder tutorialStation;
+    private static TutorialSequence tutorialSequence;
 
     private static final BroadcastReceiver endTimerReceiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -135,11 +137,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
                 boolean losePomodoro = intent.getBooleanExtra(POMODORO_SERVICE_STOP_FOR_REAL_EXTRA_NAME, false);
                 if (pomodoroFinished) {
                     stopPomodoro(context);
-                    Handler handler = new Handler();
-                    Runnable runnable = () -> {
-                        onPomodoroFinished(context, PrefUtil.getCurrentGoal());
-                    };
-                    handler.postDelayed(runnable, 10);
+                    openPomodoroFinishedDialog = true;
                 } else if (!losePomodoro) {
                     Handler handler = new Handler();
                     Runnable runnable = () -> tryStopPomodoro(context);
@@ -196,6 +194,18 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         updateToggle();
         updateRunning(PrefUtil.getTimerState() == TimerState.Running, requireContext());
 
+        if (openPomodoroFinishedDialog) {
+            Handler handler = new Handler();
+            Runnable runnable = () -> {
+                onPomodoroFinished(requireContext(), PrefUtil.getCurrentGoal());
+            };
+            handler.postDelayed(runnable, 10);
+        }
+        if (!PrefUtil.finishedTutorial(MAIN_PAGE_NAME) && !PrefUtil.skippedTutorial(MAIN_PAGE_NAME)) {
+            Handler handler = new Handler();
+            handler.postDelayed(() -> showTutorial(), 5);
+        }
+
         return v;
     }
 
@@ -228,7 +238,6 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         }
     }
 
-
     /**
      * setupLightnings method:
      * this method sets up the lightnings view
@@ -238,11 +247,8 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
         setupLightningsBounds();
 
-        int lightningFrequency = (int) statsDB.getCurrentAllTimeNeurons();
+        int lightningFrequency = statsDB.getCurrentAllTimeNeurons();
         int lightningsAmount = (int) Math.ceil(lightningFrequency / 60.0);
-
-        brainWidth = brainImage.getMaxWidth();
-        brainHeight = brainImage.getMaxHeight();
 
         randomLightnings = new ArrayList<>();
 
@@ -298,6 +304,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void initObjects(View v) {
+        tutorialNoTarget = v.findViewById(R.id.tutorialNoTarget);
         brainImage = v.findViewById(R.id.brain_image);
         timeMethodSwitch = v.findViewById(R.id.time_method_switch);
         playPauseBtn = v.findViewById(R.id.play_pause_btn);
@@ -313,6 +320,281 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         initCurrentGoalPicker();
         initCurrentGoalBar();
         updateCurrentGoalBar();
+    }
+
+    private List<TutorialView.Builder> getTutorialStations() {
+        List<TutorialView.Builder> tutorialStations = new ArrayList<>();
+        TutorialConfiguration config = tutorialConfig();
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .enableDotAnimation(false)
+                .dismissOnTouch(true)
+                .enableIcon(false)
+                .setTargetPadding(0)
+                .setTarget(tutorialNoTarget)
+                .setInfoText("Hi there! Welcome to my app (:\n" +
+                        "If you're here, I believe you are ready to start your journey with me.\n\n" +
+                        "This app will try to help you get better results achieving your goals...\n" +
+                        "How? By using the \"Pomodoro\" method\n" +
+                        "While using the Pomodoro method, you'll have to complete a session of work," +
+                        " by default 25-minutes long, but you can change that.\n" +
+                        "Quitting a Pomodoro session is not an option - if you quit, the time you " +
+                        "put into work not count.\n" +
+                        "After finishing a pomodoro session, it's recommended to take a rest (I will offer it), by default " +
+                        "5-minutes long, but you can also change that.\n\n" +
+                        "Let's start understanding how to use the app, shall we?\n\n" +
+                        "(Click anywhere to continue)\n(Or click skip to skip the tutorial (not recommended))");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(brainImage)
+                .enableFadeOutAnimation(false)
+                .setInfoText("This is your brain");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(brainImage)
+                .enableFadeInAnimation(false)
+                .enableFadeOutAnimation(false)
+                .setInfoText("The more you activate it, the better it performs.\n\n" +
+                        "Its performance is represented by the active neurons it has, these little " +
+                        "lightnings you see running on it");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(brainImage)
+                .enableFadeInAnimation(false)
+                .setInfoText("The number of active neurons your brain has is represented to the number" +
+                        " of lightnings showing in one minute");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(addNewGoalBtn)
+                .performClick(true, false, false)
+                .setInfoText("To earn neurons, you'll have to work.\n" +
+                        "First, create a goal by using this button");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(addNewGoalDialog)
+                .setShape(ShapeType.RECTANGLE)
+                .setInfoText("Here you'll customize your goal.\n" +
+                        "You have to name it, and estimate how long will it take you to complete it.\n" +
+                        "Also, you can describe it.\n\n" +
+                        "And don't worry - you can later edit it's name and description, so don't spend to much time thinking of it.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(addBtn)
+                .setShape(ShapeType.RECTANGLE)
+                .performClick(true, false, false)
+                .setInfoText("I've inserted some information for example.\n" +
+                        "When you're done customizing your goal, click the \"Add New Goal\" button.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(currentGoalProgressBarButton)
+                .setShape(ShapeType.RECTANGLE)
+                .performClick(true, false, false)
+                .setInfoText("Now, after creating the goal, you'd want to start working on it.\n" +
+                        "To do that, first click the \"Current Goal Bar\" to select the goal you'd " +
+                        "like to work on (for now you've got only one goal set up).");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(currentGoalProgressBarButton)
+                .setShape(ShapeType.RECTANGLE)
+                .setInfoText("Now, You can see the goal you'll work on in here.\n" +
+                        "You can also see your progress relative to your initial estimation.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(timeMethodSwitch)
+                .setShape(ShapeType.RECTANGLE)
+                .performClick(true, false, true)
+                .enableFadeOutAnimation(false)
+                .setInfoText("Now after we specified our goal in progress, you can choose one of two" +
+                        " modes to work in.\n\n" +
+                        "First is the Pomodoro mode:\n" +
+                        "As I mentioned earlier, this mode requires commitment. " +
+                        "if you start it, you'll have to finish it, otherwise you'll gain no time " +
+                        "and neurons count for your work. Quitting a Pomodoro session means losing it.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(timeMethodSwitch)
+                .setShape(ShapeType.RECTANGLE)
+                .enableFadeInAnimation(false)
+                .setInfoText("Now after we specified our goal in progress, you can choose one of two" +
+                        " modes to work in.\n\n" +
+                        "Second is the Stopwatch mode:\n" +
+                        "This mode requires no commitment, but will reward you " +
+                        "worst then the Pomodoro mode, by neurons and by your success in completing " +
+                        "your goals, or so I believe.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(playPauseBtn)
+                .performClick(true, false, true)
+                .enableFadeOutAnimation(false)
+                .setInfoText("Everything is set up to work.\n" +
+                        "Click this button to start working.\n" +
+                        "After that, you can close the app and kill it, and the timer will still run," +
+                        " in any of the modes.\n" +
+                        "If you use the Pomodoro mode, when the session is over I will notify you " +
+                        "with a sound, and when you come back into the app I will suggest to take a " +
+                        "rest, that I will also start a timer for.\n" +
+                        "The length of this session and break are adjustable in the settings' which " +
+                        "we will review later.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(playPauseBtn)
+                .performClick(true, false, true)
+                .enableFadeInAnimation(false)
+                .setInfoText("To stop the timer, there are two ways.\n" +
+                        "Either you click this button again, Or you can do it through the notification " +
+                        "displayed.\n " +
+                        "The second method though will require some permissions, which the notification " +
+                        "will guide you how to grant to the app.\n" +
+                        "In the notification also you'll see the timers time and the name of the current " +
+                        "goal in progress.");
+        tutorialStations.add(tutorialStation);
+
+        tutorialStation = new TutorialView.Builder(activity)
+                .setConfiguration(config)
+                .setTarget(tutorialNoTarget)
+                .enableDotAnimation(false)
+                .dismissOnTouch(true)
+                .enableIcon(false)
+                .setTargetPadding(0)
+                .setInfoText("It'll be all you need to start.\n" +
+                        "The example goal that we've created will now get deleted.\n" +
+                        "To learn about other pages and features in the app, click on the three lines" +
+                        "in the top left, and click on the page you'd like to explore - A tutorial " +
+                        "will wait for you there if you haven't finished it yet.\n" +
+                        "Goals you create will first appear in \"Active Goals\" page, there you'll be " +
+                        "able to edit them and more, so I suggest to go there next.\n\n" +
+                        "If you forget something, you can always go to settings and set this tutorial " +
+                        "as unfinished.\n\n" +
+                        "Good luck!");
+        tutorialStations.add(tutorialStation);
+
+        return tutorialStations;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void buildTutorial() {
+        List<TutorialView.Builder> tutorialStations = getTutorialStations();
+
+        tutorialSequence = new TutorialSequence(requireContext(), MAIN_PAGE_NAME, tutorialStations)
+                .enableSkipButton(true)
+                .enableBackButton(true)
+                .enableRestartButton(true)
+                .setListener(new TutorialSequenceListener() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onResume(int index) {
+                        View currentTargetView = tutorialStations.get(index).getTargetView();
+                        View previousTargetView = index > 1 ? tutorialStations.get(index - 1).getTargetView() : currentTargetView;
+                        if (currentTargetView.equals(addNewGoalDialog)) {
+                            openAddNewGoalDialog();
+                        } else if (currentTargetView.equals(addBtn)) {
+                            openAddNewGoalDialog();
+                            newGoalsName.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_NAME);
+                            newGoalsDescription.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_DESCRIPTION);
+                            newGoalsTimeEstimated.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_TIME_ESTIMATED);
+                            goalDB.removeGoal(newGoalsName.getText().toString());
+                        } else if(currentTargetView.equals(timeMethodSwitch) && !previousTargetView.equals(timeMethodSwitch)) {
+                            timeMethodSwitch.setChecked(IconSwitch.Checked.LEFT);
+                        } else if(currentTargetView.equals(playPauseBtn) && previousTargetView.equals(playPauseBtn)) {
+                            if(PrefUtil.getTimerState() == TimerState.Stopped) {
+                                playPauseBtn.performClick();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNext(int fromIndex, int toIndex) {
+                        View targetView = tutorialStations.get(fromIndex).getTargetView();
+                        View nextTargetView = tutorialStations.size() - 1 > fromIndex ? tutorialStations.get(toIndex).getTargetView() : targetView;
+                        if (targetView.equals(addNewGoalDialog)) {
+                            newGoalsName.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_NAME);
+                            newGoalsDescription.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_DESCRIPTION);
+                            newGoalsTimeEstimated.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_TIME_ESTIMATED);
+                            goalDB.removeGoal(newGoalsName.getText().toString());
+                        } else if(targetView.equals(currentGoalProgressBarButton) && targetView.equals(nextTargetView)) {
+                            tutorialSequence.pause();
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onBack(int fromIndex, int toIndex) {
+                        View currentTargetView = tutorialStations.get(fromIndex).getTargetView(),
+                        previousTargetView = tutorialStations.get(toIndex).getTargetView();
+                        if (currentTargetView.equals(addNewGoalDialog)) {
+                            closeAddNewGoalDialog();
+                        } else if (previousTargetView.equals(addNewGoalDialog)) {
+                            newGoalsName.setText("");
+                            newGoalsDescription.setText("");
+                            newGoalsTimeEstimated.setText("");
+                        } else if (previousTargetView.equals(addBtn)) {
+                            newGoalsName.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_NAME);
+                            newGoalsDescription.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_DESCRIPTION);
+                            newGoalsTimeEstimated.setText(TUTORIAL_FIRST_EXAMPLE_GOAL_TIME_ESTIMATED);
+                            openAddNewGoalDialog();
+                            goalDB.removeGoal(newGoalsName.getText().toString());
+                        } else if(currentTargetView.equals(currentGoalPicker)) {
+                            currentGoalPickerDialog.hide();
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onRestart() {
+                        closeAddNewGoalDialog();
+                        if(currentGoalPickerDialog.isShowing()) {
+                            currentGoalPickerDialog.hide();
+                        }
+                        if(PrefUtil.getTimerState() == TimerState.Running) {
+                            stopTimerService(requireContext());
+                        }
+                        timeMethodSwitch.setChecked(IconSwitch.Checked.LEFT);
+                    }
+
+                    @Override
+                    public void onSkip() {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        PrefUtil.setTutorialStationIndex(MAIN_PAGE_NAME, 0);
+                    }
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void showTutorial() {
+        buildTutorial();
+        tutorialSequence.resumeTutorial();
     }
 
     /**
@@ -380,42 +662,28 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initButtonsClick() {
-        timeMethodSwitch.setCheckedChangeListener(new IconSwitch.CheckedChangeListener() {
-            @Override
-            public void onCheckChanged(IconSwitch.Checked current) {
-                switch (current) {
-                    case LEFT:
-                        PrefUtil.setTimeMethod(PrefUtil.TimeMethod.Pomodoro);
-                        break;
-                    case RIGHT:
-                        PrefUtil.setTimeMethod(PrefUtil.TimeMethod.Timer);
-                        break;
-                }
+        timeMethodSwitch.setCheckedChangeListener(current -> {
+            switch (current) {
+                case LEFT:
+                    PrefUtil.setTimeMethod(PrefUtil.TimeMethod.Pomodoro);
+                    break;
+                case RIGHT:
+                    PrefUtil.setTimeMethod(PrefUtil.TimeMethod.Timer);
+                    break;
             }
         });
 
-        playPauseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playPauseAction();
+        timeMethodSwitch.setOnClickListener(view -> timeMethodSwitch.toggle());
+
+        playPauseBtn.setOnClickListener(view -> playPauseAction());
+
+        blurBackground.setOnClickListener(view -> {
+            if (addNewGoalDialog.getVisibility() == View.VISIBLE) {
+                closeAddNewGoalDialog();
             }
         });
 
-        blurBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (addNewGoalDialog.getVisibility() == View.VISIBLE) {
-                    closeAddNewGoalDialog();
-                }
-            }
-        });
-
-        addNewGoalBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openAddNewGoalDialog();
-            }
-        });
+        addNewGoalBtn.setOnClickListener(view -> openAddNewGoalDialog());
 
         addBtn.setOnClickListener(view -> {
             Goal newGoal = new Goal(newGoalsName.getText().toString(), newGoalsDescription.getText().toString(), PublicMethods.getNewGoalsTimeEstimated(newGoalsTimeEstimated));
@@ -437,17 +705,11 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
             }
         });
 
-        cancelAddBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                closeAddNewGoalDialog();
-            }
-        });
+        cancelAddBtn.setOnClickListener(view -> closeAddNewGoalDialog());
     }
 
     /**
-     * The callback function that is called when the regular timer has stopped.
+     * The callback function that is called when the stopwatch timer has stopped.
      *
      * @param goalName         is the name of the current goal in progress.
      * @param timerMillisExtra is the time that the timer has counted during the work session.
@@ -465,7 +727,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
 
 
     /**
-     * Calls a function that starts the regular timer service (sendCommandToStartTimerService()).
+     * Calls a function that starts the stopwatch timer service (sendCommandToStartTimerService()).
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static void startTimerService(Context context) {
@@ -476,7 +738,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     }
 
     /**
-     * Calls a function that stops the regular timer service (sendCommandToStopTimerService()).
+     * Calls a function that stops the stopwatch timer service (sendCommandToStopTimerService()).
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private static void stopTimerService(Context context) {
@@ -485,7 +747,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     }
 
     /**
-     * Starts the regular timer service (the background timer).
+     * Starts the stopwatch timer service (the background timer).
      *
      * @param goalName is the name of the current goal in progress.
      */
@@ -497,7 +759,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     }
 
     /**
-     * Stops the regular timer service (the background timer).
+     * Stops the stopwatch timer service (the background timer).
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private static void sendCommandToStopTimerService(Context context) {
@@ -758,7 +1020,7 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
                 startPomodoro(context);
                 ringtone.stop();
             };
-            negativeBtnCap = "Regular Mode";
+            negativeBtnCap = "Stopwatch Mode";
             negativeProcedure = () -> {
                 PrefUtil.setTimeMethod(PrefUtil.TimeMethod.Timer);
                 startTimerService(context);
@@ -842,6 +1104,9 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
         PrefUtil.setCurrentGoal(newCurrentGoalName);
         updateCurrentGoalBar();
         closeWheelPicker();
+        if(!PrefUtil.finishedTutorial(MAIN_PAGE_NAME) && !PrefUtil.skippedTutorial(MAIN_PAGE_NAME)) {
+            tutorialSequence.resumeTutorial();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

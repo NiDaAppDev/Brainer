@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button
+    android:id="@+id/skipButton"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="invisible"
+    android:enabled="false"
+    android:layoutDirection="rtl"
+    android:backgroundTint="@color/colorPrimary"
+    app:icon="@drawable/skip"
+
+    style="@style/Widget.MaterialComponents.Button.TextButton"
+    android:text="Skip"/>

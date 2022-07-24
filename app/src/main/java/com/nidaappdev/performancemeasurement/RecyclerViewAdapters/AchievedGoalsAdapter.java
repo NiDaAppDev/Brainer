@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,6 @@ import java.util.Objects;
 public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdapter.AchievedGoalsViewHolder> implements View.OnTouchListener {
 
     private Context context;
-    private Cursor cursor;
     private ArrayList<Goal> achievedGoals;
     private MainActivity activity;
     private NestedRecyclerView recyclerView;
@@ -49,10 +49,9 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
     private int expandedItem = -1;
     private final boolean[] openedFromParent = new boolean[]{false, true};
 
-    public AchievedGoalsAdapter(Context context, ArrayList<Goal> achievedGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity) {
+    public AchievedGoalsAdapter(Context context, ArrayList<Goal> achievedGoals, NestedRecyclerView recyclerView, MainActivity activity) {
         this.context = context;
         this.achievedGoals = achievedGoals;
-        this.cursor = cursor;
         this.recyclerView = recyclerView;
         this.activity = activity;
 
@@ -67,6 +66,17 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
 
     public void updateGoalsList() {
         achievedGoals = db.getAchievedGoalsArrayList();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void updateAddedActiveGoal(String goalName) {
+        updateGoalsList();
+        notifyItemInserted(PublicMethods.positionOfGoalInGoalsArrayList(goalName, achievedGoals));
+        scrollToPositionInRecyclerView(PublicMethods.positionOfGoalInGoalsArrayList(goalName, achievedGoals), Objects.requireNonNull(recyclerView.getLayoutManager()));
+    }
+
+    public int getGoalIndex(String goalName) {
+        return PublicMethods.positionOfGoalInGoalsArrayList(goalName, achievedGoals);
     }
 
     public class AchievedGoalsViewHolder extends RecyclerView.ViewHolder {
@@ -108,32 +118,22 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
             /**
              * controls what happens when an achieved-goal item is clicked.
              */
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleExpand();
-                }
-            });
+            itemView.setOnClickListener(v -> toggleExpand());
+
+            /**
+             * controls what happens when an achieved-goal item is clicked.
+             */
+            parentCard.setOnClickListener(v -> toggleExpand());
 
             /**
              * controls what happens when an achieved-goal items expand/shrink button is clicked.
              */
-            btnExpandShrink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleExpand();
-                }
-            });
+            btnExpandShrink.setOnClickListener(v -> toggleExpand());
 
             /**
              * controls what happens when an achieved-goal items back-to-parent button is clicked.
              */
-            btnBackToParent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goBackToParent(achievedGoals.get(getAdapterPosition()));
-                }
-            });
+            btnBackToParent.setOnClickListener(v -> goBackToParent(achievedGoals.get(getAdapterPosition())));
 
         }
 
@@ -299,7 +299,7 @@ public class AchievedGoalsAdapter extends RecyclerView.Adapter<AchievedGoalsAdap
 
         ArrayList<Goal> subGoalsArrayList;
         Goal currentGoal = achievedGoals.get(position);
-        subGoalsArrayList = db.getSubGoalsArrayListOf(currentGoal);
+        subGoalsArrayList = db.getSubGoalsArrayListOf(currentGoal.getName());
 
         String name = currentGoal.getName(),
                 description = currentGoal.getDescription();

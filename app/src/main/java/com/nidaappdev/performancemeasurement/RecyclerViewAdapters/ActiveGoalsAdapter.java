@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,7 +64,6 @@ import it.emperor.animatedcheckbox.AnimatedCheckBox;
 public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.ActiveGoalsViewHolder> implements View.OnTouchListener {
 
     private final Context context;
-    private Cursor cursor;
     private ArrayList<Goal> activeGoals;
     private final MainActivity activity;
     private final NestedRecyclerView recyclerView;
@@ -80,10 +80,9 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     private DialogHandler dialogHandler;
     private final ExtendedFloatingActionButton fab;
 
-    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, Cursor cursor, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, NachoTextView tagPickerEditText) {
+    public ActiveGoalsAdapter(Context context, ArrayList<Goal> activeGoals, NestedRecyclerView recyclerView, MainActivity activity, ExtendedFloatingActionButton fab, View blur, CircularRevealFrameLayout finishGoalDialog, TickSeekBar difficultySeekBar, TickSeekBar evolvingSeekBar, TickSeekBar satisfactionSeekBar, NachoTextView tagPickerEditText) {
         this.context = context;
         this.activeGoals = activeGoals;
-        this.cursor = cursor;
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.fab = fab;
@@ -173,14 +172,18 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     public void updateGoalsList() {
         activeGoals = db.getActiveGoalsArrayList();
         PublicMethods.sortActiveGoals(context, PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoals);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void updateAddedActiveGoal(String goalName) {
-        activeGoals = db.getActiveGoalsArrayList();
-        PublicMethods.sortActiveGoals(context, PrefUtil.getActiveSortMode(), PrefUtil.getActiveGoalsAscending(), activeGoals);
+        updateGoalsList();
         notifyItemInserted(PublicMethods.positionOfGoalInGoalsArrayList(goalName, activeGoals));
         scrollToPositionInRecyclerView(PublicMethods.positionOfGoalInGoalsArrayList(goalName, activeGoals), Objects.requireNonNull(recyclerView.getLayoutManager()));
+    }
+
+    public int getGoalIndex(String goalName) {
+        return PublicMethods.positionOfGoalInGoalsArrayList(goalName, activeGoals);
     }
 
     /**
@@ -192,6 +195,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
 
     public class ActiveGoalsViewHolder extends RecyclerView.ViewHolder {
 
+        CardView cardView;
         LinearLayout shrunkContainer, subGoalsTitleContainer, selectableContainer;
         RelativeLayout expandedContainer, subGoalsRecyclerViewContainer, btnFinish, btnDelete, btnCancel, btnSave;
         ConstraintLayout editPanel;
@@ -206,9 +210,11 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         boolean shrunk = true;
 
 
+        @RequiresApi(api = Build.VERSION_CODES.M)
         public ActiveGoalsViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.activeCardView);
             shrunkContainer = itemView.findViewById(R.id.shrunk_active_goal_container);
             expandedContainer = itemView.findViewById(R.id.expanded_active_goal_container);
             selectableContainer = itemView.findViewById(R.id.selectable_active_goal_container);
@@ -243,146 +249,134 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             /**
              * controls what happens when an active-goal item is clicked.
              */
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (multiSelectable[0] || singleSelectable[0]) {
-                        selectButton.callOnClick();
-                    } else {
-                        toggleExpand();
-                    }
+            itemView.setOnClickListener(v -> {
+                if (multiSelectable[0] || singleSelectable[0]) {
+                    selectButton.callOnClick();
+                } else {
+                    toggleExpand();
+                }
+            });
+
+            /**
+             * controls what happens when an active-goal item is clicked.
+             */
+            cardView.setOnClickListener(view -> {
+                if (multiSelectable[0] || singleSelectable[0]) {
+                    selectButton.callOnClick();
+                } else {
+                    toggleExpand();
                 }
             });
 
             /**
              * controls what happens when an active-goal item is long-clicked.
              */
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (!multiSelectable[0]) {
-                        multiSelectable[0] = true;
-                        expandedItem = -1;
-                        selectButton.callOnClick();
-                        notifyDataSetChanged();
-                    }
-                    return false;
+            itemView.setOnLongClickListener(v -> {
+                if (!multiSelectable[0]) {
+                    multiSelectable[0] = true;
+                    expandedItem = -1;
+                    selectButton.callOnClick();
+                    notifyDataSetChanged();
                 }
+                return false;
+            });
+
+            /**
+             * controls what happens when an active-goal item is long-clicked.
+             */
+            cardView.setOnLongClickListener(v -> {
+                if (!multiSelectable[0]) {
+                    multiSelectable[0] = true;
+                    expandedItem = -1;
+                    selectButton.callOnClick();
+                    notifyDataSetChanged();
+                }
+                return false;
             });
 
             /**
              * controls what happens when an active-goal items expand/shrink button is clicked.
              */
-            btnExpandShrink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleExpand();
-                }
-            });
+            btnExpandShrink.setOnClickListener(v -> toggleExpand());
 
             /**
              * controls what happens when an active-goal items back-to-parent button is clicked.
              */
-            btnBackToParent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goBackToParent(activeGoals.get(getAdapterPosition()));
-                }
-            });
+            btnBackToParent.setOnClickListener(v -> goBackToParent(activeGoals.get(getAdapterPosition())));
 
             /**
              * controls what happens when an active-goal items finish button is clicked.
              */
-            btnFinish.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View v) {
-                    ArrayList<Goal> subgoals = db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition()));
-                    boolean activeSubgoalUnderGoal = false;
-                    for (Goal subgoal : subgoals) {
-                        if (!subgoal.isAchieved()) {
-                            activeSubgoalUnderGoal = true;
-                            break;
-                        }
+            btnFinish.setOnClickListener(v -> {
+                ArrayList<Goal> subgoals = db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition()).getName());
+                boolean activeSubgoalUnderGoal = false;
+                for (Goal subgoal : subgoals) {
+                    if (!subgoal.isAchieved()) {
+                        activeSubgoalUnderGoal = true;
+                        break;
                     }
-                    if (activeSubgoalUnderGoal) {
-                        openCantFinishGoalSubgoalErrorDialog(activeGoals.get(getAdapterPosition()));
-                    }else if(activeGoals.get(getAdapterPosition()).getName().equals(PrefUtil.getCurrentGoal()) && PrefUtil.getTimerState().equals(OpeningFragment.TimerState.Running)){
-                        openCantFinishGoalActiveErrorDialog(activeGoals.get(getAdapterPosition()));
-                    } else {
-                        finishGoal(activeGoals.get(getAdapterPosition()));
-                    }
+                }
+                if (activeSubgoalUnderGoal) {
+                    openCantFinishGoalSubgoalErrorDialog(activeGoals.get(getAdapterPosition()));
+                }else if(activeGoals.get(getAdapterPosition()).getName().equals(PrefUtil.getCurrentGoal()) && PrefUtil.getTimerState().equals(OpeningFragment.TimerState.Running)){
+                    openCantFinishGoalActiveErrorDialog(activeGoals.get(getAdapterPosition()));
+                } else {
+                    finishGoal(activeGoals.get(getAdapterPosition()));
                 }
             });
 
             /**
              * controls what happens when an active-goal items edit button is clicked.
              */
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startEdit();
-                }
-            });
+            btnEdit.setOnClickListener(v -> startEdit());
 
             /**
              * controls what happens when an active-goal items edit->cancel button is clicked.
              */
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View v) {
-                    Goal currentGoal = activeGoals.get(getAdapterPosition());
-                    endEdit(currentGoal, currentGoal.getName(), currentGoal.getDescription(), removedSubGoals, "cancel");
-                }
+            btnCancel.setOnClickListener(v -> {
+                Goal currentGoal = activeGoals.get(getAdapterPosition());
+                endEdit(currentGoal, currentGoal.getName(), currentGoal.getDescription(), removedSubGoals, "cancel");
             });
 
             /**
              * controls what happens when an active-goal items edit->save button is clicked.
              */
-            btnSave.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View v) {
-                    Goal currentGoal = activeGoals.get(getAdapterPosition());
-                    endEdit(currentGoal, nameET.getText().toString(), descriptionET.getText().toString(), removedSubGoals, "save");
-                }
+            btnSave.setOnClickListener(v -> {
+                Goal currentGoal = activeGoals.get(getAdapterPosition());
+                endEdit(currentGoal, nameET.getText().toString(), descriptionET.getText().toString(), removedSubGoals, "save");
             });
 
             /**
              * controls what happens when an active-goal items edit->delete button is clicked.
              */
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View v) {
-                    Goal currentGoal = activeGoals.get(getAdapterPosition());
-                    if(PrefUtil.getCurrentGoal().equals(currentGoal.getName())){
-                        PrefUtil.setCurrentGoal("");
-                    }
-                    endEdit(currentGoal, currentGoal.getName(), currentGoal.getDescription(), removedSubGoals, "delete");
+            btnDelete.setOnClickListener(v -> {
+                Goal currentGoal = activeGoals.get(getAdapterPosition());
+                if(PrefUtil.getCurrentGoal().equals(currentGoal.getName())){
+                    PrefUtil.setCurrentGoal("");
                 }
+                endEdit(currentGoal, currentGoal.getName(), currentGoal.getDescription(), removedSubGoals, "delete");
             });
 
             /**
              * controls what happens when a goal is multiSelected / unMultiSelected.
              */
-            selectButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (multiSelectable[0]) {
-                        if (multiSelectedGoals.contains(activeGoals.get(getAdapterPosition()))) {
-                            multiSelect(false);
-                        } else {
-                            multiSelect(true);
-                        }
-                    } else if (singleSelectable[0]) {
-                        if (singleSelectedGoal == null) {
-                            singleSelect(true);
+            selectButton.setOnClickListener(v -> {
+                if (multiSelectable[0]) {
+                    if (multiSelectedGoals.contains(activeGoals.get(getAdapterPosition()))) {
+                        multiSelect(false);
+                    } else {
+                        multiSelect(true);
+                    }
+                } else if (singleSelectable[0]) {
+                    if (singleSelectedGoal != null) {
+                        if(singleSelectedGoal.equals(activeGoals.get(getAdapterPosition()))) {
+                            singleSelect(false);
                         } else {
                             ((ActiveGoalsViewHolder) Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(PublicMethods.positionOfGoalInGoalsArrayList(singleSelectedGoal.getName(), activeGoals)))).singleSelect(false);
                             singleSelect(true);
                         }
+                    } else {
+                        singleSelect(true);
                     }
                 }
             });
@@ -515,7 +509,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         }
 
         /**
-         * switches the card to multiSelected / unMultiSelected
+         * switches the card to singleSelected / unSingleSelected
          */
         public void singleSelect(boolean singleSelect) {
             try {
@@ -523,6 +517,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                     singleSelectedGoal = activeGoals.get(getAdapterPosition());
                     selectButton.setChecked(true, true);
                 } else {
+                    emptySingleSelected();
                     selectButton.setChecked(false, true);
                 }
             } catch (Exception e) {
@@ -543,7 +538,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
          * @param goal is the selected subGoal.
          */
         private void goToSubGoal(Goal goal) {
-            int subGoalPositionInActiveGoals = PublicMethods.positionOfGoalInGoalsArrayList(goal.getName(), activeGoals);
+            int subGoalPositionInActiveGoals = getGoalIndex(goal.getName());
             expandedItem = subGoalPositionInActiveGoals;
             if (subGoalPositionInActiveGoals != -1 && (editedItem == -1 || openStopEditWarningDialog(activeGoals.get(editedItem), getAdapterPosition()))) {
                 Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(getAdapterPosition())).itemView.performClick();
@@ -569,7 +564,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
          * @param goal is the parent.
          */
         private void goBackToParent(Goal goal) {
-            int parentPositionInActiveGoals = PublicMethods.positionOfGoalInGoalsArrayList(goal.getParentGoal(), activeGoals);
+            int parentPositionInActiveGoals = getGoalIndex(goal.getParentGoal());
             if (parentPositionInActiveGoals != -1) {
                 Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(getAdapterPosition())).itemView.performClick();
                 new Handler().postDelayed(new Runnable() {
@@ -634,7 +629,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             nameET.setText(newName);
             descriptionET.setText(newDescription);
             if (subGoalsRecyclerView.getAdapter() != null) {
-                ((GoalsAdapter) Objects.requireNonNull(subGoalsRecyclerView.getAdapter())).setGoals(PublicMethods.arrayListWithout(db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition())), removedSubGoals));
+                ((GoalsAdapter) Objects.requireNonNull(subGoalsRecyclerView.getAdapter())).setGoals(PublicMethods.arrayListWithout(db.getSubGoalsArrayListOf(activeGoals.get(getAdapterPosition()).getName()), removedSubGoals));
                 Objects.requireNonNull(subGoalsRecyclerView.getAdapter()).notifyDataSetChanged();
             }
         }
@@ -664,14 +659,6 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
             nameETContainer.setVisibility(View.INVISIBLE);
             descriptionETContainer.setVisibility(View.INVISIBLE);
             itemTouchHelper.attachToRecyclerView(null);
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().density * 30.0f));
-            params.addRule(RelativeLayout.BELOW, R.id.expanded_active_goal_title);
-            expandedProgressBar.setLayoutParams(params);
-
-            params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.BELOW, R.id.expanded_active_goal_description);
-            subGoalsTitleContainer.setLayoutParams(params);
         }
 
         /**
@@ -722,14 +709,14 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
                     doneEditing = false;
                     break;
                 case "delete":
-                    db.removeGoal(editedGoal);
+                    db.removeGoal(editedGoal.getName());
                     activeGoals = db.getActiveGoalsArrayList();
                     notifyItemRemoved(editedItem);
                     editedItem = -1;
                     break;
                 case "cancel":
                     if (subGoalsRecyclerView.getAdapter() != null) {
-                        ((GoalsAdapter) Objects.requireNonNull(subGoalsRecyclerView.getAdapter())).setGoals(db.getSubGoalsArrayListOf(activeGoals.get(editedItem)));
+                        ((GoalsAdapter) Objects.requireNonNull(subGoalsRecyclerView.getAdapter())).setGoals(db.getSubGoalsArrayListOf(activeGoals.get(editedItem).getName()));
                         Objects.requireNonNull(subGoalsRecyclerView.getAdapter()).notifyDataSetChanged();
                     }
                 default:
@@ -762,6 +749,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @NonNull
     @Override
     public ActiveGoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -819,9 +807,9 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         ArrayList<Goal> subGoalsArrayList;
         Goal currentGoal = activeGoals.get(position);
         if (editedItem != position) {
-            subGoalsArrayList = db.getSubGoalsArrayListOf(currentGoal);
+            subGoalsArrayList = db.getSubGoalsArrayListOf(currentGoal.getName());
         } else {
-            subGoalsArrayList = PublicMethods.arrayListWithout(db.getSubGoalsArrayListOf(currentGoal), removedSubGoals);
+            subGoalsArrayList = PublicMethods.arrayListWithout(db.getSubGoalsArrayListOf(currentGoal.getName()), removedSubGoals);
         }
 
 
@@ -908,7 +896,7 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         return dialogHandler.showDialog(activity,
                 context,
                 "Goal Has Active (Unfinished) Subgoals",
-                "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal).toString().substring(1, db.getSubGoalsArrayListOf(goal).toString().length() - 1),
+                "The goal \"" + goal.getName() + "\" has active subgoals:\n" + db.getSubGoalsArrayListOf(goal.getName()).toString().substring(1, db.getSubGoalsArrayListOf(goal.getName()).toString().length() - 1),
                 "OK",
                 okProcedure,
                 DialogTypes.TYPE_ERROR,
@@ -945,44 +933,6 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
         evolvingSeekBar.setProgress(3);
         satisfactionSeekBar.setProgress(3);
         tagPickerEditText.setText("");
-        String[] tags = db.getAllTags().toArray(new String[0]);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, tags);
-        tagPickerEditText.setAdapter(adapter);
-        tagPickerEditText.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_CURRENT_TOKEN);
-        tagPickerEditText.enableEditChipOnTouch(false, false);
-        tagPickerEditText.setNachoValidator(new ChipifyingNachoValidator());
-        tagPickerEditText.setThreshold(1);
-        tagPickerEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tagPickerEditText.showDropDown();
-            }
-        });
-
-        ArrayList<String> allTagsArrayList = db.getAllTags();
-        tagPickerEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ArrayList<String> tagsArrayList = new ArrayList<>(allTagsArrayList);
-                for (com.hootsuite.nachos.chip.Chip chip : tagPickerEditText.getAllChips())
-                    if (tagsArrayList.contains(chip.getText())) {
-                        tagsArrayList.remove(chip.getText());
-                    }
-                String[] tags = tagsArrayList.toArray(new String[0]);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, tags);
-                tagPickerEditText.setAdapter(adapter);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     /**
@@ -1038,17 +988,5 @@ public class ActiveGoalsAdapter extends RecyclerView.Adapter<ActiveGoalsAdapter.
     @Override
     public int getItemCount() {
         return activeGoals.size();
-    }
-
-    public void swapCursor(Cursor newCursor) {
-        if (cursor != null) {
-            cursor.close();
-        }
-
-        cursor = newCursor;
-
-        if (newCursor != null) {
-            notifyDataSetChanged();
-        }
     }
 }

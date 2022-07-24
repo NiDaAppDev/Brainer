@@ -32,11 +32,12 @@
                 android:orientation="horizontal"
                 android:weightSum="11">
 
-                <TextView
+                <com.lb.auto_fit_textview.AutoResizeTextView
                     android:id="@+id/shrunk_achieved_goal_title"
                     android:layout_width="0.0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
+                    android:maxLines="1"
                     android:gravity="center"
                     android:text="Goal Name"
                     android:textColor="#ff5a5a5a"
@@ -79,7 +80,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
+                <com.lb.auto_fit_textview.AutoResizeTextView
                     android:id="@+id/expanded_achieved_goal_title"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"

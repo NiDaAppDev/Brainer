@@ -59,17 +59,19 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
 
-    private final SQLiteDatabase sQLiteDatabase = getWritableDatabase();
+    private static SQLiteDatabase sQLiteDatabase;
 
     private static final StatisticsDBHelper statisticsDB = new StatisticsDBHelper(App.appContext);
 
+    private static Cursor cursor;
+
     public GoalDBHelper(Context context) {
         super(context, GOALS_DATABASE_NAME, null, DATABASE_VERSION);
+        sQLiteDatabase = getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         //TODO to edit db columns edit here
         String SQL_CREATE_GOALS_LIST_TABLE = "CREATE TABLE " +
                 GoalEntry.TABLE_NAME + " (" +
@@ -89,8 +91,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 GoalEntry.COLUMN_GOAL_FINISH_DATE + " VARCHAR(10) NOT NULL, " +
                 GoalEntry.COLUMN_GOAL_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
         db.execSQL(SQL_CREATE_GOALS_LIST_TABLE);
-        Cursor dbCursor = db.query(GoalEntry.TABLE_NAME, null, null, null, null, null, null);
-        String[] columnNames = dbCursor.getColumnNames();
+        sQLiteDatabase = db;
     }
 
     @Override
@@ -120,7 +121,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public boolean doesGoalExist(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
             return false;
@@ -131,7 +132,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public String getGoalStartDate(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         String result = PublicMethods.formatDateTime(cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_TIMESTAMP)));
         cursor.close();
@@ -140,7 +141,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public String getGoalFinishDate(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         String result = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_FINISH_DATE));
         cursor.close();
@@ -148,8 +149,8 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     }
 
     public boolean doesActiveGoalNameAlreadyExist(String name, String editedGoalName) {
-        String Query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = " + name + " AND " + COLUMN_GOAL_ACHIEVED + " = 0";
-        Cursor cursor = sQLiteDatabase.rawQuery(Query, null);
+        String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + name + "' AND " + COLUMN_GOAL_ACHIEVED + " = 0";
+        cursor = sQLiteDatabase.rawQuery(query, null);
         if (cursor.getCount() <= 0 || (cursor.getCount() <= 1 && name.equals(editedGoalName))) {
             cursor.close();
             return false;
@@ -182,7 +183,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         //TODO to edit db columns edit here
 
 
-        Cursor cursor = getWritableDatabase().query(GoalEntry.TABLE_NAME, null, null, null, null, null, GoalEntry.COLUMN_GOAL_NAME + " ASC");
+        cursor = getWritableDatabase().query(GoalEntry.TABLE_NAME, null, null, null, null, null, GoalEntry.COLUMN_GOAL_NAME + " ASC");
         ArrayList<Goal> goals = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_NAME));
@@ -226,23 +227,33 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return achievedGoals;
     }
 
+    public boolean isAchieved(String goalName) {
+        ArrayList<Goal> achievedGoals = getAchievedGoalsArrayList();
+        for (Goal goal : achievedGoals) {
+            if (goal.getName().equals(goalName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean isWorkTimeDivisionChartUnlocked() {
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             float dailyMinutesOfWork = statisticsDB.getDailyMinutesOfWork(dayOfWeek);
-            if(dailyMinutesOfWork > 0) {
+            if (dailyMinutesOfWork > 0) {
                 return true;
             }
         }
         for (Month month : Month.values()) {
             float monthlyMinutesOfWork = statisticsDB.getMonthlyMinutesOfWork(month);
-            if(monthlyMinutesOfWork > 0) {
+            if (monthlyMinutesOfWork > 0) {
                 return true;
             }
         }
         for (float i = 0f; i < 24f; i++) {
             float hourlyMinutesOfWork = statisticsDB.getHourlyMinutesOfWork((int) i);
-            if(hourlyMinutesOfWork > 0) {
+            if (hourlyMinutesOfWork > 0) {
                 return true;
             }
         }
@@ -266,31 +277,31 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         float nowHour = dt.getHourOfDay();
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-            if(dayOfWeek.plus(1).ordinal() <= todayOfWeek) {
+            if (dayOfWeek.plus(1).ordinal() <= todayOfWeek) {
                 long todayNeurons = statisticsDB.getDayOfThisWeekNeurons(dayOfWeek);
-                if(todayNeurons > 0) {
+                if (todayNeurons > 0) {
                     return true;
                 }
             }
         }
         for (int dayOfMonth = 1; dayOfMonth <= todayOfMonth; dayOfMonth++) {
             long todayNeurons = statisticsDB.getDayOfThisMonthNeurons(dayOfMonth);
-            if(todayNeurons > 0) {
+            if (todayNeurons > 0) {
                 return true;
             }
         }
         for (Month month : Month.values()) {
             long thisMonthsNeurons = statisticsDB.getMonthOfThisYearNeurons(month);
-            if(thisMonthsNeurons > 0) {
+            if (thisMonthsNeurons > 0) {
                 return true;
             }
-            if(month.equals(Month.of(nowMonth))){
+            if (month.equals(Month.of(nowMonth))) {
                 break;
             }
         }
         for (float hour = 0f; hour <= nowHour; hour++) {
             long currentHourNeurons = statisticsDB.getHourOfTodayNeurons((int) hour);
-            if(currentHourNeurons > 0) {
+            if (currentHourNeurons > 0) {
                 return true;
             }
         }
@@ -341,7 +352,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public ArrayList<Achievement> getAchievementsArrayList() {
         ArrayList<Achievement> achievements = new ArrayList<>();
-        for(int i = 0; i < achievementsNames.length; i ++) {
+        for (int i = 0; i < achievementsNames.length; i++) {
             Achievement achievement = new Achievement(achievementsNames[i], achievementsDescriptions[i], achievementsRequirements[i], achievementsIconsRes[i], isAchievementAchieved(i));
             achievements.add(achievement);
         }
@@ -450,14 +461,24 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public ArrayList<Goal> getSubGoalsArrayListOf(Goal goal) {
+    public ArrayList<Goal> getSubGoalsArrayListOf(String goalName) {
         ArrayList<Goal> subGoals = new ArrayList<>();
         for (Goal subGoal : getAllGoalsArrayList()) {
-            if (subGoal.getParentGoal().equals(goal.getName())) {
+            if (subGoal.getParentGoal().equals(goalName)) {
                 subGoals.add(subGoal);
             }
         }
         return subGoals;
+    }
+
+    public boolean isGoalSubGoalOf(String goalName, String parentGoalName) {
+        ArrayList<Goal> subgoals = getSubGoalsArrayListOf(parentGoalName);
+        for (Goal subgoal : subgoals) {
+            if (subgoal.getName().equals(goalName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<Goal> getPossibleParentGoalsArrayListOf(ArrayList<Goal> goals) {
@@ -494,7 +515,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public long getGoalCountedTime(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_TIME));
         cursor.close();
@@ -503,7 +524,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public long getGoalEstimatedTime(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_ESTIMATED_TIME));
         cursor.close();
@@ -512,7 +533,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public long getGoalCountedPomodoro(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         long result = cursor.getLong(cursor.getColumnIndexOrThrow(GoalEntry.COLUMN_GOAL_COUNTED_POMODORO));
         cursor.close();
@@ -521,7 +542,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
 
     public long getGoalCountedPomodoroTime(String goalName) {
         String query = "SELECT * FROM " + GoalEntry.TABLE_NAME + " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " = '" + goalName + "'";
-        Cursor cursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
         cursor.moveToFirst();
         long result = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_GOAL_COUNTED_POMODORO_TIME));
         cursor.close();
@@ -617,9 +638,6 @@ public class GoalDBHelper extends SQLiteOpenHelper {
             goalsBuilder.append(goal.getName());
         }
         goalsBuilder.append(")");
-//        String query = "UPDATE " + GoalEntry.TABLE_NAME +
-//                " SET " + GoalEntry.COLUMN_GOAL_PARENT + "= " + parent.getName() +
-//                " WHERE " + GoalEntry.COLUMN_GOAL_NAME + " IN " + goals.toString();
         ArrayList<String> goalsNameList = new ArrayList<>();
         for (Goal goal : goalsList) {
             goalsNameList.add(goal.getName());
@@ -641,12 +659,12 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         sQLiteDatabase.update(TABLE_NAME, cv, COLUMN_GOAL_NAME + inClause.toString(), goals);
     }
 
-    public void removeGoal(Goal goal) {
-        if (doesGoalExist(goal.getName())) {
+    public void removeGoal(String goalName) {
+        if (doesGoalExist(goalName)) {
             sQLiteDatabase.delete(TABLE_NAME,
-                    COLUMN_GOAL_NAME + "= '" + goal.getName() + "'",
+                    COLUMN_GOAL_NAME + "= '" + goalName + "'",
                     null);
-            goalsDBReference.document(goal.getName()).delete();
+            goalsDBReference.document(goalName).delete();
         }
     }
 
@@ -727,16 +745,20 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         descriptionData.put(COLUMN_GOAL_DESCRIPTION, newDescription);
         goalsDBReference.document(newName).update(descriptionData);
 
+        removeSubGoalsFromGoal(removedSubGoals, goal.getName());
 
-        if (!(removedSubGoals.isEmpty())) {
-            for (Goal removedSubGoal : removedSubGoals) {
+    }
+
+    public void removeSubGoalsFromGoal(ArrayList<Goal> subgoals, String goalName) {
+        if (!(subgoals.isEmpty())) {
+            for (Goal removedSubGoal : subgoals) {
                 String subGoalsQuery = "UPDATE " + TABLE_NAME +
                         " SET " +
                         COLUMN_GOAL_PARENT + " = ''" +
                         " WHERE " +
                         COLUMN_GOAL_NAME + " = '" + removedSubGoal.getName() +
                         "' AND " +
-                        COLUMN_GOAL_PARENT + " = '" + goal.getName() + "'";
+                        COLUMN_GOAL_PARENT + " = '" + goalName + "'";
                 sQLiteDatabase.execSQL(subGoalsQuery);
 
                 HashMap<String, Object> removedSubgoalData = new HashMap<>();
@@ -744,7 +766,6 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 goalsDBReference.document(removedSubGoal.getName()).update(removedSubgoalData);
             }
         }
-
     }
 
     public ArrayList<String> getAllTags() {
@@ -753,13 +774,13 @@ public class GoalDBHelper extends SQLiteOpenHelper {
         String query = "SELECT DISTINCT " + COLUMN_GOAL_TAGS + " FROM " + TABLE_NAME +
                 " WHERE " + COLUMN_GOAL_TAGS + " NOT IN ('')";
 
-        Cursor allTagsCursor = sQLiteDatabase.rawQuery(query, null);
+        cursor = sQLiteDatabase.rawQuery(query, null);
 
-        for (allTagsCursor.moveToFirst(); !allTagsCursor.isAfterLast(); allTagsCursor.moveToNext()) {
-            tagsList.addAll(Arrays.asList(allTagsCursor.getString(allTagsCursor.getColumnIndexOrThrow(COLUMN_GOAL_TAGS)).split(",")));
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            tagsList.addAll(Arrays.asList(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GOAL_TAGS)).split(",")));
         }
 
-        allTagsCursor.close();
+        cursor.close();
 
         return tagsList;
     }
@@ -784,7 +805,7 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                 "', " +
                 COLUMN_GOAL_SATISFACTION + " = '" + satisfaction +
                 "', " +
-                COLUMN_GOAL_FINISH_DATE + " = '" + new SimpleDateFormat("dd/MM/yyyy").format(new Date()) +
+                COLUMN_GOAL_FINISH_DATE + " = '" +  new SimpleDateFormat("dd/MM/yyyy").format(new Date()) +
                 "', " +
                 COLUMN_GOAL_TAGS + " = '" + tags +
                 "' WHERE " +
@@ -844,7 +865,6 @@ public class GoalDBHelper extends SQLiteOpenHelper {
                     monthlyMinutesOfWork = statisticsDB.getCurrentMonthMinutesOfWork();
             double result = ((monthlyAchievedGoals / sumOfGoals) * (monthlyDifficultyAverage / 3.0)) * (monthlyMinutesOfWork / sumOfGoals) * 10;
             statisticsDB.payMonthlyNeurons(LocalDate.now().getMonth(), Year.of(LocalDate.now().getYear()));
-            Log.d(TAG, "getUserNeurons: Hi");
             return result;
         } catch (Exception e) {
             e.printStackTrace();
@@ -863,25 +883,46 @@ public class GoalDBHelper extends SQLiteOpenHelper {
      */
     public String getTableAsString(String tableName) {
         String tableString = String.format("Table %s:\n", tableName);
-        Cursor allRows = sQLiteDatabase.rawQuery("SELECT * FROM " + tableName, null);
-        if (allRows.moveToFirst()) {
-            String[] columnNames = allRows.getColumnNames();
+        cursor = sQLiteDatabase.rawQuery("SELECT * FROM " + tableName, null);
+        if (cursor.moveToFirst()) {
+            String[] columnNames = cursor.getColumnNames();
             do {
                 for (String name : columnNames) {
                     tableString += String.format("%s: %s\n", name,
-                            allRows.getString(allRows.getColumnIndexOrThrow(name)));
+                            cursor.getString(cursor.getColumnIndexOrThrow(name)));
                 }
                 tableString += "\n";
 
-            } while (allRows.moveToNext());
+            } while (cursor.moveToNext());
         }
-
+        cursor.close();
         return tableString;
     }
 
-    public void clearDB(){
+    public void clearDB() {
         String query = "DELETE FROM " + TABLE_NAME;
         sQLiteDatabase.execSQL(query);
     }
 
+    public void closeStatisticsDB() {
+        statisticsDB.close();
+    }
+
+    public void deleteDB(Context context) {
+        if (sQLiteDatabase.isOpen()) {
+            sQLiteDatabase.close();
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        this.close();
+        statisticsDB.closeGoalDB();
+        context.deleteDatabase(GOALS_DATABASE_NAME);
+    }
+
+    public GoalDBHelper recreateDB(Context context) {
+        deleteDB(context);
+        sQLiteDatabase = getWritableDatabase();
+        return new GoalDBHelper(context);
+    }
 }
