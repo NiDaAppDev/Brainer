@@ -245,16 +245,25 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setupLightnings() {
 
-        setupLightningsBounds();
-
         int lightningFrequency = statsDB.getCurrentAllTimeNeurons();
+        if (!PrefUtil.finishedTutorial(MAIN_PAGE_NAME) && !PrefUtil.skippedTutorial(MAIN_PAGE_NAME) && lightningFrequency == 0) {
+            lightningFrequency = 120;
+        }
         int lightningsAmount = (int) Math.ceil(lightningFrequency / 60.0);
-
-        randomLightnings = new ArrayList<>();
 
         ConstraintLayout constraintLayout = v.findViewById(R.id.parent);
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
+
+        if(randomLightnings == null) {
+            randomLightnings = new ArrayList<>();
+        }
+
+        for(RandomLightning randomLightning : randomLightnings) {
+            constraintLayout.removeView(randomLightning);
+        }
+        randomLightnings = new ArrayList<>();
+
 
         Handler handler = new Handler();
 
@@ -286,15 +295,6 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
                 randomLightning.startLightningsInFrequencyOf(freq);
             }
         }
-    }
-
-    /**
-     * Sets up the lightning box's bounds.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setupLightningsBounds() {
-        ArrayList<Double> sizes1 = PrefUtil.getArrayListPreferences(BRAIN_PREFERENCES_SHAREDPREFERENCES_NAME, LIGHTNING_VIEW_SIZES_PREFERENCE_NAME);
-        ArrayList<Integer> sizes = new ArrayList<>();
     }
 
     /**
@@ -579,13 +579,16 @@ public class OpeningFragment extends Fragment implements IOnFocusListenable, IOn
                         timeMethodSwitch.setChecked(IconSwitch.Checked.LEFT);
                     }
 
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onSkip() {
-
+                        setupLightnings();
                     }
 
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onFinish() {
+                        setupLightnings();
                         PrefUtil.setTutorialStationIndex(MAIN_PAGE_NAME, 0);
                     }
                 });
