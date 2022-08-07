@@ -47,6 +47,7 @@ import com.hootsuite.nachos.chip.Chip;
 import com.hootsuite.nachos.terminator.ChipTerminatorHandler;
 import com.hootsuite.nachos.validator.ChipifyingNachoValidator;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.nidaappdev.congratulator.CongratulationView;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
 import com.nidaappdev.performancemeasurement.R;
 import com.nidaappdev.performancemeasurement.RecyclerViewAdapters.ActiveGoalsAdapter;
@@ -1053,7 +1054,17 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
             goalDB.finishGoal(PublicMethods.getFinishingGoal(), difficultySeekBar.getProgress(), evolvingSeekBar.getProgress(), satisfactionSeekBar.getProgress(), tags.toString());
             mainActiveGoalsAdapter.notifyItemRemoved(PublicMethods.positionOfGoalInGoalsArrayList(PublicMethods.getFinishingGoal().getName(), activeGoalsArrayList));
             mainActiveGoalsAdapter.updateGoalsList();
-            PrefUtil.setCurrentGoal("");
+            if(PrefUtil.getCurrentGoal().equals(PublicMethods.getFinishingGoal().toString()))
+                PrefUtil.setCurrentGoal("");
+            new CongratulationView.Builder(requireActivity())
+                    .setTitle("Congratulations!")
+                    .setContent("You've finished " + PublicMethods.getFinishingGoal().toString() +
+                            "!" + "\nWell done! keep up the great work.")
+                    .enableImage(false, false)
+                    .setConfettiColors(new int[]{getResources().getColor(R.color.brain1),
+                            getResources().getColor(R.color.brain2),
+                            getResources().getColor(R.color.brain3)})
+                    .show();
         }
     }
 

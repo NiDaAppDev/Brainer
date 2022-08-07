@@ -12,10 +12,6 @@ import androidx.fragment.app.Fragment;
 import com.nidaappdev.performancemeasurement.BuildConfig;
 import com.nidaappdev.performancemeasurement.R;
 
-
-import mehdi.sakout.aboutpage.AboutPage;
-import mehdi.sakout.aboutpage.Element;
-
 public class AboutFragment extends Fragment {
 
 
@@ -28,18 +24,7 @@ public class AboutFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Element versionElement = new Element();
-        versionElement.setTitle(BuildConfig.VERSION_NAME);
-        return new AboutPage(getContext())
-                .isRTL(false)
-                .setDescription(getString(R.string.app_description))
-                .setImage(R.drawable.app_icon)
-                .addGroup("Contact and more")
-                .addEmail("nidaappdev@gmail.com")
-                .addGitHub("NiDaAppDev")
-                .addGroup("App Info")
-                .addItem(versionElement)
-                .create();
+        return inflater.inflate(R.layout.fragment_about_us, container);
     }
 
 }
