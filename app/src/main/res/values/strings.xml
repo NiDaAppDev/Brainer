@@ -5,7 +5,7 @@
     <string name="achieved_goals_nav_text">Achieved Goals</string>
     <string name="stats_nav_text">Stats</string>
     <string name="tips_and_tricks_nav_text"><![CDATA[Tips & Tricks]]></string>
-    <string name="about_us_nav_text">About Us</string>
+    <string name="about_us_nav_text">About</string>
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
 
@@ -27,6 +27,7 @@
     <string name="confirm_setting_as_subgoals_of_parent_goal_dialog_button_text">Confirm</string>
     <string name="finish_goal_dialog_finish_button_text">Finish</string>
     <string name="active_goals_fragment_menu_sort_item_label">Sort</string>
+    <string name="about_me_fragment_menu_search_item_label">Search</string>
     <string name="sort_goals_dialog_button_text">Sort</string>
     <string name="timer_notification_background_allowed_title">Goal In Progress</string>
     <string name="time_out_notification_background_allowed_title">Time Out</string>
@@ -60,6 +61,16 @@
     <string name="user_sign_in_TV_text">Sign in with your user:</string>
 
 
+    <string name="aboutLibraries_description_special1_name">My Github ID</string>
+    <string name="aboutLibraries_description_special1_text">
+        <![CDATA[NiDaAppDev]]>
+    </string>
+    <string name="aboutLibraries_description_special2_name">My Email</string>
+    <string name="aboutLibraries_description_special2_text">
+        <![CDATA[nidaappdev@gmail.com]]>
+    </string>
+
+
     <string name="facebook_app_id" translatable="false">1234</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1234</string>
     <string name="facebook_client_token" translatable="false">56789</string>
@@ -69,5 +80,11 @@
     <string name="main_page_tutorial_checkbox">Main Page</string>
     <string name="active_goals_page_tutorial_checkbox">Active Goals Page</string>
     <string name="achieved_goals_page_tutorial_checkbox">Achieved Goals Page</string>
+
+    <string name="app_description"><![CDATA[Performance Measurements is an app that will try to help
+     you get your goals done better and faster.
+     <br />It\'ll run the timers for your work periods, it\'ll suggest working with the Pomodoro
+     method, and also will show you graphs that\'ll help you see your progress and learn from it
+     about your work efficiency and more.]]></string>
 
 </resources>

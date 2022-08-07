@@ -42,8 +42,8 @@ class LottieAlertDialogCustom : AlertDialog
     private var negativeTextColor:Int? = null
     private var noneBtnColor:Int? = null
     private var noneTextColor:Int? = null
-    private lateinit var animationFadeIn : Animation
-    private lateinit var animationFadeOut: Animation
+    private var animationFadeIn : Animation
+    private var animationFadeOut: Animation
 
     private constructor(
             context: Context,
@@ -192,7 +192,7 @@ class LottieAlertDialogCustom : AlertDialog
         {
             btnPositive.setText(mPositiveText)
             btnPositive.visibility=View.VISIBLE
-            btnPositive.setOnClickListener(View.OnClickListener { mPositiveListener?.onClick(LottieAlertDialogCustom@this) })
+            btnPositive.setOnClickListener(View.OnClickListener { mPositiveListener?.onClick(this) })
         }
         else
         {
@@ -202,7 +202,7 @@ class LottieAlertDialogCustom : AlertDialog
         {
             btnNegative.setText(mNegativeText)
             btnNegative.visibility=View.VISIBLE
-            btnNegative.setOnClickListener(View.OnClickListener { mNegativeListener?.onClick(LottieAlertDialogCustom@this) })
+            btnNegative.setOnClickListener(View.OnClickListener { mNegativeListener?.onClick(this) })
         }
         else
         {
@@ -212,7 +212,7 @@ class LottieAlertDialogCustom : AlertDialog
         {
             btnNone.setText(mNoneText)
             btnNone.visibility=View.VISIBLE
-            btnNone.setOnClickListener(View.OnClickListener { mNoneListener?.onClick(LottieAlertDialogCustom@this) })
+            btnNone.setOnClickListener(View.OnClickListener { mNoneListener?.onClick(this) })
         }
         else
         {
@@ -293,6 +293,6 @@ class LottieAlertDialogCustom : AlertDialog
         noneBtnColor=builder.getNoneButtonColor()
         noneTextColor=builder.getNoneTextColor()
         lAnimation.startAnimation(animationFadeOut)
-        Handler().postDelayed(Runnable { setView() },50)
+        Handler().postDelayed({ setView() },50)
     }
 }

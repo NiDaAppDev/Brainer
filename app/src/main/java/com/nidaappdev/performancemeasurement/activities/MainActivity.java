@@ -4,7 +4,6 @@ import static android.Manifest.permission.FOREGROUND_SERVICE;
 import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.nidaappdev.performancemeasurement.util.Constants.GO_TO_OPENING_FRAGMENT;
-import static com.nidaappdev.performancemeasurement.util.Constants.MAIN_PAGE_NAME;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -30,8 +29,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+import com.mikepenz.aboutlibraries.ui.LibsSupportFragment;
 import com.nidaappdev.performancemeasurement.R;
-import com.nidaappdev.performancemeasurement.fragments.AboutUsFragment;
 import com.nidaappdev.performancemeasurement.fragments.AchievedGoalsFragment;
 import com.nidaappdev.performancemeasurement.fragments.AchievementsFragment;
 import com.nidaappdev.performancemeasurement.fragments.ActiveGoalsFragment;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AchievementsFragment achievementsFragment;
     private TipsAndTricksFragment tipsAndTricksFragment;
     private SettingsFragment settingsFragment;
-    private AboutUsFragment aboutUsFragment;
+    private LibsSupportFragment aboutMeFragment;
 
     /**
      * Defines all the objects that are used in the class.
@@ -122,7 +122,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         achievementsFragment = new AchievementsFragment();
         tipsAndTricksFragment = new TipsAndTricksFragment();
         settingsFragment = new SettingsFragment();
-        aboutUsFragment = new AboutUsFragment();
+//        aboutMeFragment = new AboutMeFragment();
+
+        aboutMeFragment = new LibsBuilder()
+                .withAboutIconShown(true)
+                .withAboutVersionShown(true)
+                .withAboutDescription(getString(R.string.app_description))
+                .supportFragment();
 
         if (savedInstanceState == null || intentAction.equals(GO_TO_OPENING_FRAGMENT)) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, openingFragment).commit();
@@ -231,9 +237,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Objects.requireNonNull(getSupportActionBar()).setTitle("Settings");
                 break;
             case R.id.nav_about_us:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, aboutUsFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, aboutMeFragment).commit();
                 setNavMenuItemThemeColors(getResources().getColor(R.color.purple));
-                Objects.requireNonNull(getSupportActionBar()).setTitle("About Us");
+                Objects.requireNonNull(getSupportActionBar()).setTitle("About");
                 break;
         }
 
