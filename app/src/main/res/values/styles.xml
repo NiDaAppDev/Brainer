@@ -16,7 +16,7 @@
 
         <item name="chipStyle">@style/customChip</item>
 
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.PerformanceMeasurements.AppBottomSheetDialogTheme</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Brainer.AppBottomSheetDialogTheme</item>
 
     </style>
     
@@ -25,7 +25,7 @@
         <item name="boxStrokeWidth">1dp</item>
     </style>
 
-    <style name="ThemeOverlay.PerformanceMeasurements.AppBottomSheetDialogTheme"
+    <style name="ThemeOverlay.Brainer.AppBottomSheetDialogTheme"
         parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>

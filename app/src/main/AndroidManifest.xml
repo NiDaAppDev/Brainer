@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nidaappdev.brainer">
+    package="com.nidaappdev.performancemeasurement">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="com.nidaappdev.brainer.App"
+        android:name="com.nidaappdev.performancemeasurement.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,12 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name="com.nidaappdev.brainer.activities.RegisterActivity"
+            android:name="com.nidaappdev.performancemeasurement.activities.RegisterActivity"
             android:exported="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.nidaappdev.brainer.activities.SignInActivity"
+            android:name="com.nidaappdev.performancemeasurement.activities.SignInActivity"
             android:exported="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
@@ -32,12 +32,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.nidaappdev.brainer.timersClassesAndInterfaces.TimerService" />
-        <service android:name="com.nidaappdev.brainer.timersClassesAndInterfaces.PomodoroService" />
-        <service android:name="com.nidaappdev.brainer.timersClassesAndInterfaces.TimeOutService" />
+        <service android:name="com.nidaappdev.performancemeasurement.timersClassesAndInterfaces.TimerService" />
+        <service android:name="com.nidaappdev.performancemeasurement.timersClassesAndInterfaces.PomodoroService" />
+        <service android:name="com.nidaappdev.performancemeasurement.timersClassesAndInterfaces.TimeOutService" />
 
         <activity
-            android:name="com.nidaappdev.brainer.activities.MainActivity"
+            android:name="com.nidaappdev.performancemeasurement.activities.MainActivity"
             android:exported="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>

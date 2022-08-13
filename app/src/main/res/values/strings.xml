@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PerformanceMeasurement</string>
+    <string name="app_name">Brainer</string>
     <string name="main_screen_nav_text">Main Screen</string>
     <string name="active_goals_nav_text">Active Goals</string>
     <string name="achieved_goals_nav_text">Achieved Goals</string>
@@ -81,7 +81,7 @@
     <string name="active_goals_page_tutorial_checkbox">Active Goals Page</string>
     <string name="achieved_goals_page_tutorial_checkbox">Achieved Goals Page</string>
 
-    <string name="app_description"><![CDATA[Performance Measurements is an app that will try to help
+    <string name="app_description"><![CDATA[Brainer is an app that will try to help
      you get your goals done better and faster.
      <br />It\'ll run the timers for your work periods, it\'ll suggest working with the Pomodoro
      method, and also will show you graphs that\'ll help you see your progress and learn from it
