@@ -23,7 +23,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
+            <com.nidaappdev.brainer.customViews.NestedRecyclerView.NestedRecyclerView
                 android:id="@+id/active_goals_recycler_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -409,7 +409,7 @@
                         android:text="Select parent goal:"
                         android:textSize="30sp" />
 
-                    <com.nidaappdev.performancemeasurement.customViews.NestedRecyclerView.NestedRecyclerView
+                    <com.nidaappdev.brainer.customViews.NestedRecyclerView.NestedRecyclerView
                         android:id="@+id/set_as_subgoal_dialog_recycler_view"
                         android:layout_width="fill_parent"
                         android:layout_height="100dp"

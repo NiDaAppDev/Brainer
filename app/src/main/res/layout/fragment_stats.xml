@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.brainer.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/work_time_division_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_division_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.brainer.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/pomodoro_vs_regular_division_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 app:layout_constraintBottom_toTopOf="@id/pomodoro_vs_regular_results_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.brainer.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/pomodoro_vs_regular_results_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                 app:layout_constraintBottom_toTopOf="@id/neurons_progress_chart"
                 app:dividerColor="@color/gray_light"/>
 
-            <com.nidaappdev.performancemeasurement.customViews.StatsClasses.CustomChartObjects.CustomChart
+            <com.nidaappdev.brainer.customViews.StatsClasses.CustomChartObjects.CustomChart
                 android:id="@+id/neurons_progress_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -88,7 +88,7 @@
                 android:duplicateParentState="true"
                 android:focusable="true">
 
-                <com.nidaappdev.performancemeasurement.customViews.CustomProgressBarButton.CustomProgressBarButton
+                <com.nidaappdev.brainer.customViews.CustomProgressBarButton.CustomProgressBarButton
                     android:id="@+id/goal_progress_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
