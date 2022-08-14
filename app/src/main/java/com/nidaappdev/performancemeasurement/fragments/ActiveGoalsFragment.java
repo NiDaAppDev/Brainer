@@ -452,7 +452,6 @@ public class ActiveGoalsFragment extends Fragment implements IOnBackPressed {
 
         finishGoalButton.setOnClickListener(v -> {
             finishGoal();
-            //TODO: add a congratulations screen for finishing the goal.
             closeFinishGoalDialog();
         });
     }
