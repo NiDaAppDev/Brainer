@@ -1,18 +1,27 @@
 {
   "project_info": {
     "project_number": "976996764303",
+    "firebase_url": "https://performance-measurements-default-rtdb.firebaseio.com",
     "project_id": "performance-measurements",
     "storage_bucket": "performance-measurements.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:976996764303:android:5c4c817c7a32a350a23efa",
+        "mobilesdk_app_id": "1:976996764303:android:0f26f5e58545d445a23efa",
         "android_client_info": {
           "package_name": "com.nidaappdev.performancemeasurement"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "976996764303-ase5k85vjv4ike6q7il3hdlqtrggp1dc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nidaappdev.performancemeasurement",
+            "certificate_hash": "916664ccd9183864a19ad99c188ea66505066f12"
+          }
+        },
         {
           "client_id": "976996764303-s26p1qeh99m1655hdcsuv7h0r8d7vrba.apps.googleusercontent.com",
           "client_type": 3
