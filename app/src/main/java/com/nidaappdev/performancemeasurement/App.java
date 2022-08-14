@@ -1,5 +1,6 @@
 package com.nidaappdev.performancemeasurement;
 
+import static android.content.ContentValues.TAG;
 import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_ACHIEVED;
 import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO;
 import static com.nidaappdev.performancemeasurement.databaseObjects.GoalContract.GoalEntry.COLUMN_GOAL_COUNTED_POMODORO_TIME;
@@ -30,15 +31,22 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
 import com.dd.CircularProgressButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -49,6 +57,8 @@ import com.nidaappdev.performancemeasurement.databaseObjects.GoalDBHelper;
 import com.nidaappdev.performancemeasurement.databaseObjects.StatisticsDBHelper;
 import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,6 +168,10 @@ public class App extends Application {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    showSnackBar(progressButton.getRootView(),
+                            LayoutInflater.from(appContext),
+                            "Failed Loading User Settings",
+                            e.getMessage());
                     progressButton.setProgress(-1);
                     handler.postDelayed(() -> progressButton.setProgress(0), 2000);
                 });
@@ -191,6 +205,10 @@ public class App extends Application {
                 .addOnFailureListener(e ->
 
                 {
+                    showSnackBar(progressButton.getRootView(),
+                            LayoutInflater.from(appContext),
+                            "Failed Loading User Goals DataBase",
+                            e.getMessage());
                     progressButton.setProgress(-1);
                     handler.postDelayed(() -> progressButton.setProgress(0), 2000);
                 });
@@ -216,9 +234,29 @@ public class App extends Application {
                     handler.postDelayed(onSuccess, 2000);
                 })
                 .addOnFailureListener(e -> {
+                    showSnackBar(progressButton.getRootView(),
+                            LayoutInflater.from(appContext),
+                            "Failed Loading User Statistics Data",
+                            e.getMessage());
                     progressButton.setProgress(-1);
                     handler.postDelayed(() -> progressButton.setProgress(0), 2000);
                 });
+    }
+
+    public static void showSnackBar(View v, LayoutInflater layoutInflater, String title, String message) {
+
+        Snackbar snackbar = Snackbar.make(v, "", BaseTransientBottomBar.LENGTH_SHORT);
+
+        View customSnackBarLayout = layoutInflater.inflate(R.layout.custom_snackbar_layout, null);
+        ((TextView)customSnackBarLayout.findViewById(R.id.title)).setText(title);
+        ((TextView)customSnackBarLayout.findViewById(R.id.message)).setText(message);
+
+        snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
+        Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        snackBarLayout.setPadding(0, 0, 0, 0);
+        snackBarLayout.addView(customSnackBarLayout);
+
+        snackbar.show();
     }
 
 }

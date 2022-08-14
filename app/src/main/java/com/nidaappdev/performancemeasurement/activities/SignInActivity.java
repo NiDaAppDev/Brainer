@@ -1,10 +1,13 @@
 package com.nidaappdev.performancemeasurement.activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -21,12 +24,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.nidaappdev.performancemeasurement.App;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
 import com.nidaappdev.performancemeasurement.R;
+import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -101,17 +107,22 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 signInBtn.setIndeterminateProgressMode(true);
                 authenticator.signInWithEmailAndPassword(username, password).addOnCompleteListener(task -> {
                     Handler handler = new Handler();
-                    if (task.isSuccessful()) {
-                        Intent i = new Intent(SignInActivity.this, MainActivity.class);
-                        Runnable onFinishLoading = () -> {
-                            startActivity(i);
-                            finish();
-                        };
-                        App.loadUserDataFromCloud(signInBtn, onFinishLoading);
-                    } else {
+                    if (!task.isSuccessful()) {
+                        App.showSnackBar(signInBtn.getRootView(),
+                                getLayoutInflater(),
+                                "Failed Signing In",
+                                PublicMethods.getValueOrDefault(task.getException().getMessage(),
+                                        "Unknown Error Has Occurred"));
                         signInBtn.setProgress(-1);
                         handler.postDelayed(() -> signInBtn.setProgress(0), 2000);
+                        return;
                     }
+                    Intent i = new Intent(SignInActivity.this, MainActivity.class);
+                    Runnable onFinishLoading = () -> {
+                        startActivity(i);
+                        finish();
+                    };
+                    App.loadUserDataFromCloud(signInBtn, onFinishLoading);
                 });
             }
 
@@ -153,17 +164,22 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void handleGoogleSignInResult(GoogleSignInResult result) {
         Handler handler = new Handler();
-        if (result.isSuccess()) {
-            Intent i = new Intent(SignInActivity.this, MainActivity.class);
-            Runnable onFinishLoading = () -> {
-                startActivity(i);
-                finish();
-            };
-            App.loadUserDataFromCloud(signInBtn, onFinishLoading);
-        } else {
+        if (!result.isSuccess()) {
+            App.showSnackBar(signInBtn.getRootView(),
+                    getLayoutInflater(),
+                    "Failed Signing In",
+                    result.getStatus().getStatusMessage());
             signInBtn.setProgress(-1);
             handler.postDelayed(() -> signInBtn.setProgress(0), 2000);
+            return;
         }
+        Intent i = new Intent(SignInActivity.this, MainActivity.class);
+        Runnable onFinishLoading = () -> {
+            startActivity(i);
+            finish();
+        };
+        App.loadUserDataFromCloud(signInBtn, onFinishLoading);
+
     }
 
     @Override

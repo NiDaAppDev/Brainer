@@ -51,6 +51,7 @@
         <entry key="app/src/main/res/layout/current_goal_bottom_sheet_dialog.xml" value="0.29157759726378796" />
         <entry key="app/src/main/res/layout/custom_chart_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_pick_chart_view.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/custom_snackbar_layout.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/fragment_about_us.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_achieved_goals.xml" value="0.302536231884058" />
         <entry key="app/src/main/res/layout/fragment_achievements.xml" value="0.29243266353142366" />

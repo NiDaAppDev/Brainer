@@ -20,6 +20,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.nidaappdev.performancemeasurement.App;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
 import com.nidaappdev.performancemeasurement.R;
+import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMethods;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -96,6 +97,11 @@ public class RegisterActivity extends AppCompatActivity {
                             };
                             App.loadUserDataFromCloud(registerBtn, onFinishLoading);
                         } else {
+                            App.showSnackBar(registerBtn.getRootView(),
+                                    getLayoutInflater(),
+                                    "Failed Registering",
+                                    PublicMethods.getValueOrDefault(task.getException().getMessage(),
+                                            "Unknown Error Has Occurred"));
                             registerBtn.setProgress(-1);
                             handler.postDelayed(() -> registerBtn.setProgress(0), 2000);
                         }
