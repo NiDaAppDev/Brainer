@@ -25,10 +25,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.aboutlibraries.ui.LibsSupportFragment;
 import com.nidaappdev.performancemeasurement.R;
@@ -57,8 +58,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    FirebaseAuth authenticator;
+    private FirebaseUser user;
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -143,15 +143,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void initNavigationHeader() {
-        authenticator = FirebaseAuth.getInstance();
+    private void initFirebaseUser() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+    }
 
+    private void initNavigationHeader() {
+        initFirebaseUser();
         profile_image = navigationHeader.findViewById(R.id.profile_imageView);
         profile_username = navigationHeader.findViewById(R.id.hello_user_TV);
         sign_out_btn = navigationHeader.findViewById(R.id.sign_out_btn);
         String username = "";
-        if (authenticator.getCurrentUser() != null) {
-            username = authenticator.getCurrentUser().getEmail();
+        if (user != null) {
+            username = user.getEmail();
         } else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
             username = GoogleSignIn.getLastSignedInAccount(this).getDisplayName();
         }
@@ -161,11 +164,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void signOut() {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> {
-            Intent signOutIntent = new Intent(MainActivity.this, SignInActivity.class);
-            startActivity(signOutIntent);
-            finish();
-        });
+        FirebaseAuth.getInstance().signOut();
+        GoogleSignIn.getClient(getApplicationContext(), GoogleSignInOptions.DEFAULT_SIGN_IN).signOut();
+        Intent signOutIntent = new Intent(MainActivity.this, SignInActivity.class);
+        startActivity(signOutIntent);
+        finish();
     }
 
     /**

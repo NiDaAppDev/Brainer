@@ -36,11 +36,10 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.android.gms:play-services-auth:20.2.0'
-    implementation 'com.firebaseui:firebase-ui-auth:8.0.1'
     implementation 'com.google.firebase:firebase-firestore'
     implementation platform('com.google.firebase:firebase-bom:30.3.2')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
     implementation 'it.emperor.animatedcheckbox:animatedcheckbox:1.0.3'
     implementation 'com.github.warkiz.tickseekbar:tickseekbar:0.1.4'

@@ -18,7 +18,7 @@
 
         <item
             android:id="@+id/nav_achieved_goals"
-            android:icon="@drawable/fui_ic_check_circle_black_128dp"
+            android:icon="@drawable/check_circle"
             android:title="@string/achieved_goals_nav_text"/>
 
         <item
