@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "976996764303-ase5k85vjv4ike6q7il3hdlqtrggp1dc.apps.googleusercontent.com",
+          "client_id": "976996764303-a7oi5n5781uq95a0uf9mjelcebhlj91m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nidaappdev.performancemeasurement",
             "certificate_hash": "916664ccd9183864a19ad99c188ea66505066f12"
+          }
+        },
+        {
+          "client_id": "976996764303-qpujuqtkg0m1q65452b7aqtvn8gpb09u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nidaappdev.performancemeasurement",
+            "certificate_hash": "985ea2147adfd4b2d5e2ae25a3c279f9910e7c24"
+          }
+        },
+        {
+          "client_id": "976996764303-rop8albfqijoa4eikadvsi2sfratmkc2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nidaappdev.performancemeasurement",
+            "certificate_hash": "6d315a87c322a9b3fef6d3f389bb4fa30d2228da"
           }
         },
         {
