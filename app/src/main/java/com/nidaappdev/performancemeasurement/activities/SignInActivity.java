@@ -20,14 +20,24 @@ import androidx.appcompat.widget.Toolbar;
 import com.dd.CircularProgressButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.auth.User;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.nidaappdev.performancemeasurement.App;
 import com.nidaappdev.performancemeasurement.Lottie.DialogHandler;
@@ -45,8 +55,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private ImageButton googleSignInBtn;
     private TextView registerSuggestionTV;
 
-    public FirebaseAuth authenticator;
-    private GoogleApiClient googleApiClient;
+    private FirebaseAuth authenticator;
+    private GoogleSignInClient googleSignInClient;
     private DialogHandler dialogHandler;
 
     private static final int RC_GOOGLE_SIGN_IN = 9001;
@@ -66,10 +76,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         googleSignInBtn = findViewById(R.id.google_sign_in_btn);
         registerSuggestionTV = findViewById(R.id.register_suggestion_TV);
 
-        authenticator = FirebaseAuth.getInstance();
 
         dialogHandler = DialogHandler.getDialogHandler(this);
 
+        initPasswordSignInVariables();
         initGoogleSignInVariables();
         initRegisterSuggestionTV();
         initLogInBtn();
@@ -129,24 +139,26 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         });
     }
 
+    private void initPasswordSignInVariables() {
+        authenticator = FirebaseAuth.getInstance();
+    }
+
     private void initGoogleSignInBtn() {
         googleSignInBtn.setOnClickListener(view -> googleSignIn());
     }
 
     private void initGoogleSignInVariables() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("976996764303-s26p1qeh99m1655hdcsuv7h0r8d7vrba.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .build();
+        googleSignInClient = GoogleSignIn.getClient(SignInActivity.this, googleSignInOptions);
     }
 
     private void googleSignIn() {
         signInBtn.setIndeterminateProgressMode(true);
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
     }
 
@@ -156,29 +168,42 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_GOOGLE_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleGoogleSignInResult(result);
+            Task<GoogleSignInAccount> signInAccountTask = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleGoogleSignInResult(signInAccountTask);
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void handleGoogleSignInResult(GoogleSignInResult result) {
+    private void handleGoogleSignInResult(Task<GoogleSignInAccount> task) {
         Handler handler = new Handler();
-        if (!result.isSuccess()) {
-            App.showSnackBar(signInBtn.getRootView(),
-                    getLayoutInflater(),
-                    "Failed Signing In",
-                    result.getStatus().getStatusMessage());
-            signInBtn.setProgress(-1);
-            handler.postDelayed(() -> signInBtn.setProgress(0), 2000);
-            return;
+        try {
+            GoogleSignInAccount googleSignInAccount = task.getResult(ApiException.class);
+            if(googleSignInAccount != null) {
+                AuthCredential authCredential = GoogleAuthProvider
+                        .getCredential(googleSignInAccount.getIdToken()
+                                ,null);
+                authenticator.signInWithCredential(authCredential)
+                        .addOnCompleteListener(this, credentialTask -> {
+                            if(!credentialTask.isSuccessful()) {
+                                App.showSnackBar(signInBtn.getRootView(),
+                                        getLayoutInflater(),
+                                        "Failed Signing In",
+                                        task.getException().getMessage());
+                                signInBtn.setProgress(-1);
+                                handler.postDelayed(() -> signInBtn.setProgress(0), 2000);
+                                return;
+                            }
+                            Intent i = new Intent(SignInActivity.this, MainActivity.class);
+                            Runnable onFinishLoading = () -> {
+                                startActivity(i);
+                                finish();
+                            };
+                            App.loadUserDataFromCloud(signInBtn, onFinishLoading);
+                        });
+            }
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
-        Intent i = new Intent(SignInActivity.this, MainActivity.class);
-        Runnable onFinishLoading = () -> {
-            startActivity(i);
-            finish();
-        };
-        App.loadUserDataFromCloud(signInBtn, onFinishLoading);
 
     }
 
