@@ -16,7 +16,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 
@@ -33,14 +32,16 @@ import com.nidaappdev.performancemeasurement.publicClassesAndInterfaces.PublicMe
 import com.nidaappdev.performancemeasurement.util.PrefUtil;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TimerService extends Service {
 
     long startTime = 0L, millis = 0L, seconds = 0L;
     boolean notificationJustStarted, isBatteryOptimizationActive;
     String action, goalName;
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable;
+    Timer timer = new Timer();
+    TimerTask timerTask;
     NotificationCompat.Builder timerNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
 
     @Override
@@ -68,7 +69,7 @@ public class TimerService extends Service {
     }
 
     private void startTimer() {
-        timerRunnable = new Runnable() {
+        timerTask = new TimerTask() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void run() {
@@ -78,10 +79,9 @@ public class TimerService extends Service {
                 if (seconds * 60 == PrefUtil.getPomodoroLength()) {
                     suggestBreak();
                 }
-                timerHandler.postDelayed(this, 1000);
             }
         };
-        timerHandler.postDelayed(timerRunnable, 0);
+        timer.scheduleAtFixedRate(timerTask, 0, 1000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -117,7 +117,7 @@ public class TimerService extends Service {
     private void initBatteryOptimizationActiveNotification() {
         Intent notificationIntent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         String disableBatteryOptimizationText = String.format("Background activity is restricted on this device.\nPlease allow it so we can post an active notification during work sessions.\n\nTo do so, click on the notification to go to\nApp management -> search for %s -> Battery Usage -> enable 'Allow background activity')", getString(R.string.app_name));
         timerNotificationBuilder.
                 setContentTitle(getString(R.string.timer_notification_background_restricted_title))
@@ -135,7 +135,7 @@ public class TimerService extends Service {
         timerNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         timerNotificationBuilder
                 .setContentTitle(getString(R.string.timer_notification_background_allowed_title))
@@ -143,7 +143,7 @@ public class TimerService extends Service {
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.tomato)
                 .setContentIntent(pendingIntent)
-                .setNotificationSilent()
+                .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationJustStarted = false;
     }
@@ -190,7 +190,7 @@ public class TimerService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void killService() {
-        timerHandler.removeCallbacks(timerRunnable);
+        timer.cancel();
         PrefUtil.setTimerState(OpeningFragment.TimerState.Stopped);
 
         Intent saveGoalProgress = new Intent(SAVE_GOAL_PROGRESS_INTENT_ACTION);
